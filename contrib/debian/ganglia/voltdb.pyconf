@@ -1,0 +1,111 @@
+modules {
+    module {
+        name = "voltdb"
+        language = "python"
+        param net_status {
+            value = "/usr/bin/netstat -s -p tcp"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 10
+    time_threshold = 15
+    metric {
+        name = "voltdb_is_active"
+        title = "Is Active"
+    }
+    metric {
+        name = "voltdb_memory_rss"
+        title = "Memory Resident Set Size"
+    }
+    metric {
+        name = "voltdb_memory_javaused"
+        title = "Memory for Java and in use"
+    }
+    metric {
+        name = "voltdb_memory_javaunused"
+        title = "Memory for Java but unused"
+    }
+    metric {
+        name = "voltdb_memory_tupledata"
+        title = "Memory for storing db records"
+    }
+    metric {
+        name = "voltdb_memory_tupleallocated"
+        title = "Memory for db records and free space"
+    }
+    metric {
+        name = "voltdb_memory_indexmemory"
+        title = "Memory for db indexes"
+    }
+    metric {
+        name = "voltdb_memory_stringmemory"
+        title = "Memory for in-line records"
+    }
+    metric {
+        name = "voltdb_memory_tuplecount"
+        title = "Total number of database records now"
+    }
+    metric {
+        name = "voltdb_memory_pooledmemory"
+        title = "Memory for other tasks"
+    } 
+    metric {
+        name = "voltdb_dr_total_bytes"
+        title = "Current queue length to DR"
+    } 
+    metric {
+        name = "voltdb_dr_total_bytes_in_memory"
+        title = "Queued data currently held in memory"
+    } 
+    metric {
+        name = "voltdb_dr_total_buffers"
+        title = "Waiting buffers in this partition"
+    } 
+    metric {
+        name = "voltdb_partition_count"
+        title = "Unique or logical partitions on the cluster"
+    } 
+    metric {
+        name = "voltdb_planner_partitions"
+        title = "Number of partitions"
+    } 
+    metric {
+        name = "voltdb_planner_cache1_hits"
+        title = "Queries that matched and reused in cache1"
+    } 
+    metric {
+        name = "voltdb_planner_cache2_hits"
+        title = "Queries that matched and reused in cache2"
+    } 
+    metric {
+        name = "voltdb_planner_cache_misses"
+        title = "Queries that had no match in the cache"
+    } 
+    metric {
+        name = "voltdb_planner_failures"
+        title = "Planning for an ad hoc query failed"
+    } 
+    metric {
+        name = "voltdb_procedure_aborts"
+        title = "Aborted procedures"
+    } 
+    metric {
+        name = "voltdb_procedure_failures"
+        title = "Procedure failed unexpectedly"
+    } 
+    metric {
+        name = "voltdb_procedure_invocations"
+        title = "Procedures invocations"
+    } 
+    metric {
+        name = "voltdb_procedure_timed_invocations"
+        title = "Number of invocations for avg,min,max"
+    } 
+    metric {
+        name = "voltdb_procedure_avg_execution_time"
+        title = "Avg time to execute the stored procedure"
+    } 
+       
+}

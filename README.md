@@ -1,2 +1,2 @@
 # tejo
-an anomaly detection scheme for cloud databses
+an anomaly detection scheme for cloud databases

@@ -1,0 +1,16 @@
+#! /bin/sh
+#
+# rdate         Execute the rdate command.
+#
+# Version:      1998-11-01 tapio.lehtonen@iki.fi
+#
+     
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+#HOST=time.windows.com
+HOST=time.nist.gov
+     
+# Set operating system time from other host in LAN.
+if [ -x /usr/bin/rdate ]
+then
+    /usr/bin/rdate $HOST
+fi

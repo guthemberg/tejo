@@ -1,0 +1,25 @@
+ServerName LOCATION-monitor-001.cloudapp.net
+
+<VirtualHost *:80>
+        ServerAdmin gdasilva@laas.fr
+
+        DocumentRoot /usr/share/ganglia-webfrontend
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride None
+        </Directory>
+        <Directory /usr/share/ganglia-webfrontend>
+                AllowOverride All
+                Order allow,deny
+                Allow from all
+                Deny from none
+        </Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
