@@ -34,14 +34,14 @@ location = "LOCATION"
 
 /* You can specify as many udp_recv_channels as you like as well. */ 
 udp_recv_channel {
-  port = 8649
-#  bind = LOCATION-TARGET-001.cloudapp.net
+  port = PORT
+#  bind = TARGET
   retry_bind = true
 } 
 /* You can specify as many tcp_accept_channels as you like to share 
    an xml description of the state of the cluster */ 
 tcp_accept_channel { 
-  port = 8649 
+  port = PORT 
 } 
 
 /* Each metrics module that is referenced by gmond must be specified and 

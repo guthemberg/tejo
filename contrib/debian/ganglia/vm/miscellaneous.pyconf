@@ -1,0 +1,18 @@
+modules {
+    module {
+        name = "miscellaneous"
+        language = "python"
+        param net_status {
+            value = "/usr/bin/netstat -s -p tcp"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 30
+    time_threshold = 90
+    metric {
+        name = "miscellaneous_hostname"
+        title = "Hostname"
+    }
+}

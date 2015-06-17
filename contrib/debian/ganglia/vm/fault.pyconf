@@ -1,0 +1,26 @@
+modules {
+    module {
+        name = "fault"
+        language = "python"
+        param net_status {
+            value = "/usr/bin/netstat -s -p tcp"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 30
+    time_threshold = 90
+    metric {
+        name = "fault_injection"
+        title = "Fault injection"
+    }
+    metric {
+        name = "fault_intensity"
+        title = "Fault intensity"
+    }
+    metric {
+        name = "fault_value"
+        title = "Fault value"
+    }
+}

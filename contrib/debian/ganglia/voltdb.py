@@ -15,7 +15,7 @@ ALIVE_TIME=int(config['alive_time'])
 #from database import MyDB
 
 #available in home_dir
-from svc.common.db.voltdb.stats import VoltStats
+from tejo.common.db.voltdb.stats import VoltStats
 
 
 NAME_PREFIX = 'voltdb_'

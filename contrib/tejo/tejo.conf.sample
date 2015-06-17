@@ -1,10 +1,8 @@
-vms=LOCATION-vm-001.cloudapp.net,LOCATION-vm-002.cloudapp.net,LOCATION-vm-003.cloudapp.net,LOCATION-vm-004.cloudapp.net,LOCATION-vm-005.cloudapp.net,LOCATION-vm-006.cloudapp.net
-
-workload_hosts=LOCATION-workload-001.cloudapp.net,
+node_type=TYPE
 
 rrd_file_prefix=mongodb_
-rrd_path_vms_prefix=/var/db/ganglia/rrds/VMs
-rrd_path_workload_hosts_prefix=/var/db/ganglia/rrds/workload
+rrd_path_vms_prefix=PATH_TO_RRDS/VMs
+rrd_path_workload_hosts_prefix=PATH_TO_RRDS/workload
 
 fault_injection_filename=fault_injection.rrd
 fault_intensity_filename=fault_intensity.rrd
@@ -12,8 +10,6 @@ fault_value_filename=fault_value.rrd
 
 slo_violation_filename=slo_violation.rrd
 slo_throughput_filename=slo_throughput.rrd
-slo_latency_99th_read_filename=slo_latency_99th_read.rrd
-slo_max_latency_99th_read_filename=slo_max_latency_99th_read.rrd
 slo_target_throughput_filename=slo_target_throughput.rrd
 slo_system_id_filename=slo_system_id.rrd
 slo_latency_95th_filename=slo_latency_95th.rrd
@@ -27,24 +23,29 @@ vm_bytes_out_filename=bytes_out.rrd
 load_one_filename=load_one.rrd
 vm_mongodb_is_primary_filename=mongodb_is_primary.rrd 
 
-home_dir=/home/user/hermes
-vsphere_host=vsphere
-vsphere_user=root
-vsphere_pass=VSPHERE_PASSWORD
+root_dir=/home/user
+home_dir=/home/user/tejo
 guest_vm_sys_user=user
 guest_vm_sys_pass=GUEST_PASSWORD
 collect_delay=15
 alive_time=60
+time_to_vm_death=86400
+default_domain=MY_DOMAIN
+
+default_gmond_port=8649
+ganglia_api=http://localhost:8652
+vm_gmond_port=8649
+wl_gmond_port=8648
 
 db_name=userdb
 db_user=user
 db_host=127.0.0.1
-db_pass=DB_PASSWORD
+db_pass=u53r
 
 mongo_ports="27017"
-mongo_query_router_host=LOCATION-qrouter-001.cloudapp.net
+mongo_query_router_host=LOCATION-qrouter-001.MY_DOMAIN
 volt_ports="21212,3021,5555,2181,21211"
-volt_leader=LOCATION-vm-001.cloudapp.net
+volt_leader=LOCATION-vm-001.MY_DOMAIN
 volt_wl_duration=480
 volt_wl_log=/tmp/volt_wl_run.log
 volt_rate_limit=3000

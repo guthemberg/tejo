@@ -1,7 +1,7 @@
-ServerName LOCATION-monitor-001.cloudapp.net
+ServerName SOURCE
 
 <VirtualHost *:80>
-        ServerAdmin gdasilva@laas.fr
+        ServerAdmin guthemberg.silvestre@gmail.com
 
         DocumentRoot /usr/share/ganglia-webfrontend
         <Directory />

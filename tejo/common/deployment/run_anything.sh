@@ -1,7 +1,7 @@
 #!/bin/sh
 
-. /etc/svc.conf
-. /home/user/svc/svc/experiments_scripts/db/volt/config
+. /etc/tejo.conf
+. /home/user/tejo/tejo/experiments_scripts/db/volt/config
 
 anything=$1
 

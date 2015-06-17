@@ -21,7 +21,7 @@ globals {
  * of a <CLUSTER> tag.  If you do not specify a cluster tag, then all <HOSTS> will 
  * NOT be wrapped inside of a <CLUSTER> tag. */ 
 cluster { 
-  name = "SOURCES"
+  name = "SOURCE"
   owner = "unspecified" 
   latlong = "unspecified" 
   url = "unspecified" 
@@ -36,8 +36,8 @@ location = "LOCATION"
    used to only support having a single channel */ 
 udp_send_channel { 
   #bind_hostname = yes
-  host = LOCATION-TARGET-001.cloudapp.net
-  port = 8649 
+  host = TARGET
+  port = PORT 
   ttl = 30 
 } 
 

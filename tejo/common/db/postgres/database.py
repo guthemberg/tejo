@@ -69,6 +69,14 @@ class MyDB:
 		return self.pushInsert(cmd)		
 
 
+	def getColumnNames(self,table,scheme='public'):
+		column_names = []
+		query="select column_name from information_schema.columns where table_schema = '%s' and table_name='%s'"%(scheme,table)
+		self.cur.execute(query)
+		column_names = [row[0] for row in self.cur]
+			
+		return column_names
+		
 	def __del__(self):
 		if self.conn is not None:
 			self.cur.close()

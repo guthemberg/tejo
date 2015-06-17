@@ -7,7 +7,7 @@ import subprocess
 import filecmp
 
 #db api available in home_dir
-conf_file = "/etc/svc.conf"
+conf_file = "/etc/tejo.conf"
 config=ConfigObj(conf_file)
 sys.path.append(config['home_dir'])
 ALIVE_TIME=int(config['alive_time'])
@@ -20,7 +20,7 @@ for filename in (sorted(glob.glob(rrd_path_vms_prefix+"/*"))):
         info =  (filename).split('/')[-1]
         socket.inet_aton(info)
         #print info
-        script_to_run=config['home_dir']+"/svc/common/deployment/fix_hosts.sh"
+        script_to_run=config['home_dir']+"/tejo/common/deployment/fix_hosts.sh"
         script_out=subprocess.Popen(["sh",script_to_run,info], stdout=subprocess.PIPE,close_fds=True).communicate()[0].rstrip()
         #print script_out
     except socket.error:

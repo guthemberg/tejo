@@ -3,13 +3,13 @@ import subprocess
 from configobj import ConfigObj
 
 #db api available in home_dir
-conf_file = "/etc/svc.conf"
+conf_file = "/etc/tejo.conf"
 config=ConfigObj(conf_file)
 sys.path.append(config['home_dir'])
 #from database import MyDB
 
 #available in home_dir
-from svc.common.db.voltdb.voltdbclient import *
+from tejo.common.db.voltdb.voltdbclient import *
 
 class VoltStats:
     
