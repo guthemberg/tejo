@@ -271,7 +271,7 @@ if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
 
 if (number_of_workloads == 0) or failed_data_collection:
-    print "workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d,%d)." % (latency_95th,latency_99th,number_of_workloads)
+    print "workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d)." % (latency_95th,latency_99th,number_of_workloads)
     print '[%s] Done.' % ts
     sys.exit(0)
     
