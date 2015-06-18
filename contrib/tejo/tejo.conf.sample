@@ -43,7 +43,7 @@ db_host=127.0.0.1
 db_pass=u53r
 
 mongo_ports="27017"
-mongo_query_router_host=LOCATION-qrouter-001.MY_DOMAIN
+mongo_query_router_host=QROUTER
 volt_ports="21212,3021,5555,2181,21211"
 volt_leader=LOCATION-vm-001.MY_DOMAIN
 volt_wl_duration=480
