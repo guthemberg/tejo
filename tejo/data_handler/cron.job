@@ -1,1 +1,1 @@
-*      *       *       *       *      /usr/bin/pkill -f collect.sh; /bin/tcsh -c '/bin/sh `grep home_dir /etc/tejo.conf|cut -f2 -d=`/tejo/data_handler/collect.sh  >& /tmp/save_vm_slo_measurements.log'
+*      *       *       *       *      /usr/bin/pkill -f collect.sh; /bin/tcsh -c '/bin/sh `grep home_dir /etc/tejo.conf|cut -f2 -d=`/tejo/data_handler/collect.sh'

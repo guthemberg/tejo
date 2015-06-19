@@ -23,9 +23,9 @@ vm_bytes_out_filename=bytes_out.rrd
 load_one_filename=load_one.rrd
 vm_mongodb_is_primary_filename=mongodb_is_primary.rrd 
 
-root_dir=/home/user
-home_dir=/home/user/tejo
-guest_vm_sys_user=user
+root_dir=/home/USER
+home_dir=/home/USER/tejo
+guest_vm_sys_user=USER
 guest_vm_sys_pass=GUEST_PASSWORD
 collect_delay=15
 alive_time=60
