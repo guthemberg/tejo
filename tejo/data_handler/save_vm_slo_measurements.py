@@ -14,21 +14,10 @@ config=ConfigObj(conf_file)
 sys.path.append(config['home_dir'])
 ALIVE_TIME=int(config['alive_time'])
 DEATH_TIME=int(config['time_to_vm_death'])
-LOG_FILE="/tmp/save_vmd_slo_measurements.log"
 #from database import MyDB
 
 #available in home_dir
 from tejo.common.db.postgres.database import MyDB
-
-
-def erase_file(path_to_file):
-    open(path_to_file, 'w').close()
-
-def append_msg_to_file(msg,path_to_file):
-    myfile = open(path_to_file, "a")
-    myfile.write(msg)
-    myfile.close()
-
 
 def isFailed(config,fault_flag):
     result=0
@@ -182,12 +171,9 @@ def get_hostname(cluster,node_id):
         return node_id
     
      
-####main
-erase_file(LOG_FILE)
 now = time.strftime("%c")
 ## Display current date and time from now variable 
-#print ("Current time %s"  % now )
-append_msg_to_file("Current time %s\n"  % now ,LOG_FILE)
+print ("Current time %s"  % now )
 
 #postgres db
 dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
@@ -285,10 +271,8 @@ if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
 
 if (number_of_workloads == 0) or failed_data_collection:
-    append_msg_to_file("workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d).\n" % (latency_95th,latency_99th,number_of_workloads),LOG_FILE)
-    append_msg_to_file('[%s] Done.' % ts,LOG_FILE)
-#     print "workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d)." % (latency_95th,latency_99th,number_of_workloads)
-#     print '[%s] Done.' % ts
+    print "workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d)." % (latency_95th,latency_99th,number_of_workloads)
+    print '[%s] Done.' % ts
     sys.exit(0)
     
 latency_95th=int(latency_95th/number_of_workloads)
@@ -340,13 +324,9 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          number_of_vms,latency_95th,latency_99th,latency_avg, \
                          max_latency_95th,max_latency_99th,max_latency_avg)
 
-append_msg_to_file(dbconn.getDebugMess()+'\n',LOG_FILE)
-ts=time.strftime("%Y-%m-%d %H:%M:%S")
-append_msg_to_file('[%s] Done.\n' % ts,LOG_FILE)
+print dbconn.getDebugMess()
 
-# print dbconn.getDebugMess()
-# 
-# print '[%s] Done.' % ts
+print '[%s] Done.' % ts
 
 sys.exit(0)
 

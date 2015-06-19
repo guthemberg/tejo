@@ -5,6 +5,8 @@ collect_time=`grep collect_delay /etc/tejo.conf | cut -d= -f2`
 home_dir=`grep home_dir /etc/tejo.conf | cut -d= -f2`
 intervals=`echo "($MAX_TIME / $collect_time)"|bc`
 
+/usr/bin/pkill -f save_vm_slo_measurements.py
+
 i=0
 
 while :;
