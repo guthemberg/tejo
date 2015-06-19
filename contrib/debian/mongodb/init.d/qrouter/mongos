@@ -48,7 +48,7 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/mongos
-DESC=database
+DESC=mongos-router
 
 NAME=mongos
 # Defaults.  Can be overridden by the /etc/default/$NAME
@@ -56,7 +56,7 @@ NAME=mongos
 # http://dochub.mongodb.org/core/configurationoptions
 CONF=/etc/mongos.conf
 PIDFILE=/var/run/$NAME.pid
-ENABLE_MONGOS=yes
+ENABLE_MONGOD=yes
 
 # Include mongodb defaults if available
 if [ -f /etc/default/$NAME ] ; then
@@ -80,7 +80,7 @@ if test ! -x $DAEMON; then
     exit 0
 fi
 
-if test "x$ENABLE_MONGOS" != "xyes"; then
+if test "x$ENABLE_MONGOD" != "xyes"; then
     exit 0
 fi
 
@@ -264,3 +264,4 @@ case "$1" in
 esac
 
 exit 0
+
