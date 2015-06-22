@@ -30,6 +30,7 @@ def main(argv):
         host="%s:27017" % hostname
         hosts.append({'_id': id, 'host': host})
         id=id+1
+    print hosts
     config={'_id': rset, 'members': hosts}
     c = MongoClient('localhost', 27017)
     c.admin.command("replSetInitiate", config)
