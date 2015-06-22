@@ -4,21 +4,25 @@ import sys, getopt
 
 
 def compute_args(argv):
-   rset = 0
+   rset = ''
    vms = ''
+   
    try:
-      opts, args = getopt.getopt(argv,"hn:v:",["rset=","vms="])
+       opts, args = getopt.getopt(argv,"hn:v:",["rset=","vms="])
    except getopt.GetoptError:
-      print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...>'
-      sys.exit(2)
+       print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...>'
+       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
          print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...>'
-         sys.exit(1)
+         sys.exit()
       elif opt in ("-n", "--rset"):
          rset = arg
       elif opt in ("-v", "--vms"):
          vms = arg
+   if len(rset)==0 or len(vms)==0:
+       print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...>'
+       sys.exit(2)
    return (rset,vms)
    
 def main(argv):
