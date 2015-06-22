@@ -5,3 +5,5 @@
 cd $home_dir
 
 git pull
+
+exit 0
