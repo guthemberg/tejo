@@ -42,9 +42,9 @@ def main(argv):
     
     c = MongoClient(host, 27017)
     for shard in shards.split(','):
-        c.admin.command("addShard", shard)
+        c.admin.command({"addShard": shard})
         wait_awhile()
-    c.admin.command("enableSharding", db)
+    c.admin.command({"enableSharding": db})
     wait_awhile()
     #sh.shardCollection("ycsb.usertable", { "_id": "hashed" } )
     #db.runCommand( { shardCollection: "records.people", key: { zipcode: 1 } } )
