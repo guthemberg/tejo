@@ -43,7 +43,8 @@ def main(argv):
     for hostname in vms.split(','):
         host="%s:27017" % hostname
         hosts.append({'_id': id, 'host': host})
-        config={'_id': rset, 'members': hosts}
+        version=id+1
+        config={'_id': rset, 'version':version, 'members': hosts}
         if id==0:
             c.admin.command("replSetInitiate", config)
             wait_awhile()
@@ -53,7 +54,7 @@ def main(argv):
         id=id+1
     #arbiter
     host="%s:30000" % arbiter
-    hosts.append({'_id': id, 'host': host,"arbiterOnly" : True})
+    hosts.append({'_id': id, 'version':version, 'host': host,"arbiterOnly" : True})
     config={'_id': rset, 'members': hosts}
     c.admin.command("replSetReconfig",config)
     #conf_file = "/etc/tejo.conf"
