@@ -11,13 +11,13 @@ def compute_args(argv):
    host=''
    
    try:
-       opts, args = getopt.getopt(argv,"hs:d:c:h:",["shards=","db=","collection=","host="])
+       opts, args = getopt.getopt(argv,"hs:d:c:n:",["shards=","db=","collection=","host="])
    except getopt.GetoptError:
-       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -h <host>'
+       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -n <host>'
        sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-         print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...> -a arbiter'
+         print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -n <host>'
          sys.exit()
       elif opt in ("-s", "--shards"):
          shards = arg
@@ -25,10 +25,10 @@ def compute_args(argv):
          db = arg
       elif opt in ("-c", "--collection"):
          collection = arg
-      elif opt in ("-h", "--host"):
+      elif opt in ("-n", "--host"):
          host = arg
    if len(shards)==0 or len(db)==0 or len(collection)==0 or len(host)==0:
-       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -h <host>'
+       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -n <host>'
        sys.exit(2)
    return (shards,db,collection,host)
 
