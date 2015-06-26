@@ -54,8 +54,8 @@ def main(argv):
         id=id+1
     #arbiter
     host="%s:30000" % arbiter
-    hosts.append({'_id': id, 'version':version, 'host': host,"arbiterOnly" : True})
-    config={'_id': rset, 'members': hosts}
+    hosts.append({'_id': id,'host': host,"arbiterOnly" : True})
+    config={'_id': rset, 'version':version, 'members': hosts}
     c.admin.command("replSetReconfig",config)
     #conf_file = "/etc/tejo.conf"
     #config=ConfigObj(conf_file)
