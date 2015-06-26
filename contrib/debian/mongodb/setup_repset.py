@@ -33,16 +33,22 @@ def main(argv):
     
     hosts=[]
     id=0
+    c = MongoClient('localhost', 27017)
     for hostname in vms.split(','):
         host="%s:27017" % hostname
         hosts.append({'_id': id, 'host': host})
+        config={'_id': rset, 'members': hosts}
+        if id==0:
+            c.admin.command("replSetInitiate", config)
+        else:
+            c.admin.command("replSetReconfig",config) 
+            
         id=id+1
     #arbiter
     host="%s:30000" % arbiter
     hosts.append({'_id': id, 'host': host,"arbiterOnly" : True})
     config={'_id': rset, 'members': hosts}
-    c = MongoClient('localhost', 27017)
-    c.admin.command("replSetInitiate", config)
+    c.admin.command("replSetReconfig",config)
     #conf_file = "/etc/tejo.conf"
     #config=ConfigObj(conf_file)
     
