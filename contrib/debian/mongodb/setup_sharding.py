@@ -42,7 +42,7 @@ def main(argv):
     
     c = MongoClient(host, 27017)
     for shard in shards.split(','):
-        c.admin.command({"addShard": shard})
+        c.admin.command("addShard",shard,allowLocal=True)
         wait_awhile()
     c.admin.command({"enableSharding": db})
     wait_awhile()
