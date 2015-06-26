@@ -48,7 +48,7 @@ def main(argv):
     #sh.shardCollection("ycsb.usertable", { "_id": "hashed" } )
     #db.runCommand( { shardCollection: "records.people", key: { zipcode: 1 } } )
     db_collection="%s.%s" % (db,collection)
-    c.admin.command({ shardCollection: db_collection, key: { "_id": "hashed" } })
+    c.admin.command({ 'shardCollection': db_collection, 'key': { "_id": "hashed" } })
     
 
 if __name__ == "__main__":
