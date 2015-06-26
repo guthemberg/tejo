@@ -8,11 +8,12 @@ def compute_args(argv):
    shards = ''
    db = ''
    collection=''
+   host=''
    
    try:
-       opts, args = getopt.getopt(argv,"hs:d:c:",["shards=","db=","collection="])
+       opts, args = getopt.getopt(argv,"hs:d:c:h:",["shards=","db=","collection=","host="])
    except getopt.GetoptError:
-       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c collection_name'
+       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -h <host>'
        sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
@@ -24,10 +25,12 @@ def compute_args(argv):
          db = arg
       elif opt in ("-c", "--collection"):
          collection = arg
-   if len(shards)==0 or len(db)==0 or len(collection)==0:
-       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c collection_name'
+      elif opt in ("-h", "--host"):
+         host = arg
+   if len(shards)==0 or len(db)==0 or len(collection)==0 or len(host)==0:
+       print 'setup_sharding.py -s <list_of_shards> -d <db_name> -c <collection_name> -h <host>'
        sys.exit(2)
-   return (shards,db,collection)
+   return (shards,db,collection,host)
 
 def wait_awhile():   
     print "waiting 60 seconds before continuing..."
@@ -35,11 +38,9 @@ def wait_awhile():
     print "done."
     
 def main(argv):
-    (shards,db,collection)=compute_args(argv)
+    (shards,db,collection,host)=compute_args(argv)
     
-    hosts=[]
-    id=0
-    c = MongoClient('localhost', 27017)
+    c = MongoClient(host, 27017)
     for shard in shards.split(','):
         c.admin.command("addShard", shard)
         wait_awhile()
