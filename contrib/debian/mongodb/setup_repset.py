@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 #from configobj import ConfigObj
 import sys, getopt
+from time import sleep
 
 
 def compute_args(argv):
@@ -27,7 +28,12 @@ def compute_args(argv):
        print 'setup_repset.py -n <rep_set> -v <vm1,vm2,...> -a arbiter'
        sys.exit(2)
    return (rset,vms,arbiter)
-   
+
+def wait_awhile():   
+    print "waiting 60 seconds before continuing..."
+    sleep(60)
+    print "done."
+    
 def main(argv):
     (rset,vms,arbiter)=compute_args(argv)
     
@@ -40,9 +46,10 @@ def main(argv):
         config={'_id': rset, 'members': hosts}
         if id==0:
             c.admin.command("replSetInitiate", config)
+            wait_awhile()
         else:
             c.admin.command("replSetReconfig",config) 
-            
+            wait_awhile()
         id=id+1
     #arbiter
     host="%s:30000" % arbiter
