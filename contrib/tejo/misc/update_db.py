@@ -24,9 +24,9 @@ from tejo.common.db.postgres.database import MyDB
 path_to_vms_rrds=config['rrd_path_vms_prefix']+'/*.*'
 
 dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
-query='drop table vm'
-dbconn.genericRun(query)
-sys.exit(0)
+#query='drop table vm'
+#dbconn.genericRun(query)
+#sys.exit(0)
 
 print path_to_vms_rrds
 
