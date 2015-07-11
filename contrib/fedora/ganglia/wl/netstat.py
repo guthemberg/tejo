@@ -32,7 +32,7 @@ import copy
 
 NAME_PREFIX = 'netstat_'
 PARAMS = {
-    'net_status' : '/usr/bin/netstat -s -p tcp'
+    'net_status' : '/bin/netstat -s -t'
 }
 METRICS = {
     'time' : 0,
