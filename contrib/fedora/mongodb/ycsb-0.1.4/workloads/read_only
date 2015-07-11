@@ -1,6 +1,6 @@
-recordcount=1200000
-operationcount=600000
-maxexecutiontime=120
+recordcount=RECORDCOUNT
+operationcount=OPCOUNT
+maxexecutiontime=MAXTIME
 
 workload=com.yahoo.ycsb.workloads.CoreWorkload
 
