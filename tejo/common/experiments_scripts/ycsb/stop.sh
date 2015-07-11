@@ -1,1 +1,1 @@
-/usr/bin/pkill -f run.sh ; /usr/bin/pkill -f ycsb-0.1.4 ; /bin/rm -rf /tmp/slo_*; cd /home/user; sudo rm -rf /tmp/experiment_outputs ; sudo mkdir /tmp/experiment_outputs; sudo chown `whoami`:`whoami` /tmp/experiment_outputs 
+/usr/bin/pkill -f run.sh ; /usr/bin/pkill -f ycsb-0.1.4 ; /bin/rm -rf /tmp/slo_*; cd /home/user; sudo rm -rf /tmp/experiment_outputs ; sudo mkdir /tmp/experiment_outputs; sudo chown `whoami` /tmp/experiment_outputs 
