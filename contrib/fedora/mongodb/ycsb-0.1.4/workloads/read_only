@@ -1,0 +1,14 @@
+recordcount=1200000
+operationcount=600000
+maxexecutiontime=120
+
+workload=com.yahoo.ycsb.workloads.CoreWorkload
+
+readallfields=true
+
+readproportion=1.0
+updateproportion=0
+scanproportion=0
+insertproportion=0
+
+requestdistribution=zipfianreadonly

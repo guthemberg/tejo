@@ -1,10 +1,11 @@
 #!/bin/sh
 
+. /etc/tejo.conf
 #go to home
-HOME=/home/user
-SVC_HOME=${HOME}/svc
-OUTPUT_DIR=${SVC_HOME}/experiment_outputs
-YCSB_HOME=${SVC_HOME}/ycsb-0.1.4
+#root_dir=/home/user
+#home_dir=${HOME}/svc
+OUTPUT_DIR=${home_dir}/experiment_outputs
+YCSB_HOME=${home_dir}/contrib/debian/mongodb/ycsb-0.1.4
 
 #mongodb host
 db_service="mongodb://datastore-001.svc.laas.fr:27017"
