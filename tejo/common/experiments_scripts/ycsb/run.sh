@@ -73,7 +73,7 @@ elif [ $# -eq 2 ]; then
 		echo "invalid system_id option (must be 0 or 2). bye"
 		exit -1
 	fi
-	threads=2
+	threads=1
 	max_conn=20
 	operations=`echo "${DEFAULT_OPS_PER_SECOND}*${mongo_maxexecutiontime}"|bc`
 	if [ ! -e ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ]; then
