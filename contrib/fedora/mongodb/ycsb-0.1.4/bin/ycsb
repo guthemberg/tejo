@@ -105,7 +105,7 @@ options = sys.argv[3:]
 
 #ycsb_command = ["java", "-XX:+UseConcMarkSweepGC","-Xms3g","-Xmx3500m","-cp", ":".join(find_jars(ycsb_home, database)), \
 #ycsb_command = ["java", "-XX:+UseConcMarkSweepGC","-Xmx7g","-cp", ":".join(find_jars(ycsb_home, database)), \
-ycsb_command = ["java", "-XX:+UseConcMarkSweepGC","-Xmx3800m","-cp", ":".join(find_jars(ycsb_home, database)), \
+ycsb_command = ["java", "-XX:+UseConcMarkSweepGC","-Xmx1900m","-cp", ":".join(find_jars(ycsb_home, database)), \
                 COMMANDS[sys.argv[1]]["main"], "-db", db_classname] + options
 if command:
     ycsb_command.append(command)
