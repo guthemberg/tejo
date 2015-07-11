@@ -16,7 +16,7 @@ sudo chmod ugo+x ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4/bin/ycsb
 #go to home
 #root_dir=/home/user
 #home_dir=${HOME}/svc
-OUTPUT_DIR=${home_dir}/experiment_outputs
+OUTPUT_DIR=/tmp/experiment_outputs
 YCSB_HOME=${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4
 
 #mongodb host
