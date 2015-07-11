@@ -1,0 +1,1 @@
+run_db.sh and stop_db.sh are startup scripts for voltdb

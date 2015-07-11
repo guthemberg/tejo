@@ -1,0 +1,1 @@
+run.sh and stop.sh control tpc-c workload for voltdb

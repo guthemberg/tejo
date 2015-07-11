@@ -1,0 +1,1 @@
+/usr/bin/pkill -f run.sh ; /usr/bin/pkill -f ycsb-0.1.4 ; /bin/rm -rf /tmp/slo_*; cd /home/user; sudo rm -rf /var/db/experiment_outputs ; sudo mkdir /var/db/experiment_outputs; sudo chown user:user /var/db/experiment_outputs 

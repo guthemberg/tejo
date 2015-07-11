@@ -1,0 +1,1 @@
+run.sh and stop.sh control voter-selfcheck workload for voltdb

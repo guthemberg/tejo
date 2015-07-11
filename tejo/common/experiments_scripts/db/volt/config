@@ -1,0 +1,3 @@
+STOP_VOLTDB="sh ${home_dir}/svc/experiments_scripts/db/volt/stop_db.sh"
+COPY_DEP_FILE="scp -o StrictHostKeyChecking=no ${volt_leader}:/etc/voltdb/deployment.xml /tmp/; sudo cp /tmp/deployment.xml /etc/voltdb/"
+START_VOLTDB="sh ${home_dir}/svc/experiments_scripts/db/volt/run_db.sh $volt_leader"
