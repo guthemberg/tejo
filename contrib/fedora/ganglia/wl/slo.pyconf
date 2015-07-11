@@ -1,0 +1,62 @@
+modules {
+    module {
+        name = "slo"
+        language = "python"
+        param net_status {
+            value = "/usr/bin/netstat -s -p tcp"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 10
+    time_threshold = 15
+    metric {
+        name = "slo_violation"
+        title = "SLO violation"
+    }
+    metric {
+        name = "slo_throughput"
+        title = "Throughput"
+    }
+    metric {
+        name = "slo_latency_99th_read"
+        title = "99th percentile latency for READs"
+    }
+    metric {
+        name = "slo_latency_99th"
+        title = "99th percentile latency"
+    }
+    metric {
+        name = "slo_latency_95th"
+        title = "95th percentile latency"
+    }
+    metric {
+        name = "slo_max_latency_avg"
+        title = "Max. latency average"
+    }
+    metric {
+        name = "slo_latency_avg"
+        title = "Latency average"
+    }
+    metric {
+        name = "slo_target_throughput"
+        title = "Target throughput"
+    }
+    metric {
+        name = "slo_max_latency_99th_read"
+        title = "Max. 99th perc lat for READs"
+    }
+    metric {
+        name = "slo_max_latency_99th"
+        title = "Max. 99th percentile latency"
+    }
+    metric {
+        name = "slo_max_latency_95th"
+        title = "Max. 95th percentile latency"
+    }
+    metric {
+        name = "slo_system_id"
+        title = "System id."
+    }
+}
