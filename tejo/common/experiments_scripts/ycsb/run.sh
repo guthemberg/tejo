@@ -40,9 +40,16 @@ workload_file=${YCSB_HOME}/workloads/$label
 threads=30
 max_conn=2000
 
+defaultl_core_file=${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4/core/lib/core-0.1.4.jar
+backup_core_file=${root_dir}/core-0.1.4.jar
+if [ ! -e backup_core_file ]; then
+	cp $defaultl_core_file $backup_core_file
+fi
+
 if [ $# -eq 0 ]; then
 	sed "s|RECORDCOUNT|$mongo_recordcount|g" ${YCSB_HOME}/workloads/$label | sed "s|MAXTIME|$mongo_maxexecutiontime|g" | sed "s|OPCOUNT|$DEFAULT_OPS_PER_SECOND|g"  > /tmp/myworload
 	workload_file=/tmp/myworload
+	cp $backup_core_file $defaultl_core_file 
 elif [ $# -eq 1 ]; then
 	if [ $1 -ne 2 ]; then
 		echo "invalid system_id option (must be 2). bye"
@@ -53,6 +60,7 @@ elif [ $# -eq 1 ]; then
 	sed "s|RECORDCOUNT|$mongo_recordcount|g" ${YCSB_HOME}/workloads/$label | sed "s|MAXTIME|$mongo_maxexecutiontime|g" | sed "s|OPCOUNT|$DEFAULT_OPS_PER_SECOND|g"  > /tmp/myworload
 	workload_file=/tmp/myworload
 	#	workload_file=${YCSB_HOME}/workloads/$label
+	cp $backup_core_file $defaultl_core_file 
 elif [ $# -eq 2 ]; then
 	if [ $1 -eq 2 ]; then
 		system_id=$1
@@ -68,6 +76,11 @@ elif [ $# -eq 2 ]; then
 	threads=2
 	max_conn=40
 	operations=`echo "${DEFAULT_OPS_PER_SECOND}*${mongo_maxexecutiontime}"|bc`
+	if [ ! -e ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ]; then
+		echo "core.far does not exit, bye."
+		exit 1
+	fi
+	cp ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4/core/lib/core-0.1.4.jar
 	sed "s|RECORDCOUNT|$mongo_recordcount|g" ${YCSB_HOME}/workloads/$label | sed "s|MAXTIME|$mongo_maxexecutiontime|g" | sed "s|OPCOUNT|$operations|g"  > /tmp/myworload
 	workload_file=/tmp/myworload
 		
