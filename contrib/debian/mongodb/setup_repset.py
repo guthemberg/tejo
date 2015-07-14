@@ -42,7 +42,13 @@ def main(argv):
     c = MongoClient('localhost', 27017)
     for hostname in vms.split(','):
         host="%s:27017" % hostname
-        hosts.append({'_id': id, 'host': host})
+        #maximum number of voting members, as described in
+        #http://docs.mongodb.org/manual/tutorial/expand-replica-set/
+        if id<7:
+            hosts.append({'_id': id, 'host': host})
+        else:
+            hosts.append({'_id': id, 'host': host,'votes': 0})
+
         version=id+1
         config={'_id': rset, 'version':version, 'members': hosts}
         if id==0:
