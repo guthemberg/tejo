@@ -60,7 +60,7 @@ def main(argv):
         id=id+1
     #arbiter
     host="%s:30000" % arbiter
-    hosts.append({'_id': id,'host': host,"arbiterOnly" : True})
+    hosts.append({'_id': id,'host': host,"arbiterOnly" : True,'votes': 0})
     version=id+1
     config={'_id': rset, 'version':version, 'members': hosts}
     c.admin.command("replSetReconfig",config)
