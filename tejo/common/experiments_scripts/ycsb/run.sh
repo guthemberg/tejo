@@ -73,8 +73,17 @@ elif [ $# -eq 2 ]; then
 		echo "invalid system_id option (must be 0 or 2). bye"
 		exit -1
 	fi
-	threads=4
-	max_conn=20
+	
+	if [ ${DEFAULT_OPS_PER_SECOND} -eq 100 ]; then
+		threads=8
+        max_conn=320
+	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 50 ]; then
+		threads=4
+		max_conn=20
+    else
+    	echo "Unknown operations rate, instead of value ${DEFAULT_OPS_PER_SECOND} , please try 100 or 50, bye."
+    	exit 1
+    fi
 	operations=`echo "${DEFAULT_OPS_PER_SECOND}*${mongo_maxexecutiontime}"|bc`
 	if [ ! -e ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ]; then
 		echo "core.far does not exit, bye."
