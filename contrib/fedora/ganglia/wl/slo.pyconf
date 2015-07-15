@@ -20,10 +20,6 @@ collection_group {
         title = "Throughput"
     }
     metric {
-        name = "slo_latency_99th_read"
-        title = "99th percentile latency for READs"
-    }
-    metric {
         name = "slo_latency_99th"
         title = "99th percentile latency"
     }
@@ -42,10 +38,6 @@ collection_group {
     metric {
         name = "slo_target_throughput"
         title = "Target throughput"
-    }
-    metric {
-        name = "slo_max_latency_99th_read"
-        title = "Max. 99th perc lat for READs"
     }
     metric {
         name = "slo_max_latency_99th"
