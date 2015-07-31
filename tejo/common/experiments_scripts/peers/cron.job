@@ -1,1 +1,1 @@
-MIN      HOUR       *       *       *      /bin/tcsh -c 'pkill -f refresh_workload_list.py; python HOMEDIR/tejo/common/experiments_scripts/peers/refresh_workload_list.py  >& /tmp/refresh_workload.log'
+MIN      HOUR       *       *       *      /bin/sh HOMEDIR/tejo/common/experiments_scripts/peers/refresh_workload_wrapper.sh
