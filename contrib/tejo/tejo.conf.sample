@@ -55,3 +55,5 @@ volt_leader=LOCATION-vm-001.MY_DOMAIN
 volt_wl_duration=480
 volt_wl_log=/tmp/volt_wl_run.log
 volt_rate_limit=3000
+
+workload_list_file=/home/user/workload_list.pck
