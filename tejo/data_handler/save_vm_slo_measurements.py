@@ -169,6 +169,8 @@ def get_nodes():
 
 
 def get_hostname(cluster,node_id):
+    print cluster
+    print node_id
     try:
         url=config['ganglia_api']+'/'+cluster+'/'+node_id
         document=urlopen(url)
@@ -176,6 +178,7 @@ def get_hostname(cluster,node_id):
         document.close()
         node=xmltodict.parse(data)
         for obj in node[u'GANGLIA_XML'][u'GRID'][u'CLUSTER'][u'HOST'][u'METRIC']:
+            print obj
             if obj[u'@NAME']=='miscellaneous_hostname':
                 return obj[u'@VAL']
         return node_id
