@@ -198,13 +198,33 @@ def is_it_an_invalid_rrd_file(name):
         else:
             return True
     return False
-     
+ 
+def close_ssh_tunnel_to_master_db():
+    rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
+    process_key=config['guest_vm_sys_user']+'@'+config['db_master']
+    (subprocess.Popen(['pkill','-f',process_key], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+
+def open_ssh_tunnel_to_master_db():
+    close_ssh_tunnel_to_master_db()
+    rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
+    process_key=config['guest_vm_sys_user']+'@'+config['db_master']
+    while len(subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',config['db_master'],'pgrep','-f',process_key], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())>0:
+        print 'waiting to old tunnel die...'
+        time.sleep(1)
+    forward_ports=config['db_port']+":127.0.0.1:5432"
+    (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no','-f',process_key,'-L',forward_ports,'-N'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        
+    
 now = time.strftime("%c")
 ## Display current date and time from now variable 
 print ("Current time %s"  % now )
 
 #postgres db
-dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
+if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
+    open_ssh_tunnel_to_master_db()
+    dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'],config['db_port'])    
+else:
+    dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
 
 
 rrd_path_vms_prefix=config['rrd_path_vms_prefix']
@@ -358,7 +378,8 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          max_latency_95th,max_latency_99th,max_latency_avg)
 
 print dbconn.getDebugMess()
-
+if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
+    close_ssh_tunnel_to_master_db()
 print '[%s] Done.' % ts
 
 sys.exit(0)
