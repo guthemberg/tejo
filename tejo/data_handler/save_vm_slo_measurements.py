@@ -221,7 +221,7 @@ print ("Current time %s"  % now )
 
 #postgres db
 if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
-    open_ssh_tunnel_to_master_db()
+#    open_ssh_tunnel_to_master_db()
     dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'],config['db_port'])    
 else:
     dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
@@ -378,8 +378,8 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          max_latency_95th,max_latency_99th,max_latency_avg)
 
 print dbconn.getDebugMess()
-if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
-    close_ssh_tunnel_to_master_db()
+#if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
+#    close_ssh_tunnel_to_master_db()
 print '[%s] Done.' % ts
 
 sys.exit(0)

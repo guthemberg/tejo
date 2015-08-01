@@ -9,7 +9,23 @@ intervals=`echo "($MAX_TIME / $collect_time)"|bc`
 
 echo "$intervals"
 
+close_ssh_tunnel_to_db () 
+{
+	pkill -f ${guest_vm_sys_user}@${db_master}
+}
+
+open_ssh_tunnel_to_db ()
+{
+	ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -f ${guest_vm_sys_user}@${db_master} -L ${db_port}:${db_host}:5432 -N	
+}
+
+#main
 /usr/bin/pkill -f save_vm_slo_measurements.py
+
+if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true" ]; then
+	close_ssh_tunnel_to_db
+	open_ssh_tunnel_to_db
+fi
 
 i=0
 
@@ -29,3 +45,6 @@ do
 	fi
 done 
 
+if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true" ]; then
+	close_ssh_tunnel_to_db
+fi
