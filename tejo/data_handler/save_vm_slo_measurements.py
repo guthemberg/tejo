@@ -143,12 +143,20 @@ def get_nodes():
     
     path_to_vms_rrds=config['rrd_path_vms_prefix']+'/*.*'
     vms,bad_nodes,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_vms_rrds))])
+    print "getting vms (vms:%d,bad_nodes:%d,dead_nodes:%d):"%(len(vms),len(bad_nodes),len(dead_nodes))
+    print vms
+    print bad_nodes
+    print dead_nodes
     
     for node in dead_nodes:
         delete_path(config['rrd_path_vms_prefix']+'/'+node)
     
     path_to_wls_rrds=config['rrd_path_workload_hosts_prefix']+'/*.*'
     wls,bad_nodes,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_wls_rrds))])
+    print "getting wls (wls:%d,bad_nodes:%d,dead_nodes:%d):"%(len(wls),len(bad_nodes),len(dead_nodes))
+    print vms
+    print bad_nodes
+    print dead_nodes
     
     for node in dead_nodes:
         delete_path(config['rrd_path_workload_hosts_prefix']+'/'+node)
@@ -214,7 +222,10 @@ max_latency_avg=0
 
 number_of_workloads=0
 failed_data_collection=False
+print "getting nodes..."
 workload_hosts,vms=get_nodes()
+print "number of wl nodes: %d" % len(workload_hosts)
+print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
     #if node is not found it return unknown
