@@ -55,11 +55,11 @@ def getFloatValue(rrd_file):
     return float(rrdtool.info(rrd_file)['ds[sum].last_ds'])
 
 def get_host_path_id(hostname):
-    if os.path.isdir(config['rrd_path_vms_prefix']+"/"+hostname):
+    if os.path.isdir(config['rrd_path_vms_prefix']+"/"+hostname) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+hostname):
         return hostname
     else:
         ip=socket.gethostbyname(hostname)
-        if os.path.isdir(config['rrd_path_vms_prefix']+"/"+ip):
+        if os.path.isdir(config['rrd_path_vms_prefix']+"/"+ip) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+ip):
             return ip
         else:
             return "unknown"
@@ -154,7 +154,7 @@ def get_nodes():
     path_to_wls_rrds=config['rrd_path_workload_hosts_prefix']+'/*.*'
     wls,bad_nodes,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_wls_rrds))])
     print "getting wls (wls:%d,bad_nodes:%d,dead_nodes:%d):"%(len(wls),len(bad_nodes),len(dead_nodes))
-    print vms
+    print wls
     print bad_nodes
     print dead_nodes
     
