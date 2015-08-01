@@ -20,6 +20,7 @@ do
 	if [ $i -eq $intervals ]; then
 		break
 	else
+		echo "sleeping $remaining"
 		sleep $remaining
 	fi
 done 
