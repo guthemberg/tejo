@@ -14,7 +14,7 @@ class MyDB:
 		if port is None:
 			parameters = "dbname='"+dbname+"' user='"+user+"' host='"+host+"' password='"+password+"'"
 		else:
-			parameters = "dbname='"+dbname+"' user='"+user+"' host='"+host+"' password='"+password+"' port='"+port+"'"
+			parameters = "dbname='"+dbname+"' user='"+user+"' host='"+host+"' password='"+password+"' port='"+str(port)+"'"
 		self.debug=''
 		try:    
 			#for unicode
