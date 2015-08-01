@@ -19,15 +19,19 @@ DEATH_TIME=int(config['time_to_vm_death'])
 #available in home_dir
 from tejo.common.db.postgres.database import MyDB
 
-def isFailed(config,fault_flag):
+def isFailed(config,fault_flag,workload_hosts):
     result=0
-    workload_host1_file=config['rrd_path_workload_hosts_prefix']+'/'+config['workload_hosts'][0]+'/'+config['slo_violation_filename']
+    for host in workload_hosts:
+        workload_host1_file=config['rrd_path_workload_hosts_prefix']+'/'+host+'/'+config['slo_violation_filename']
+        if ((getFloatValue(workload_host1_file)>0.0) ) and (fault_flag>0):
+            result=1
+
     #host2_file=config['rrd_path_hosts_prefix']+'/'+config['hosts'][1]+'/'+config['slo_violation_filename']
     #check host 1
 #    if ((getFloatValue(host1_file)>0.0) or (getFloatValue(host2_file)>0.0)) and (fault_flag>0):
 #        result=1
-    if ((getFloatValue(workload_host1_file)>0.0) ) and (fault_flag>0):
-        result=1
+#    if ((getFloatValue(workload_host1_file)>0.0) ) and (fault_flag>0):
+#        result=1
     return result
     
 
@@ -326,7 +330,7 @@ for node in vms:
             
     #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
 #     if alive:
-    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], node),dbconn,keys,isFailed(config, fault_flag),values)
+    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values)
     number_of_vms = number_of_vms + 1
 
 #save slo status
