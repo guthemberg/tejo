@@ -110,7 +110,8 @@ if __name__ == '__main__':
                 action='added'
                 add_peer(node, server, rtt)
                 existing_peers[node]={'server':server,'rtt':rtt}
-            elif rtt<existing_peers[node]['rtt'] and server!=existing_peers[node]['server']:
+            elif rtt<existing_peers[node]['rtt']:
+                existing_peers[node]['server']=server
                 update_peer_server(node, server, rtt)
                 action='updated'
             if existing_peers[node]['server']==server:
