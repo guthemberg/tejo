@@ -81,7 +81,7 @@ elif [ $# -eq 2 ]; then
 		threads=4
 		max_conn=20
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 500 ]; then
-		threads=8
+		threads=16
 		max_conn=320
     else
     	echo "Unknown operations rate, instead of value ${DEFAULT_OPS_PER_SECOND} , please try 500, 100, or 50, bye."
