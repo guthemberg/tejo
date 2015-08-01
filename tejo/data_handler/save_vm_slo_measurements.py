@@ -45,7 +45,7 @@ def insert_vm_stat_into_db(ts,hostname,dbconn,keys,failure,values):
 def insert_slo_state_into_db(ts,dbconn,throughput,violation, \
                              target_throughput, \
                              system_id,active_vms, latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg):
-    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg))
+    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg))
 
 ##this function expects ts as a string and throughput and violation as integers
 def insert_workload_state_into_db(ts,dbconn,hostname, throughput,violation, \
