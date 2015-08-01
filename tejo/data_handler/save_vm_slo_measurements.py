@@ -189,7 +189,15 @@ def get_hostname(cluster,node_id):
         rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
         node_id = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',node_id,'hostname'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         return node_id
-    
+
+#exclude some selected, troubled rrd files
+def is_it_an_invalid_rrd_file(name):
+    if 'diskstat' in name:
+        if 'sda' in name:
+            False
+        else:
+            return True
+    return False
      
 now = time.strftime("%c")
 ## Display current date and time from now variable 
@@ -326,6 +334,8 @@ for node in vms:
 #             alive=False
 #             break
         db_key= ( (filename).split('/')[-1] ).split('.')[0]
+        if is_it_an_invalid_rrd_file(db_key):
+            continue
         if len(keys)>0:
             keys+=(','+db_key)
         else:
