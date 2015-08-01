@@ -80,13 +80,16 @@ elif [ $# -eq 2 ]; then
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 50 ]; then
 		threads=4
 		max_conn=20
+	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 500 ]; then
+		threads=8
+		max_conn=320
     else
     	echo "Unknown operations rate, instead of value ${DEFAULT_OPS_PER_SECOND} , please try 100 or 50, bye."
     	exit 1
     fi
 	operations=`echo "${DEFAULT_OPS_PER_SECOND}*${mongo_maxexecutiontime}"|bc`
 	if [ ! -e ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ]; then
-		echo "core.far does not exit, bye."
+		echo "${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar does not exit, bye."
 		exit 1
 	fi
 	cp ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4_core_${DEFAULT_OPS_PER_SECOND}op.jar ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4/core/lib/core-0.1.4.jar
