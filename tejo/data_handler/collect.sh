@@ -7,8 +7,6 @@ collect_time=`grep collect_delay /etc/tejo.conf | cut -d= -f2`
 home_dir=`grep home_dir /etc/tejo.conf | cut -d= -f2`
 intervals=`echo "($MAX_TIME / $collect_time)"|bc`
 
-echo "$intervals"
-
 close_ssh_tunnel_to_db () 
 {
 	pkill -f ${guest_vm_sys_user}@${db_master}
@@ -22,7 +20,7 @@ open_ssh_tunnel_to_db ()
 #main
 /usr/bin/pkill -f save_vm_slo_measurements.py
 
-if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true" ]; then
+if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true"   -o "$db_tunnelling" = "1"   -o "$db_tunnelling" = "t"   -o "$db_tunnelling" = "yeah" ]; then
 	close_ssh_tunnel_to_db
 	open_ssh_tunnel_to_db
 fi
