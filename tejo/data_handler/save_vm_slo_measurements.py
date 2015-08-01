@@ -168,7 +168,7 @@ def get_nodes():
     return (wls,vms)
 
 
-def get_hostname(cluster,node_id):
+def get_hostname(cluster,username,node_id):
 #     print cluster
 #     print node_id
     try:
@@ -187,9 +187,16 @@ def get_hostname(cluster,node_id):
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
         rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
-        node_id = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',node_id,'hostname'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        destination=username+'@'+node_id
+        node_id = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',destination,'hostname'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         return node_id
 
+def check_hostname(cluster,username,name):
+    try:
+        int(name.split('.')[-1])
+        return get_hostname(cluster, username,name)
+    except:
+        return name
 #exclude some selected, troubled rrd files
 def is_it_an_invalid_rrd_file(name):
     if 'diskstat' in name:
@@ -313,7 +320,9 @@ for hostname in workload_hosts:
         
         number_of_workloads=number_of_workloads+1
     
-        insert_workload_state_into_db(ts,dbconn,hostname, node_throughput, \
+        #check workload hostname
+        node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
+        insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg)
@@ -368,7 +377,7 @@ for node in vms:
             
     #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
 #     if alive:
-    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values)
+    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values)
     number_of_vms = number_of_vms + 1
 
 #save slo status
