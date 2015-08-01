@@ -173,6 +173,7 @@ def get_hostname(cluster,node_id):
     print node_id
     try:
         url=config['ganglia_api']+'/'+cluster+'/'+node_id
+        print url
         document=urlopen(url)
         data=document.read()
         document.close()
@@ -183,6 +184,10 @@ def get_hostname(cluster,node_id):
                 return obj[u'@VAL']
         return node_id
     except:
+        #trying through ssh
+        #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
+        rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
+        node_id = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',node_id,'hostname'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         return node_id
     
      
