@@ -114,6 +114,8 @@ if __name__ == '__main__':
                 existing_peers[node]['server']=server
                 update_peer_server(node, server, rtt)
                 action='updated'
+            else:
+                rtt=existing_peers[node]['rtt']
             if existing_peers[node]['server']==server:
                 worload_peers[node]=rtt
             del existing_peers[node]
