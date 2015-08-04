@@ -1,1 +1,1 @@
-MIN      HOUR       *       *       *      /bin/sh HOMEDIR/tejo/common/experiments_scripts/peers/refresh_workload_wrapper.sh
+*/20      *       *       *       *      /bin/sh HOMEDIR/tejo/common/experiments_scripts/peers/refresh_workload_wrapper.sh
