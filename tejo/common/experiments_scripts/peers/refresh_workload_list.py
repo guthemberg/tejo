@@ -136,11 +136,14 @@ if __name__ == '__main__':
             if peer['monitor'] == monitor:
                 nearest_peers_list[peer['peer']]=peer['monitor_rtt']
 
-    print "current number of peers: %d " % len(all_peers_list)                
+    print "current number of peers: %d " % len(all_peers_list)
+    print all_peers_list
     save_object_to_file(all_peers_list, tejo_config['all_peers_file'])
-    print "current monitors list size: %d " % len(monitors_list)                
+    print "current monitors list size: %d " % len(monitors_list)
+    print monitors_list                
     save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
-    print "current nearest peers list size: %d " % len(nearest_peers_list)                
+    print "current nearest peers list size: %d " % len(nearest_peers_list)
+    print nearest_peers_list                
     save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
                 
     #computing new nodes
