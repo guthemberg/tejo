@@ -51,8 +51,6 @@ def update_peer_monitor(peer, monitor, rtt,monitors):
     status=db.status
     status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False)
     status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False)
-    status.update({'peer':peer},{'$set':{'target':monitor}}, upsert=False)
-    status.update({'peer':peer},{'$set':{'target_rtt':rtt}}, upsert=False)
     status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False)
     c.close()    
 
@@ -62,7 +60,7 @@ def add_peer(peer, monitor, rtt):
     db=c.tejo
     status=db.status
     monitors={monitor:rtt}
-    status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors},check_keys=False)
+    status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
     c.close()    
 
 def remove_peer(peer):
@@ -132,7 +130,7 @@ if __name__ == '__main__':
             remaining_operation_tokens=remaining_operation_tokens-1
         else:
             ple_nodes.remove(peer['peer'])
-            all_peers_list[peer['peer']]={'monitor':peer['monitor'],'monitor_rtt':peer['monitor_rtt'],'target':peer['target'],'target_rtt':peer['target_rtt'],'monitors':peer['monitors']}
+            all_peers_list[peer['peer']]={'monitor':peer['monitor'],'monitor_rtt':peer['monitor_rtt'],'target':peer['target'],'target_rtt':peer['target_rtt'],'monitors':peer['monitors'],'active':peer['active']}
             if peer['monitor'] not in monitors_list:
                 monitors_list.append(peer['monitor'])
             if peer['monitor'] == monitor:
