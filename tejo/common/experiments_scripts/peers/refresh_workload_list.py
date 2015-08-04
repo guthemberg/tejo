@@ -126,6 +126,7 @@ if __name__ == '__main__':
     #1.1) 
     for peer in peers:
         if remaining_operation_tokens > 0 and peer['peer'] not in ple_nodes:
+            print "%s: %s" % (peer['peer'],str(peer['peer'] not in ple_nodes))
             peers_to_be_removed.append(peer['peer'])
             remaining_operation_tokens=remaining_operation_tokens-1
         else:
