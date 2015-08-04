@@ -111,7 +111,7 @@ if __name__ == '__main__':
     #steps
     #1) get the list of ple peers
     peers=get_list_of_peers()
-    print "current number of peers: %d" % len(peers)
+#    print "current number of peers: %d" % len(peers)
     monitors_list=[]
     all_peers_list={}
     nearest_peers_list={}
