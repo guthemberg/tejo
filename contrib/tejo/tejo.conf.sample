@@ -59,5 +59,10 @@ volt_wl_duration=480
 volt_wl_log=/tmp/volt_wl_run.log
 volt_rate_limit=3000
 
+all_peers_file=/home/user/all_peers_list.pck
+nearest_peers_file=/home/user/nearest_peers_list.pck
+monitors_list_file=/home/user/monitors_list.pck
 workload_list_file=/home/user/workload_list.pck
 workload_user=upmc_aren
+
+www_dir=/usr/share/ganglia-webfrontend/
