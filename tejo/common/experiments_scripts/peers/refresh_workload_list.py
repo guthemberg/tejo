@@ -142,6 +142,7 @@ if __name__ == '__main__':
                 add_peer(node, server, rtt)
                 all_peers_list[node]={'server':server,'rtt':rtt}
             elif rtt<all_peers_list[node]['rtt']:
+                print "updating %s (%s,%.4f)" % (node, all_peers_list[node]['server'], all_peers_list[node]['rtt'])
                 all_peers_list[node]['server']=server
                 update_peer_server(node, server, rtt)
                 action='updated'
