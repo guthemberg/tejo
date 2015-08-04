@@ -1,9 +1,10 @@
-import pickle,sys,socket,subprocess,os,git
+import pickle,sys,socket,subprocess,os,git,random
 from pymongo import MongoClient
 from datetime import datetime
 from time import mktime,sleep
 #from planetlab import Monitor
 from configobj import ConfigObj
+
 
 try:
     import json
@@ -79,6 +80,9 @@ def save_object_to_file(myobject,output_file):
     pickle.dump(myobject, f)
     f.close()
 
+def load_object_from_file(input_file):
+    return pickle.load( open( input_file, "rb" ) )
+
 
 if __name__ == '__main__':
     print "[%s]:update membership..."%(str(datetime.now()))    
@@ -96,9 +100,21 @@ if __name__ == '__main__':
     #steps
     #1) get the list of ple peers
     peers=get_list_of_peers()
-    existing_peers={}
+    monitors_list=[]
+    all_peers_list={}
+    nearest_peers_list={}
+    server=(socket.gethostname())
+#    worload_peers={}
+
     for peer in peers:
-        existing_peers[peer['client']]={'server':peer['server'],'rtt':peer['rtt']}
+        all_peers_list[peer['client']]={'server':peer['server'],'rtt':peer['rtt']}
+        if peer['server'] not in monitors_list:
+            monitors_list.append(peer['server'])
+        if peer['server'] == server:
+            nearest_peers_list[peer['client']]=peer['rtt']
+#    save_workload_list(worload_peers, tejo_config['workload_list_file'])
+    save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
+            
     #2) get the list of ple nodes
     config=ConfigObj(PLE_CONF_FILE)
     ple = PlanetLabAPI(config['username'],config['password'],config['host'])
@@ -106,48 +122,83 @@ if __name__ == '__main__':
     #3) compute rtt
     number_of_nodes=len(ple_nodes)
     measured_nodes=1
-    server=(socket.gethostname())
-    worload_peers={}
-    monitors_list=[]
-    nearest_peers_list={}
-    all_peers_list={}
-    for node in ple_nodes:
+    
+    ###get monitor list
+    
+    
+    max_updates=10
+    steps=max_updates
+    
+    peers_to_remove=[]
+    while max_updates>0 and len(ple_nodes)>0:
+        node=random.randrange(0,len(ple_nodes))
+        ple_nodes.remove(node)
+        
         rtt=getRTT_SSH(node,path_to_yanoama)
         if rtt > 0.0:
             action='none'
-            if node not in existing_peers:
+            if node not in all_peers_list:
                 action='added'
                 add_peer(node, server, rtt)
-                existing_peers[node]={'server':server,'rtt':rtt}
-            elif rtt<existing_peers[node]['rtt']:
-                existing_peers[node]['server']=server
+                all_peers_list[node]={'server':server,'rtt':rtt}
+            elif rtt<all_peers_list[node]['rtt']:
+                all_peers_list[node]['server']=server
                 update_peer_server(node, server, rtt)
                 action='updated'
             else:
-                rtt=existing_peers[node]['rtt']
+                rtt=all_peers_list[node]['rtt']
                 
-            if existing_peers[node]['server']==server:
+            if all_peers_list[node]['server']==server:
                 nearest_peers_list[node]=rtt
             else:
-                server=existing_peers[node]['server']
+                server=all_peers_list[node]['server']
                 
-            if existing_peers[node]['server'] not in monitors_list:
-                monitors_list.append(existing_peers[node]['server'])
                 
             all_peers_list={'rtt':rtt,'server':server}
-            del existing_peers[node]
-            print '(%d/%d)%s:%.4f [%s]'%(measured_nodes,number_of_nodes,node,rtt,action)
+#            del existing_peers[node]
+            print '(%d/%d)%s:%.4f [%s]'%(measured_nodes,steps,node,rtt,action)
         else:
-            print '(%d/%d)failed for %s'%(measured_nodes,number_of_nodes,node)
+            peers_to_remove.append(node)
+            print '(%d/%d)failed for %s'%(measured_nodes,steps,node)
         measured_nodes=measured_nodes+1
-    output_file=tejo_config['workload_list_file']
-    save_workload_list(worload_peers, output_file)
-    save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
-    save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
+        
+        max_updates=max_updates-1
+    
+#     for node in ple_nodes:
+#         rtt=getRTT_SSH(node,path_to_yanoama)
+#         if rtt > 0.0:
+#             action='none'
+#             if node not in existing_peers:
+#                 action='added'
+#                 add_peer(node, server, rtt)
+#                 existing_peers[node]={'server':server,'rtt':rtt}
+#             elif rtt<existing_peers[node]['rtt']:
+#                 existing_peers[node]['server']=server
+#                 update_peer_server(node, server, rtt)
+#                 action='updated'
+#             else:
+#                 rtt=existing_peers[node]['rtt']
+#                 
+#             if existing_peers[node]['server']==server:
+#                 nearest_peers_list[node]=rtt
+#             else:
+#                 server=existing_peers[node]['server']
+#                 
+#             if existing_peers[node]['server'] not in monitors_list:
+#                 monitors_list.append(existing_peers[node]['server'])
+#                 
+#             all_peers_list={'rtt':rtt,'server':server}
+#             del existing_peers[node]
+#             print '(%d/%d)%s:%.4f [%s]'%(measured_nodes,number_of_nodes,node,rtt,action)
+#         else:
+#             print '(%d/%d)failed for %s'%(measured_nodes,number_of_nodes,node)
+#         measured_nodes=measured_nodes+1
     save_object_to_file(all_peers_list, tejo_config['all_peers_file'])
+    save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
+    
     #4) clean up db
-    number_of_nodes=len(existing_peers)
-    peers_names=existing_peers.keys()
+    number_of_nodes=len(peers_to_remove)
+    peers_names=peers_to_remove
     measured_nodes=1
     for peer in peers_names:
         remove_peer(peer)
