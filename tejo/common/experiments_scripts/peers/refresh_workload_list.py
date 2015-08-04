@@ -62,7 +62,7 @@ def add_peer(peer, monitor, rtt):
     db=c.tejo
     status=db.status
     monitors={monitor:rtt}
-    status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors})
+    status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors},check_keys=False)
     c.close()    
 
 def remove_peer(peer):
