@@ -105,6 +105,7 @@ if __name__ == '__main__':
     ple_nodes=ple.getSliceHostnames(config['slice'])
     #3) compute rtt
     number_of_nodes=len(ple_nodes)
+#    print ple_nodes
     
     print "current number of ple nodes: %d" % number_of_nodes
 
@@ -126,7 +127,7 @@ if __name__ == '__main__':
     #1.1) 
     for peer in peers:
         if remaining_operation_tokens > 0 and (not(peer['peer'] in ple_nodes)):
-            print "%s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
+#            print "%s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
             peers_to_be_removed.append(peer['peer'])
             remaining_operation_tokens=remaining_operation_tokens-1
         else:
@@ -138,13 +139,13 @@ if __name__ == '__main__':
                 nearest_peers_list[peer['peer']]=peer['monitor_rtt']
 
     print "current number of peers: %d " % len(all_peers_list)
-    print all_peers_list
+#    print all_peers_list
     save_object_to_file(all_peers_list, tejo_config['all_peers_file'])
     print "current monitors list size: %d " % len(monitors_list)
-    print monitors_list                
+#    print monitors_list                
     save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
     print "current nearest peers list size: %d " % len(nearest_peers_list)
-    print nearest_peers_list                
+#    print nearest_peers_list                
     save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
                 
     #computing new nodes
