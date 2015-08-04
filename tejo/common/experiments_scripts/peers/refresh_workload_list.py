@@ -74,6 +74,12 @@ def save_workload_list(workload_list,output_file='/home/user/workload_list.pck')
     pickle.dump(workload_list, f)
     f.close()
 
+def save_object_to_file(myobject,output_file):
+    f = open(output_file,'w')
+    pickle.dump(myobject, f)
+    f.close()
+
+
 if __name__ == '__main__':
     print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
@@ -102,6 +108,9 @@ if __name__ == '__main__':
     measured_nodes=1
     server=(socket.gethostname())
     worload_peers={}
+    monitors_list=[]
+    nearest_peers_list={}
+    all_peers_list={}
     for node in ple_nodes:
         rtt=getRTT_SSH(node,path_to_yanoama)
         if rtt > 0.0:
@@ -116,8 +125,16 @@ if __name__ == '__main__':
                 action='updated'
             else:
                 rtt=existing_peers[node]['rtt']
+                
             if existing_peers[node]['server']==server:
-                worload_peers[node]=rtt
+                nearest_peers_list[node]=rtt
+            else:
+                server=existing_peers[node]['server']
+                
+            if existing_peers[node]['server'] not in monitors_list:
+                monitors_list.append(existing_peers[node]['server'])
+                
+            all_peers_list={'rtt':rtt,'server':server}
             del existing_peers[node]
             print '(%d/%d)%s:%.4f [%s]'%(measured_nodes,number_of_nodes,node,rtt,action)
         else:
@@ -125,6 +142,9 @@ if __name__ == '__main__':
         measured_nodes=measured_nodes+1
     output_file=tejo_config['workload_list_file']
     save_workload_list(worload_peers, output_file)
+    save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
+    save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
+    save_object_to_file(all_peers_list, tejo_config['all_peers_file'])
     #4) clean up db
     number_of_nodes=len(existing_peers)
     peers_names=existing_peers.keys()
@@ -134,7 +154,7 @@ if __name__ == '__main__':
         print '(%d/%d)%s [%s]'%(measured_nodes,number_of_nodes,peer,'removed')
         measured_nodes=measured_nodes+1
 
-    print "number of members: %d" % len(worload_peers)
+    print "number of members: %d" % len(nearest_peers_list)
     print "[%s]:done."%(str(datetime.now()))  
     sys.exit(0)
     
