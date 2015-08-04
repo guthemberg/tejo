@@ -131,7 +131,7 @@ if __name__ == '__main__':
     
     peers_to_remove=[]
     while max_updates>0 and len(ple_nodes)>0:
-        node=random.randrange(0,len(ple_nodes))
+        node=ple_nodes[random.randrange(0,len(ple_nodes))]
         ple_nodes.remove(node)
         
         rtt=getRTT_SSH(node,path_to_yanoama)
