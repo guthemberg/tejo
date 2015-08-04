@@ -80,11 +80,14 @@ elif [ $# -eq 2 ]; then
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 50 ]; then
 		threads=4
 		max_conn=20
+	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 300 ]; then
+		threads=24
+		max_conn=512
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 500 ]; then
 		threads=32
 		max_conn=512
     else
-    	echo "Unknown operations rate, instead of value ${DEFAULT_OPS_PER_SECOND} , please try 500, 100, or 50, bye."
+    	echo "Unknown operations rate, instead of value ${DEFAULT_OPS_PER_SECOND} , please try 500, 300, 100, or 50, bye."
     	exit 1
     fi
 	operations=`echo "${DEFAULT_OPS_PER_SECOND}*${mongo_maxexecutiontime}"|bc`
