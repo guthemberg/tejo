@@ -154,7 +154,7 @@ if __name__ == '__main__':
         
     #updating existing nodes
     while remaining_operation_tokens > 0 and len(all_peers_list) > 0:
-        peer=all_peers_list.keys()[0]
+        peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
         rtt=getRTT_SSH(peer,path_to_yanoama)
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0:
             monitors=all_peers_list[peer]['monitors']
