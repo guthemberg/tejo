@@ -124,6 +124,7 @@ if __name__ == '__main__':
     remaining_operation_tokens=operation_tokens
     #1.1) 
     
+    
     for peer in peers:
         if remaining_operation_tokens > 0 and (not(peer['peer'] in ple_nodes)):
             print "%s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
