@@ -59,7 +59,7 @@ def add_peer(peer, monitor, rtt):
     c = MongoClient(host, 27017)
     db=c.tejo
     status=db.status
-    monitors={monitor:rtt}
+    monitors={monitor.split('.')[0]:rtt}
     status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
     c.close()    
 
@@ -160,9 +160,17 @@ if __name__ == '__main__':
         peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
         rtt=getRTT_SSH(peer,path_to_yanoama)
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0:
+            new_monitors={}
             monitors=all_peers_list[peer]['monitors']
-            monitors[monitor]=rtt
-            peer_to_update[peer]={'monitor_rtt':rtt,'monitors':monitors}
+            #fixing
+            for mymonitor in monitors:
+                if len(mymonitor.split('.'))>1:
+                    new_monitors[mymonitor.split('.')[0]]=monitors[mymonitor]
+                else:
+                    new_monitors[mymonitor]=monitors[mymonitor]
+                
+            new_monitors[monitor.split('.')[0]]=rtt
+            peer_to_update[peer]={'monitor_rtt':rtt,'monitors':new_monitors}
             remaining_operation_tokens=remaining_operation_tokens-1
         del all_peers_list[peer]
     
