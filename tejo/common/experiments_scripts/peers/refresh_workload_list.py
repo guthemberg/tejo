@@ -185,7 +185,7 @@ if __name__ == '__main__':
     for peer in peer_to_update:
         update_peer_monitor(peer, monitor, peer_to_update[peer]['monitor_rtt'], peer_to_update[peer]['monitors'])
         measured_nodes=measured_nodes+1
-        print '(%d/%d)%s:%.4f (rtt) , %d (number of monitors) [UPDATED]'%(measured_nodes,operation_tokens,peer,peer_to_update[peer],len(peer_to_update[peer]['monitors']))
+        print '(%d/%d)%s:%.4f (rtt) , %d (number of monitors) [UPDATED]'%(measured_nodes,operation_tokens,peer,peer_to_update[peer]['monitor_rtt'],len(peer_to_update[peer]['monitors']))
 
     print "[%s]:done."%(str(datetime.now()))  
     sys.exit(0)
