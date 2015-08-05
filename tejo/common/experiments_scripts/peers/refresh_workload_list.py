@@ -130,7 +130,7 @@ if __name__ == '__main__':
             print "%s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
             peers_to_be_removed.append(peer['peer'])
             remaining_operation_tokens=remaining_operation_tokens-1
-        else:
+        elif peer['peer'] in ple_nodes:
             ple_nodes.remove(peer['peer'])
             all_peers_list[peer['peer']]={'monitor':peer['monitor'],'monitor_rtt':peer['monitor_rtt'],'target':peer['target'],'target_rtt':peer['target_rtt'],'monitors':peer['monitors'],'active':peer['active']}
             if peer['monitor'] not in monitors_list:
