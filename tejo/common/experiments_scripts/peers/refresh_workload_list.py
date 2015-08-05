@@ -85,12 +85,6 @@ def save_object_to_file(myobject,output_file):
 def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
 
-def monitors_bad(monitors):
-    for monitor in monitors:
-        if len(monitor.split('.'))>1:
-            return True
-    return False
-
 
 if __name__ == '__main__':
     print "[%s]:update membership..."%(str(datetime.now()))    
@@ -126,7 +120,7 @@ if __name__ == '__main__':
     peer_to_update={}
 #    worload_peers={}
 
-    operation_tokens=10
+    operation_tokens=20
     remaining_operation_tokens=operation_tokens
     #1.1) 
     for peer in peers:
@@ -166,30 +160,10 @@ if __name__ == '__main__':
         peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
         rtt=getRTT_SSH(peer,path_to_yanoama)
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0:
-            new_monitors={}
             monitors=all_peers_list[peer]['monitors']
-            #fixing
-            for mymonitor in monitors:
-                if len(mymonitor.split('.'))>1:
-                    new_monitors[mymonitor.split('.')[0]]=monitors[mymonitor]
-                else:
-                    new_monitors[mymonitor]=monitors[mymonitor]
-                
-            new_monitors[monitor.split('.')[0]]=rtt
-            peer_to_update[peer]={'monitor_rtt':rtt,'monitors':new_monitors}
+            monitors[monitor.split('.')[0]]=rtt
+            peer_to_update[peer]={'monitor_rtt':rtt,'monitors':monitors}
             remaining_operation_tokens=remaining_operation_tokens-1
-        elif monitors_bad(all_peers_list[peer]['monitors']):
-            new_monitors={}
-            monitors=all_peers_list[peer]['monitors']
-            #fixing
-            for mymonitor in monitors:
-                if len(mymonitor.split('.'))>1:
-                    new_monitors[mymonitor.split('.')[0]]=monitors[mymonitor]
-                else:
-                    new_monitors[mymonitor]=monitors[mymonitor]
-            peer_to_update[peer]={'monitor_rtt':all_peers_list[peer]['monitor_rtt'],'monitors':new_monitors}
-            remaining_operation_tokens=remaining_operation_tokens-1
-            
         del all_peers_list[peer]
     
     #performing all operations in order
