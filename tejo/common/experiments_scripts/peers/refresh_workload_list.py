@@ -49,9 +49,9 @@ def update_peer_monitor(peer, monitor, rtt,monitors):
     c = MongoClient(host, 27017)
     db=c.tejo
     status=db.status
-    status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False)
-    status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False)
-    status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False)
+    status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False,check_keys=False)
+    status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False,check_keys=False)
+    status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False,check_keys=False)
     c.close()    
 
 def add_peer(peer, monitor, rtt):
