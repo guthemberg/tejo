@@ -63,6 +63,9 @@ all_peers_file=/home/user/all_peers_list.pck
 nearest_peers_file=/home/user/nearest_peers_list.pck
 monitors_list_file=/home/user/monitors_list.pck
 workload_list_file=/home/user/workload_list.pck
+workload_rtt=/tmp/rtt.pck
+workload_strategy=nearest
+workload_target=WL_TARGET
 workload_user=upmc_aren
 
 www_dir=/usr/share/ganglia-webfrontend/
