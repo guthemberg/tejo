@@ -35,8 +35,8 @@ def isFailed(config,fault_flag,workload_hosts):
     return result
     
 
-def insert_vm_stat_into_db(ts,hostname,dbconn,keys,failure,values):
-    dbconn.genericRun("INSERT into vm (ts,hostname,failure,%s) VALUES (timestamp '%s','%s',%d,%s)" % (keys,ts,hostname,failure,values))
+def insert_vm_stat_into_db(ts,hostname,dbconn,keys,failure,values,location):
+    dbconn.genericRun("INSERT into vm (ts,hostname,failure,%s,location) VALUES (timestamp '%s','%s',%d,%s,'%s')" % (keys,ts,hostname,failure,values,location))
 
 #def insert_fault_info_into_db(ts,hostname,dbconn,injection,intensity):
 #    dbconn.genericRun("INSERT into fault (ts,hostname,injection,intensity) VALUES (timestamp '%s','%s',%d,%s)" % (ts,hostname,injection,intensity))
@@ -44,13 +44,16 @@ def insert_vm_stat_into_db(ts,hostname,dbconn,keys,failure,values):
 ##this function expects ts as a string and throughput and violation as integers
 def insert_slo_state_into_db(ts,dbconn,throughput,violation, \
                              target_throughput, \
-                             system_id,active_vms, latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg):
-    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg))
+                             system_id,active_vms, latency_95th,latency_99th, \
+                             latency_avg,max_latency_95th,max_latency_99th, \
+                             max_latency_avg, location):
+    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s')" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location))
 
 ##this function expects ts as a string and throughput and violation as integers
 def insert_workload_state_into_db(ts,dbconn,hostname, throughput,violation, \
-                             system_id, latency_95th,latency_99th,latency_avg):
-    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d)" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg))
+                             system_id, latency_95th,latency_99th,latency_avg, \
+                             rtt,location):
+    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d,%.4f,'%s')" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location))
 
 def format_db_value(db_value):
     return str(float(db_value))
@@ -118,6 +121,9 @@ def isVMDead(hostname):
 
 def getIntValue(rrd_file):
     return int(float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
+
+def getFloatValue(rrd_file):
+    return (float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
 
 def delete_path(path_to_be_deleted):
     #safeguard against accidents
@@ -233,6 +239,7 @@ if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', '
 else:
     dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
 
+location=(socket.gethostname())
 
 rrd_path_vms_prefix=config['rrd_path_vms_prefix']
 fault_injection_filename=config['fault_injection_filename']
@@ -249,6 +256,7 @@ latency_avg_filename=config['slo_latency_avg_filename']
 max_latency_95th_filename=config['slo_max_latency_95th_filename']
 max_latency_99th_filename=config['slo_max_latency_99th_filename']
 max_latency_avg_filename=config['slo_max_latency_avg_filename']
+rtt_filename=config['slo_rtt_filename']
 
 #rrd_file_prefix=config['rrd_file_prefix']
 
@@ -266,6 +274,7 @@ latency_avg=0
 max_latency_95th=0
 max_latency_99th=0
 max_latency_avg=0
+rtt=0.0
 
 number_of_workloads=0
 failed_data_collection=False
@@ -317,6 +326,9 @@ for hostname in workload_hosts:
         
         rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+max_latency_avg_filename
         max_latency_avg=getIntValue(rrd_file)
+
+        rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+rtt_filename
+        rtt=getFloatValue(rrd_file)
         
         number_of_workloads=number_of_workloads+1
     
@@ -325,7 +337,7 @@ for hostname in workload_hosts:
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
-                                      node_latency_avg)
+                                      node_latency_avg,rtt,location)
     
 if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
@@ -377,14 +389,15 @@ for node in vms:
             
     #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
 #     if alive:
-    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values)
+    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values,location)
     number_of_vms = number_of_vms + 1
 
 #save slo status
 insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          target_throughput,system_id, \
                          number_of_vms,latency_95th,latency_99th,latency_avg, \
-                         max_latency_95th,max_latency_99th,max_latency_avg)
+                         max_latency_95th,max_latency_99th,max_latency_avg, \
+                         location)
 
 print dbconn.getDebugMess()
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
