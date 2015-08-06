@@ -29,6 +29,12 @@ import socket
 import time
 import copy
 
+import pickle,os
+#from planetlab import Monitor
+from configobj import ConfigObj
+
+TEJO_CONF_FILE='/etc/tejo.conf'
+
 NAME_PREFIX = 'slo_'
 PARAMS = {
     'net_status' : '/usr/bin/netstat -s -p tcp'
@@ -40,6 +46,8 @@ METRICS = {
 LAST_METRICS = copy.deepcopy(METRICS)
 METRICS_CACHE_TTL = 3
 
+def load_object_from_file(input_file):
+    return pickle.load( open( input_file, "rb" ) )
 
 
 def get_metrics():
@@ -62,6 +70,15 @@ def get_metrics():
             metrics['throughput']=float(''.join(open('/tmp/slo_throughput.txt', 'r').readlines()).strip())
         except :
             metrics['throughput']=float(0)
+
+        #rtt
+        try:
+            tejo_config=ConfigObj(TEJO_CONF_FILE)
+            metrics['rtt']=float(load_object_from_file(tejo_config['workload_rtt']))
+        except :
+            metrics['rtt']=float(0.0)
+
+
         #target throughput
         try:
             metrics['target_throughput']=int(''.join(open('/tmp/slo_target_throughput.txt', 'r').readlines()).strip())
@@ -521,6 +538,17 @@ def metric_init(lparams):
             'slope': 'both',
             'format': '%f',
             'description': 'Throughput',
+            'groups': groups
+        },
+        {
+            'name': NAME_PREFIX + 'rtt',
+            'call_back': get_value,
+            'time_max': time_max,
+            'value_type': 'float',
+            'units': 'milliseconds',
+            'slope': 'both',
+            'format': '%f',
+            'description': 'RTT to WL Target',
             'groups': groups
         },
         {

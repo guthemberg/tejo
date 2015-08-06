@@ -16,6 +16,10 @@ collection_group {
         title = "SLO violation"
     }
     metric {
+        name = "slo_rtt"
+        title = "RTT to WL Target"
+    }
+    metric {
         name = "slo_throughput"
         title = "Throughput"
     }
