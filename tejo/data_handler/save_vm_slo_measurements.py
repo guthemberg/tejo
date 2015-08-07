@@ -257,7 +257,7 @@ def save_peer(hostname,rtt):
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
     
-    if not hostname in setup_peers_status[hostname]:
+    if not hostname in setup_peers_status:
         setup_peers_status[peer]={'rtt':rtt,'active':True}
         save_object_to_file(setup_peers_status, setup_peers_status_file)
     elif not setup_peers_status[hostname]['active']:
