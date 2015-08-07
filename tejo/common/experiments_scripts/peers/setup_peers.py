@@ -101,6 +101,9 @@ if __name__ == '__main__':
         for peer in setup_peers_status:
             if not peer in nearest_peers_table:
                 del setup_peers_status[peer] 
+        for peer in nearest_peers_table:
+             if not peer in setup_peers_status:
+                 setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
     else:
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
