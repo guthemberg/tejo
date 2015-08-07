@@ -118,7 +118,15 @@ if __name__ == '__main__':
         
     script_path=tejo_config['home_dir']+'/contrib/pl/setup.sh'
     script_output = subprocess.Popen(['/bin/sh',script_path,peer_to_setup], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-    setup_peers_status[peer_to_setup]['active']=True
+    script_path=tejo_config['home_dir']+'/tejo/common/experiments_scripts/peers/check_running_peer.sh'
+    script_output = subprocess.Popen(['/bin/sh',script_path], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+    if script_output=='ok':
+        print '%s: ok!' % peer_to_setup
+        setup_peers_status[peer_to_setup]['active']=True
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
+    else:
+        print '%s: failed!' % peer_to_setup
+
 
 
     print "[%s]:done."%(str(datetime.now()))  
