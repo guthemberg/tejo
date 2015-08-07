@@ -8,4 +8,6 @@ python -c "import pickle ; print pickle.load( open( '$monitors_list_file', 'rb' 
 if [ $? -eq 0 ]
 then
 	sudo cp $monitors_list_file $www_dir
+else
+	rm $monitors_list_file
 fi
