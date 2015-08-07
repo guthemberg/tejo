@@ -375,7 +375,7 @@ for hostname in workload_hosts:
         number_of_workloads=number_of_workloads+1
         #check workload hostname
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
-        print 'workload node name:%s,%s'%(hostname,node_name)
+        #print 'workload node name:%s,%s'%(hostname,node_name)
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
