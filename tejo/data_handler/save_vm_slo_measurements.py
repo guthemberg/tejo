@@ -46,8 +46,8 @@ def insert_slo_state_into_db(ts,dbconn,throughput,violation, \
                              target_throughput, \
                              system_id,active_vms, latency_95th,latency_99th, \
                              latency_avg,max_latency_95th,max_latency_99th, \
-                             max_latency_avg, location):
-    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s')" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location))
+                             max_latency_avg, location,number_of_workloads):
+    dbconn.genericRun("INSERT into slo (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location,number_of_workloads) VALUES (timestamp '%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s',%d)" % (ts,throughput,violation,target_throughput,system_id,active_vms,latency_95th,latency_99th,latency_avg,max_latency_95th,max_latency_99th,max_latency_avg,location,number_of_workloads))
 
 ##this function expects ts as a string and throughput and violation as integers
 def insert_workload_state_into_db(ts,dbconn,hostname, throughput,violation, \
@@ -284,6 +284,7 @@ print "number of wl nodes: %d" % len(workload_hosts)
 print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
+    
     #if node is not found it return unknown
 #    path_id=get_host_path_id(hostname)
     path_id=hostname
@@ -331,10 +332,9 @@ for hostname in workload_hosts:
         rtt=getFloatValue(rrd_file)
         
         number_of_workloads=number_of_workloads+1
-    
         #check workload hostname
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
-        print 'workload node name:%s,%s'%(hostname,node_name) 
+        print 'workload node name:%s,%s'%(hostname,node_name)
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
@@ -398,7 +398,7 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          target_throughput,system_id, \
                          number_of_vms,latency_95th,latency_99th,latency_avg, \
                          max_latency_95th,max_latency_99th,max_latency_avg, \
-                         location)
+                         location,number_of_workloads)
 
 print dbconn.getDebugMess()
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
