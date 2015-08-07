@@ -106,7 +106,7 @@ fi
 
 echo -n $system_id > /tmp/slo_system_id.txt
 
-
+touch ${mongo_active_wl_file}
 
 a=11
 
