@@ -37,22 +37,32 @@ def save_object_to_file(myobject,output_file):
     
     
 if __name__ == '__main__':
-    print "[%s]:getting rtt..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama='/home/'+tejo_config['workload_user']+'/yanoama'
-    current_rtt=0.0
-    if os.path.isfile(tejo_config['workload_rtt']):
-        current_rtt=float(load_object_from_file(tejo_config['workload_rtt']))
-    
-    rtt=getRTT_SSH(tejo_config['workload_target'], path_to_yanoama)
-    
-    if rtt>0.0:
-        if current_rtt>0.0:
-            if rtt<current_rtt:
-                save_object_to_file(rtt, tejo_config['workload_rtt'])
+    list_of_monitors=sys.argv[1]
+    peering_table_file=tejo_config['root_dir']+"/peering.pck"
+    peering_table={}
+    if os.path.isfile(peering_table_file):
+        peering_table=load_object_from_file(peering_table_file)
+    smallest_rtt=0.0
+    target=tejo_config['workload_target']
+    for monitor in load_object_from_file(list_of_monitors):
+        rtt=getRTT_SSH(monitor, yanoama_root)
+        if monitor in peering_table:
+            if rtt<peering_table[monitor] and rtt>0:
+                peering_table[monitor]=rtt
+            if rtt == -1:
+                del peering_table[monitor]
         else:
-            save_object_to_file(rtt, tejo_config['workload_rtt'])
-            
+            if rtt>0:
+                peering_table[monitor]=rtt
+        if monitor in peering_table:
+            if smallest_rtt==0.0 or peering_table[monitor]<smallest_rtt:
+                smallest_rtt=peering_table[monitor]
+                target=monitor
+                
+    save_object_to_file(peering_table, peering_table_file)
+    sys.stdout.write(target)
     sys.exit(0)
 
             
