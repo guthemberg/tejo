@@ -39,7 +39,6 @@ if __name__ == '__main__':
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama='/home/'+tejo_config['workload_user']+'/yanoama'
     list_of_monitors=sys.argv[1]
-    print sys.argv[1]
     peering_table_file=tejo_config['root_dir']+"/peering.pck"
     peering_table={}
     if os.path.isfile(peering_table_file):
