@@ -129,13 +129,13 @@ monitors_file=`echo $monitors_list_file |cut -d/ -f$n_fields`
 
 if [ ! -e ${root_dir}/$monitors_file ]
 then
-	wget --no-check-certificate http://$workload_target/$monitors_list -O ${root_dir}/$monitors_file
+	wget --no-check-certificate http://$workload_target/$monitors_file -O ${root_dir}/$monitors_file
 else
 	python -c "import pickle ; print pickle.load( open( '${root_dir}/$monitors_file', 'rb' ) )"
 	if [ ! $? -eq 0 ]
 	then
 		rm ${root_dir}/$monitors_file
-		wget --no-check-certificate http://$workload_target/$monitors_list -O ${root_dir}/$monitors_file
+		wget --no-check-certificate http://$workload_target/$monitors_file -O ${root_dir}/$monitors_file
 		#doubling checking
 		python -c "import pickle ; print pickle.load( open( '${root_dir}/$monitors_file', 'rb' ) )"
 		if [ ! $? -eq 0 ]
