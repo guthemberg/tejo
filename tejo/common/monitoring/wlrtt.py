@@ -1,4 +1,4 @@
-import pickle,sys,socket,subprocess,os,git,random
+import pickle,sys,socket,subprocess,os,random
 from pymongo import MongoClient
 from datetime import datetime
 from time import mktime,sleep
