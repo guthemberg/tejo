@@ -46,7 +46,7 @@ if __name__ == '__main__':
     smallest_rtt=0.0
     target=tejo_config['workload_target']
     for monitor in load_object_from_file(list_of_monitors):
-        rtt=getRTT_SSH(monitor, yanoama_root)
+        rtt=getRTT_SSH(monitor, path_to_yanoama)
         if monitor in peering_table:
             if rtt<peering_table[monitor] and rtt>0:
                 peering_table[monitor]=rtt
