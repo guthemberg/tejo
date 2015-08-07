@@ -239,7 +239,7 @@ if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', '
 else:
     dbconn=MyDB(config['db_name'],config['db_user'],config['db_host'],config['db_pass'])
 
-location=(socket.gethostname())
+location=(socket.gethostname()).split('-')[0]
 
 rrd_path_vms_prefix=config['rrd_path_vms_prefix']
 fault_injection_filename=config['fault_injection_filename']
