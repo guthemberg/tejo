@@ -135,7 +135,7 @@ fi
 #this returns the nearest target
 target=`python ${home_dir}/contrib/pl/peering.py ${root_dir}/$monitors_file`
 
-if [ "$workload_target" != "$target" ]
+if [ "$workload_target" != "$target" -a `expr length "$target"` -gt 0 ]
 then
 	if [ "$workload_strategy" = "nearest" ]
 	then
