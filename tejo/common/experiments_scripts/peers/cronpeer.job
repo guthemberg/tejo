@@ -1,1 +1,1 @@
-MIN      *       *       *       *      python HOMEDIR/tejo/common/experiments_scripts/peers/setup_peers.py
+MIN      *       *       *       *      /bin/tcsh -c 'python HOMEDIR/tejo/common/experiments_scripts/peers/setup_peers.py >& /tmp/setup_peers.log'
