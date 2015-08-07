@@ -140,7 +140,7 @@ else
 		python -c "import pickle ; print pickle.load( open( '${root_dir}/$monitors_file', 'rb' ) )"
 		if [ ! $? -eq 0 ]
 		then
-			echo "sorry failed to get the monitors list"
+			echo "sorry failed to get the monitors list ${root_dir}/$monitors_file"
 			exit 1
 		fi
 	fi 
