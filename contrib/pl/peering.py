@@ -36,33 +36,37 @@ def save_object_to_file(myobject,output_file):
     
     
 if __name__ == '__main__':
-    tejo_config=ConfigObj(TEJO_CONF_FILE)
-    path_to_yanoama='/home/'+tejo_config['workload_user']+'/yanoama'
-    list_of_monitors=sys.argv[1]
-    peering_table_file=tejo_config['root_dir']+"/peering.pck"
-    peering_table={}
-    if os.path.isfile(peering_table_file):
-        peering_table=load_object_from_file(peering_table_file)
-    smallest_rtt=0.0
-    target=tejo_config['workload_target']
-    for monitor in load_object_from_file(list_of_monitors):
-        rtt=getRTT_SSH(monitor, path_to_yanoama)
-        if monitor in peering_table:
-            if rtt<peering_table[monitor] and rtt>0:
-                peering_table[monitor]=rtt
-            if rtt == -1:
-                del peering_table[monitor]
-        else:
-            if rtt>0:
-                peering_table[monitor]=rtt
-        if monitor in peering_table:
-            if smallest_rtt==0.0 or peering_table[monitor]<smallest_rtt:
-                smallest_rtt=peering_table[monitor]
-                target=monitor
-                
-    save_object_to_file(peering_table, peering_table_file)
-    sys.stdout.write(target)
-    sys.exit(0)
+    try:
+        tejo_config=ConfigObj(TEJO_CONF_FILE)
+        path_to_yanoama='/home/'+tejo_config['workload_user']+'/yanoama'
+        list_of_monitors=sys.argv[1]
+        peering_table_file=tejo_config['root_dir']+"/peering.pck"
+        peering_table={}
+        if os.path.isfile(peering_table_file):
+            peering_table=load_object_from_file(peering_table_file)
+        smallest_rtt=0.0
+        target=tejo_config['workload_target']
+        for monitor in load_object_from_file(list_of_monitors):
+            rtt=getRTT_SSH(monitor, path_to_yanoama)
+            if monitor in peering_table:
+                if rtt<peering_table[monitor] and rtt>0:
+                    peering_table[monitor]=rtt
+                if rtt == -1:
+                    del peering_table[monitor]
+            else:
+                if rtt>0:
+                    peering_table[monitor]=rtt
+            if monitor in peering_table:
+                if smallest_rtt==0.0 or peering_table[monitor]<smallest_rtt:
+                    smallest_rtt=peering_table[monitor]
+                    target=monitor
+                    
+        save_object_to_file(peering_table, peering_table_file)
+        sys.stdout.write(target)
+        sys.exit(0)
+    except:
+        sys.stdout.write('')
+        sys.exit(1)
 
             
         
