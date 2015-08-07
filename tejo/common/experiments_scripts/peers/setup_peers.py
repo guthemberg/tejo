@@ -122,6 +122,7 @@ if __name__ == '__main__':
     key=tejo_config['root_dir']+"/.ssh/id_rsa_cloud"
     ssh_args=tejo_config['workload_user']+"@"+peer_to_setup    
     script_output = subprocess.Popen(['ssh','-i', key, "-o", "StrictHostKeyChecking=no", "-t", ssh_args,'/bin/sh',script_path], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+    print "script output: (%s)"%script_output
     if script_output=='ok':
         print '%s: ok!' % peer_to_setup
         setup_peers_status[peer_to_setup]['active']=True
