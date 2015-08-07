@@ -121,7 +121,7 @@ if __name__ == '__main__':
         
     script_path=tejo_config['home_dir']+'/contrib/pl/setup.sh'
     script_output = subprocess.Popen(['/bin/sh',script_path,peer_to_setup], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-    script_path=tejo_config['home_dir']+'/tejo/common/experiments_scripts/peers/check_running_peer.sh'
+    script_path='/home/'+tejo_config['workload_user']+'/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh'
     key=tejo_config['root_dir']+"/.ssh/id_rsa_cloud"
     ssh_args=tejo_config['workload_user']+"@"+peer_to_setup    
     script_output = subprocess.Popen(['ssh','-i', key, "-o", "StrictHostKeyChecking=no", "-t", ssh_args,'/bin/sh',script_path], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
