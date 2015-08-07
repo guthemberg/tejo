@@ -226,7 +226,44 @@ def open_ssh_tunnel_to_master_db():
         time.sleep(1)
     forward_ports=config['db_port']+":127.0.0.1:5432"
     (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no','-f',process_key,'-L',forward_ports,'-N'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
-        
+ 
+
+def save_object_to_file(myobject,output_file):
+    f = open(output_file,'w')
+    pickle.dump(myobject, f)
+    f.close()
+
+def load_object_from_file(input_file):
+    return pickle.load( open( input_file, "rb" ) )
+
+
+def save_peer(hostname):
+    setup_peers_status_file=config['workload_peer_status']
+    setup_peers_status={}
+    nearest_peers_table={}
+    if os.path.isfile(config['nearest_peers_file']):
+        nearest_peers_table=load_object_from_file(config['nearest_peers_file'])
+    else:
+        print 'warm: empty nearest table'
+        return
+    if os.path.isfile(setup_peers_status_file):
+        setup_peers_status=load_object_from_file(setup_peers_status_file)
+        #cleanup list
+        for peer in setup_peers_status:
+            if not peer in nearest_peers_table:
+                del setup_peers_status[peer] 
+    else:
+        for peer in nearest_peers_table:
+            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
+            
+    if not setup_peers_status[hostname]['active']:
+        setup_peers_status[hostname]['active']=True
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
+
+
+
+
+###### main        
     
 now = time.strftime("%c")
 ## Display current date and time from now variable 
@@ -339,6 +376,7 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,rtt,location)
+        save_peer(node_name)
     
 if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
