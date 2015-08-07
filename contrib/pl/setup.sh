@@ -19,5 +19,5 @@ ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -t $workload_us
 ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -t $workload_user@$peer "sh /tmp/setup.sh -l $location -d $default_domain -t workload -a $me"
 ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -t $workload_user@$peer "sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/ycsb/stop.sh"
 echo "running workload:"
-ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -t $workload_user@$peer "sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/ycsb/run.sh 0 300 &"
+ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -tt $workload_user@$peer "sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/ycsb/run.sh 0 300 &"
 echo "done"
