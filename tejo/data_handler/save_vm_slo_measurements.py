@@ -238,7 +238,7 @@ def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
 
 
-def save_peer(hostname):
+def save_peer(hostname,rtt):
     setup_peers_status_file=config['workload_peer_status']
     setup_peers_status={}
     nearest_peers_table={}
@@ -256,8 +256,11 @@ def save_peer(hostname):
     else:
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
-            
-    if not setup_peers_status[hostname]['active']:
+    
+    if not hostname in setup_peers_status[hostname]:
+        setup_peers_status[peer]={'rtt':rtt,'active':True}
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
+    elif not setup_peers_status[hostname]['active']:
         setup_peers_status[hostname]['active']=True
         save_object_to_file(setup_peers_status, setup_peers_status_file)
 
@@ -377,7 +380,7 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,rtt,location)
-        save_peer(node_name)
+        save_peer(node_name,rtt)
     
 if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
