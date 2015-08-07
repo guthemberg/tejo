@@ -54,6 +54,8 @@ mongo_collection=usertable
 mongo_replication_degree=8
 mongo_recordcount=2400000
 mongo_maxexecutiontime=120
+mongo_default_throughput=300
+mongo_active_wl_file=/home/USER/wl_active.hit
 volt_ports="21212,3021,5555,2181,21211"
 volt_leader=LOCATION-vm-001.MY_DOMAIN
 volt_wl_duration=480
@@ -68,5 +70,7 @@ workload_rtt=/tmp/rtt.pck
 workload_strategy=nearest
 workload_target=WL_TARGET
 workload_user=upmc_aren
+
+system_id=0
 
 www_dir=/usr/share/ganglia-webfrontend/
