@@ -11,6 +11,7 @@ class MyDB:
 		self.user = user
 		self.host = host
 		self.password = password
+		self.status=0
 		if port is None:
 			parameters = "dbname='"+dbname+"' user='"+user+"' host='"+host+"' password='"+password+"'"
 		else:
@@ -29,7 +30,11 @@ class MyDB:
 			self.debug='connected to db!\t'
 		except: 
 			self.debug='connection failed!\t'
+			self.status=1
 			self.conn = None
+	
+	def get_status(self):
+		return self.status
 	
 	def parser_sql_string(self,mystring):
 		#please, think to convert your data before passing to this function, e.g. maps = maps.encode('utf-8')

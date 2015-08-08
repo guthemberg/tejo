@@ -472,6 +472,6 @@ for peer in active_peers:
 #    close_ssh_tunnel_to_master_db()
 print '[%s] Done.' % ts
 
-sys.exit(0)
+sys.exit(dbconn.get_status())
 
 

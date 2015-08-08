@@ -21,21 +21,43 @@ open_ssh_tunnel_to_db ()
 /usr/bin/pkill -f save_vm_slo_measurements.py
 
 if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true"   -o "$db_tunnelling" = "1"   -o "$db_tunnelling" = "t"   -o "$db_tunnelling" = "yeah" ]; then
-	close_ssh_tunnel_to_db
-	open_ssh_tunnel_to_db
+	if [ `pgrep -f ${guest_vm_sys_user}@${db_master}|wc -l` -lt 1 ]
+	then
+		close_ssh_tunnel_to_db
+		open_ssh_tunnel_to_db
+	fi
 fi
 
 i=0
 
+status=0
+max_delta=0
+resto=$MAX_TIME
 while :;
 do
 	start=`date +"%s"`
         /bin/tcsh -c "python ${home_dir}/tejo/data_handler/save_vm_slo_measurements.py"
+        status=$?
         now=`date +"%s"`
         passed=`expr $now - $start`
-	remaining=`expr $collect_time - $passed`
+    if [ $resto -gt $passed ]
+    then
+    	resto=`expr $resto - $passed`
+    else
+    	resto=0
+    fi
+    if [ $passed -gt $max_delta ]
+    then
+    	max_delta=$passed
+    fi
+    if [ $passed -lt $collect_time ]
+    then
+		remaining=`expr $collect_time - $passed`
+    else
+    	remaining=0
+    fi
 	i=`echo "$i + 1"|bc`
-	if [ $i -eq $intervals ]; then
+	if [ $i -eq $intervals -o $max_delta -gt $resto ]; then
 		break
 	else
 		echo "sleeping $remaining"
@@ -44,5 +66,8 @@ do
 done 
 
 if [ "$db_tunnelling" = "yes" -o "$db_tunnelling" = "Yes"  -o "$db_tunnelling" = "Y"  -o "$db_tunnelling" = "y"  -o "$db_tunnelling" = "True"  -o "$db_tunnelling" = "true" ]; then
-	close_ssh_tunnel_to_db
+	if [ $status -gt 0 ]
+	then
+		close_ssh_tunnel_to_db
+	fi
 fi
