@@ -238,7 +238,18 @@ def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
 
 
-def save_peer(hostname,rtt=0.0,active=False):
+def save_peer(setup_peers_status,hostname,rtt=0.0,active=False):
+    if not setup_peers_status is None:
+        
+        if not hostname in setup_peers_status:
+            setup_peers_status[peer]={'rtt':rtt,'active':active}
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
+        else:
+            setup_peers_status[hostname]['active']=active
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
+
+
+def get_peer_status_table():
     setup_peers_status_file=config['workload_peer_status']
     setup_peers_status={}
     nearest_peers_table={}
@@ -246,7 +257,7 @@ def save_peer(hostname,rtt=0.0,active=False):
         nearest_peers_table=load_object_from_file(config['nearest_peers_file'])
     else:
         print 'warm: empty nearest table'
-        return
+        return None
     if os.path.isfile(setup_peers_status_file):
         setup_peers_status=load_object_from_file(setup_peers_status_file)
         #cleanup list
@@ -257,18 +268,16 @@ def save_peer(hostname,rtt=0.0,active=False):
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
     
-    if not hostname in setup_peers_status:
-        setup_peers_status[peer]={'rtt':rtt,'active':active}
-        save_object_to_file(setup_peers_status, setup_peers_status_file)
-    else:
-        setup_peers_status[hostname]['active']=active
-        save_object_to_file(setup_peers_status, setup_peers_status_file)
-
-
-
+    return setup_peers_status
 
 ###### main        
-    
+  
+setup_peers_status=get_peer_status_table()  
+active_peers=[]
+for peer in setup_peers_status:
+    if setup_peers_status[peer]['active']:
+        active_peers.append(peer)
+        
 now = time.strftime("%c")
 ## Display current date and time from now variable 
 print ("Current time %s"  % now )
@@ -336,6 +345,7 @@ for hostname in workload_hosts:
     
     rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+latency_99th_filename
     node_latency_99th=getIntValue(rrd_file)
+    
 
     if (node_latency_95th>0 and node_latency_99th>0):
         
@@ -380,10 +390,14 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,rtt,location)
-        save_peer(node_name,rtt,True)
+        save_peer(setup_peers_status,node_name,rtt,True)
+        if node_name in active_peers:
+            active_peers.remove(node_name)
     else:
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
-        save_peer(hostname)
+        save_peer(setup_peers_status,hostname)
+        if node_name in active_peers:
+            active_peers.remove(node_name)
     
 if ((latency_95th<=0 or latency_99th<=0)) :
     failed_data_collection=True
@@ -446,6 +460,10 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          location,number_of_workloads)
 
 print dbconn.getDebugMess()
+
+for peer in active_peers:
+    save_peer(setup_peers_status, peer, peer['rtt'])
+    
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
 #    close_ssh_tunnel_to_master_db()
 print '[%s] Done.' % ts
