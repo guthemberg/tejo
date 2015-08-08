@@ -240,7 +240,7 @@ def load_object_from_file(input_file):
 
 def save_peer(setup_peers_status,hostname,rtt=0.0,active=False):
     if not setup_peers_status is None:
-        
+        setup_peers_status_file=config['workload_peer_status']
         if not hostname in setup_peers_status:
             setup_peers_status[peer]={'rtt':rtt,'active':active}
             save_object_to_file(setup_peers_status, setup_peers_status_file)
