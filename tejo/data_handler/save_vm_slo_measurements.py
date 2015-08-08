@@ -261,9 +261,12 @@ def get_peer_status_table():
     if os.path.isfile(setup_peers_status_file):
         setup_peers_status=load_object_from_file(setup_peers_status_file)
         #cleanup list
+        peers_to_delete=[]
         for peer in setup_peers_status:
             if not peer in nearest_peers_table:
-                del setup_peers_status[peer] 
+                peers_to_delete.append(peer)
+        for peer in peers_to_delete:
+            del setup_peers_status[peer] 
     else:
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
