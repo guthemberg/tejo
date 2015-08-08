@@ -54,7 +54,7 @@ do
     then
 		remaining=`expr $collect_time - $passed`
     else
-    	remaining=0
+    	remaining=1
     fi
 	i=`echo "$i + 1"|bc`
 	if [ $i -eq $intervals -o $max_delta -gt $resto ]; then
