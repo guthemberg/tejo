@@ -12,7 +12,7 @@ fi
 
 if [ -e "$mongo_active_wl_file" ]
 then
-	if [ `pgrep -f $patern|wc -l` -ge 0 ]
+	if [ `pgrep -f $patern|wc -l` -ge 1 ]
 	then
 		if [ `pgrep -f gmond|wc -l` -ge 1 ]
 		then
