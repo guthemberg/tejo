@@ -10,19 +10,17 @@ then
 	patern="ycsb-0.1.4"
 fi
 
-if [ -e "$mongo_active_wl_file" -a `pgrep -f $patern|wc -l` -ge 0 ]
+if [ -e "$mongo_active_wl_file" ]
 then
-	if [ `pgrep -f gmond|wc -l` -ge 1 ]
+	if [ `pgrep -f $patern|wc -l` -ge 0 ]
 	then
-		echo ok
-		exit 0
-	else
-		echo failled
-		exit 1
+		if [ `pgrep -f gmond|wc -l` -ge 1 ]
+		then
+			echo ok
+			exit 0
+		fi	
 	fi
-else
-	echo failled
-	exit 1
-	
 fi
+echo failled
+exit 1
 
