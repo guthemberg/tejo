@@ -13,6 +13,21 @@
 sudo chmod ugo+x ${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4/bin/ycsb
 
 
+patern="ycsb-0.1.4"
+
+
+if [ $system_id -eq 0 ]
+then
+	patern="ycsb-0.1.4"
+fi
+
+if [ `pgrep -f run.sh|wc -l` -ge 1 -o `pgrep -f $patern|wc -l` -ge 1 ]
+then
+	echo "workload is running on pid(s):"
+	pgrep -f $patern
+	exit
+fi
+
 #go to home
 #root_dir=/home/user
 #home_dir=${HOME}/svc
