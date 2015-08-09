@@ -63,6 +63,9 @@ if __name__ == '__main__':
     rtt=0
     if os.path.isfile(rtt_file):
         rtt=int(load_object_from_file(rtt_file))
+    else:
+        sys.exit(1)
+
         
     latency_99th_file='/tmp/slo_latency_99th.txt'
     
@@ -78,35 +81,42 @@ if __name__ == '__main__':
                 if current_latency>0:
                     if current_latency>rtt:
                         rtt_list.append(current_latency-rtt)
+        else:
+            sys.exit(1)
+
 
     target_len=10
     target_throughput=get_smaller_value(throughput_values, current_throughput)
-    if len(rtt_list)>=target_rtt and target_throughput<current_throughput:
-        target_rtt=100
-        outliers=0
-        for sample in rtt_list:
-            if sample>target_rtt:
-                outliers=outliers+1
-        
-        if outliers >= (target_len/2):
+    if len(rtt_list)>=target_rtt:
+        if  target_throughput<current_throughput:
+            target_rtt=100
+            outliers=0
+            for sample in rtt_list:
+                if sample>target_rtt:
+                    outliers=outliers+1
+            
+            if outliers >= (target_len/2):
+                if system_id==0:
+                    sed_cmd="\"s|mongo_default_throughput="+current_throughput+"|mongo_default_throughput="+target_throughput+"|g\""
+                    subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+                    stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
+                    subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
+                    subprocess.Popen(["touch", tejo_config['mongo_active_wl_file']], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+                    check_script="/home/"+tejo_config['workload_user']+"/tejo/contrib/pl/check_workload.sh" 
+                    subprocess.Popen(["/bin/sh",check_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+                save_object_to_file([], rtt_list_file)               
+            else:
+                save_object_to_file(rtt_list[1:], rtt_list_file)
+        else:            
             if system_id==0:
-                sed_cmd="\"s|mongo_default_throughput="+current_throughput+"|mongo_default_throughput="+target_throughput+"|g\""
-                subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
                 stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
                 subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
-                subprocess.Popen(["touch", tejo_config['mongo_active_wl_file']], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-                check_script="/home/"+tejo_config['workload_user']+"/tejo/contrib/pl/check_workload.sh" 
-                subprocess.Popen(["/bin/sh",check_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-            save_object_to_file([], rtt_list_file)               
-        else:
-            save_object_to_file(rtt_list[1:], rtt_list_file)               
+            save_object_to_file([], rtt_list_file)
+            sys.exit(1)               
 
         
     else:
-        if len(rtt_list)>=target_rtt:
-            save_object_to_file(rtt_list[1:], rtt_list_file)
-        else:
-            save_object_to_file(rtt_list, rtt_list_file) 
+        save_object_to_file(rtt_list, rtt_list_file) 
     
     sys.exit(0)              
         
