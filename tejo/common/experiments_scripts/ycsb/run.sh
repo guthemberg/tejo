@@ -95,6 +95,9 @@ elif [ $# -eq 2 ]; then
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 50 ]; then
 		threads=4
 		max_conn=20
+	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 200 ]; then
+		threads=16
+		max_conn=384
 	elif [ ${DEFAULT_OPS_PER_SECOND} -eq 300 ]; then
 		threads=24
 		max_conn=512
