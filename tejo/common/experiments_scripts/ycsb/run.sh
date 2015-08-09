@@ -21,7 +21,7 @@ then
 	patern="ycsb-0.1.4"
 fi
 
-if [ `pgrep -f $patern|wc -l` -ge 1 ]
+if [ -e $mongo_active_wl_file -a `pgrep -f $patern|wc -l` -eq 0 ]
 then
 	echo "workload is running on pid(s):"
 	pgrep -f $patern
