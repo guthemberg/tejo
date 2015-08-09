@@ -15,10 +15,14 @@ then
 	if [ `pgrep -f gmond|wc -l` -ge 1 ]
 	then
 		echo ok
+		exit 0
 	else
 		echo failled
+		exit 1
 	fi
 else
 	echo failled
+	exit 1
+	
 fi
 
