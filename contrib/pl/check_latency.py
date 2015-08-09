@@ -103,7 +103,10 @@ if __name__ == '__main__':
 
         
     else:
-        save_object_to_file(rtt_list, rtt_list_file) 
+        if len(rtt_list)>=target_rtt:
+            save_object_to_file(rtt_list[1:], rtt_list_file)
+        else:
+            save_object_to_file(rtt_list, rtt_list_file) 
     
     sys.exit(0)              
         
