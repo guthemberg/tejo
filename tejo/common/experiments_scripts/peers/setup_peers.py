@@ -115,28 +115,40 @@ if __name__ == '__main__':
         if not setup_peers_status[peer]['active']:
             candidates.append(peer)
             
+    
+    if len(sys.argv)==2:
+        peer_to_save=sys.argv[1]
+        setup_peers_status[peer_to_save]['active']=True
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
+        sys.exit(0)
+
     #to setup
     
-    peer_to_setup=candidates[random.randrange(0,len(candidates))]
+    if len(candidates)>0:
+        peer_to_setup=candidates[random.randrange(0,len(candidates))]
+        sys.exit(0)
         
-    script_path=tejo_config['home_dir']+'/contrib/pl/setup.sh'
-    script_output = subprocess.Popen(['/bin/sh',script_path,peer_to_setup], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-    script_path='/home/'+tejo_config['workload_user']+'/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh'
-    key=tejo_config['root_dir']+"/.ssh/id_rsa_cloud"
-    ssh_args=tejo_config['workload_user']+"@"+peer_to_setup    
-    script_output = subprocess.Popen(['ssh','-i', key, "-o", "StrictHostKeyChecking=no", "-t", ssh_args,'/bin/sh',script_path], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-    print "script output: (%s)"%script_output
-    if script_output=='ok':
-        print '%s: ok!' % peer_to_setup
-        setup_peers_status[peer_to_setup]['active']=True
-        save_object_to_file(setup_peers_status, setup_peers_status_file)
-    else:
-        print '%s: failed!' % peer_to_setup
-
-
-
-    print "[%s]:done."%(str(datetime.now()))  
-    sys.exit(0)
+    sys.exit(1)
+    
+#         
+#     script_path=tejo_config['home_dir']+'/contrib/pl/setup.sh'
+#     script_output = subprocess.Popen(['/bin/sh',script_path,peer_to_setup], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+#     script_path='/home/'+tejo_config['workload_user']+'/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh'
+#     key=tejo_config['root_dir']+"/.ssh/id_rsa_cloud"
+#     ssh_args=tejo_config['workload_user']+"@"+peer_to_setup    
+#     script_output = subprocess.Popen(['ssh','-i', key, "-o", "StrictHostKeyChecking=no", "-t", ssh_args,'/bin/sh',script_path], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
+#     print "script output: (%s)"%script_output
+#     if script_output=='ok':
+#         print '%s: ok!' % peer_to_setup
+#         setup_peers_status[peer_to_setup]['active']=True
+#         save_object_to_file(setup_peers_status, setup_peers_status_file)
+#     else:
+#         print '%s: failed!' % peer_to_setup
+# 
+# 
+# 
+#     print "[%s]:done."%(str(datetime.now()))  
+#     sys.exit(0)
         
 #         
 # #    save_workload_list(worload_peers, tejo_config['workload_list_file'])

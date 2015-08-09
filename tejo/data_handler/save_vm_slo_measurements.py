@@ -271,11 +271,20 @@ def get_peer_status_table():
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
     
-    return setup_peers_status
+    return setup_peers_status,nearest_peers_table
 
+def check_nearest_rtt(peer,nearest_peers_table,rtt):
+    if peer in nearest_peers_table:
+        if nearest_peers_table[peer]>0.0:
+            if nearest_peers_table[peer]<rtt:
+                rtt=nearest_peers_table[peer]
+            elif rtt<=0.0:
+                rtt=nearest_peers_table[peer]
+    return rtt
+    
 ###### main        
   
-setup_peers_status=get_peer_status_table()  
+(setup_peers_status,nearest_peers_table)=get_peer_status_table()  
 active_peers=[]
 for peer in setup_peers_status:
     if setup_peers_status[peer]['active']:
@@ -389,16 +398,18 @@ for hostname in workload_hosts:
         #check workload hostname
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
         #print 'workload node name:%s,%s'%(hostname,node_name)
+        checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, rtt)
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
-                                      node_latency_avg,rtt,location)
-        save_peer(setup_peers_status,node_name,rtt,True)
+                                      node_latency_avg,checked_rtt,location)
+        save_peer(setup_peers_status,node_name,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
-        save_peer(setup_peers_status,hostname)
+        checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
+        save_peer(setup_peers_status,node_name,checked_rtt)
         if node_name in active_peers:
             active_peers.remove(node_name)
     
@@ -465,7 +476,8 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
 print dbconn.getDebugMess()
 
 for peer in active_peers:
-    save_peer(setup_peers_status, peer, setup_peers_status[peer]['rtt'])
+    rtt=check_nearest_rtt(peer, nearest_peers_table, setup_peers_status[peer]['rtt'])
+    save_peer(setup_peers_status, peer, rtt)
     
     
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
