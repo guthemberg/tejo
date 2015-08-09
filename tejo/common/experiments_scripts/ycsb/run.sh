@@ -21,7 +21,7 @@ then
 	patern="ycsb-0.1.4"
 fi
 
-if [ `pgrep -f run.sh|wc -l` -ge 1 -o `pgrep -f $patern|wc -l` -ge 1 ]
+if [ `pgrep -f $patern|wc -l` -ge 1 ]
 then
 	echo "workload is running on pid(s):"
 	pgrep -f $patern
