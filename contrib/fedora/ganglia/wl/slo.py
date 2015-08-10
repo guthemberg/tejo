@@ -59,6 +59,8 @@ def get_metrics():
 
         metrics = {}
         
+        tejo_config=ConfigObj(TEJO_CONF_FILE)
+
         #violations
         try:
             metrics['violation']=int(''.join(open('/tmp/slo_violation.txt', 'r').readlines()).strip())
@@ -73,10 +75,19 @@ def get_metrics():
 
         #rtt
         try:
-            tejo_config=ConfigObj(TEJO_CONF_FILE)
             metrics['rtt']=float(load_object_from_file(tejo_config['workload_rtt']))
         except :
             metrics['rtt']=float(0.0)
+            
+        ##workload death
+        
+        try:
+            if (load_object_from_file(tejo_config['workload_death_file'])):
+                metrics['death']=int(1)
+            else:
+                metrics['death']=int(1)
+        except :
+            metrics['death']=int(0)
 
 
         #target throughput
@@ -518,6 +529,17 @@ def metric_init(lparams):
 #             'description': 'TCP correct data packet header predictions',
 #             'groups': groups
 #          }#,
+        {
+            'name': NAME_PREFIX + 'death',
+            'call_back': get_value,
+            'time_max': time_max,
+            'value_type': 'uint',
+            'units': 'Yes: 1/ No: 0',
+            'slope': 'both',
+            'format': '%d',
+            'description': 'Workload death',
+            'groups': groups
+        },
         {
             'name': NAME_PREFIX + 'violation',
             'call_back': get_value,

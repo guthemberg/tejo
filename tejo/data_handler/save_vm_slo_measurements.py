@@ -238,14 +238,15 @@ def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
 
 
-def save_peer(setup_peers_status,hostname,rtt=0.0,active=False):
+def save_peer(setup_peers_status,hostname,wl_death,rtt=0.0,active=False):
     if not setup_peers_status is None:
         setup_peers_status_file=config['workload_peer_status']
         if not hostname in setup_peers_status:
-            setup_peers_status[peer]={'rtt':rtt,'active':active}
+            setup_peers_status[peer]={'rtt':rtt,'active':active,'dead':wl_death}
             save_object_to_file(setup_peers_status, setup_peers_status_file)
         else:
             setup_peers_status[hostname]['active']=active
+            setup_peers_status[hostname]['dead']=wl_death
             save_object_to_file(setup_peers_status, setup_peers_status_file)
 
 
@@ -269,7 +270,7 @@ def get_peer_status_table():
             del setup_peers_status[peer] 
     else:
         for peer in nearest_peers_table:
-            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
+            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
     
     return setup_peers_status,nearest_peers_table
 
@@ -319,6 +320,7 @@ max_latency_95th_filename=config['slo_max_latency_95th_filename']
 max_latency_99th_filename=config['slo_max_latency_99th_filename']
 max_latency_avg_filename=config['slo_max_latency_avg_filename']
 rtt_filename=config['slo_rtt_filename']
+death_filename=config['slo_death_filename']
 
 #rrd_file_prefix=config['rrd_file_prefix']
 
@@ -337,6 +339,8 @@ max_latency_95th=0
 max_latency_99th=0
 max_latency_avg=0
 rtt=0.0
+wl_death=0
+dead=False
 
 number_of_workloads=0
 failed_data_collection=False
@@ -357,6 +361,11 @@ for hostname in workload_hosts:
     
     rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+latency_99th_filename
     node_latency_99th=getIntValue(rrd_file)
+
+    rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+death_filename
+    wl_death=getIntValue(rrd_file)
+    if wl_death==1:
+        dead=True
     
 
     if (node_latency_95th>0 and node_latency_99th>0):
@@ -393,6 +402,7 @@ for hostname in workload_hosts:
 
         rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+rtt_filename
         rtt=getFloatValue(rrd_file)
+
         
         number_of_workloads=number_of_workloads+1
         #check workload hostname
@@ -403,13 +413,13 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,checked_rtt,location)
-        save_peer(setup_peers_status,node_name,checked_rtt,True)
+        save_peer(setup_peers_status,node_name,dead,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
         node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
         checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
-        save_peer(setup_peers_status,node_name,checked_rtt)
+        save_peer(setup_peers_status,node_name,dead,checked_rtt)
         if node_name in active_peers:
             active_peers.remove(node_name)
     

@@ -103,16 +103,16 @@ if __name__ == '__main__':
                 del setup_peers_status[peer] 
         for peer in nearest_peers_table:
              if not peer in setup_peers_status:
-                 setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
+                 setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
     else:
         for peer in nearest_peers_table:
-            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False}
+            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
      
         
     #getting non setuped nodes
     candidates=[]
     for peer in setup_peers_status:
-        if not setup_peers_status[peer]['active']:
+        if not setup_peers_status[peer]['active'] and not setup_peers_status[peer]['dead']:
             candidates.append(peer)
             
     

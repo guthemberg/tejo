@@ -20,6 +20,7 @@ slo_max_latency_95th_filename=slo_max_latency_95th.rrd
 slo_max_latency_99th_filename=slo_max_latency_99th.rrd
 slo_max_latency_avg_filename=slo_max_latency_avg.rrd
 slo_rtt_filename=slo_rtt.rrd
+slo_death_filename=slo_death.rrd
 
 vm_bytes_out_filename=bytes_out.rrd
 load_one_filename=load_one.rrd
@@ -57,6 +58,7 @@ mongo_recordcount=2400000
 mongo_maxexecutiontime=120
 mongo_default_throughput=200
 mongo_active_wl_file=/home/USER/wl_active.hit
+workload_death_file=/tmp/wl_death.pck
 volt_ports="21212,3021,5555,2181,21211"
 volt_leader=LOCATION-vm-001.MY_DOMAIN
 volt_wl_duration=480
@@ -72,6 +74,8 @@ workload_strategy=nearest
 workload_target=WL_TARGET
 workload_user=upmc_aren
 workload_peer_status=/home/USER/peers_tatus_table.pck
+workload_target_rates=300,200,100,50
+workload_death_file=/tmp/wl_death.pck
 
 system_id=0
 

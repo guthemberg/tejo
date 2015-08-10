@@ -12,6 +12,10 @@ collection_group {
     collect_every = 10
     time_threshold = 15
     metric {
+        name = "slo_death"
+        title = "Workload death"
+    }
+    metric {
         name = "slo_violation"
         title = "SLO violation"
     }
