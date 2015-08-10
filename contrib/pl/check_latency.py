@@ -97,7 +97,7 @@ if __name__ == '__main__':
         
     #check liveness of the workload
     ##timeout is 2 hour (60*60*2 in seconds)
-    if (last_time-int(time.time()))>(60*60*2):
+    if (last_time-int(time.time()))>(60*60*4):
         kill_workload(tejo_config, rtt_list_file)
         sys.exit(1)
 
