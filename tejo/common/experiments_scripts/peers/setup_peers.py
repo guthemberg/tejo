@@ -87,7 +87,7 @@ def load_object_from_file(input_file):
 
 
 if __name__ == '__main__':
-    print "[%s]:update membership..."%(str(datetime.now()))    
+#    print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama=tejo_config['root_dir']+'/yanoama'
     setup_peers_status_file=tejo_config['root_dir']+'/peers_tatus_table.pck'
