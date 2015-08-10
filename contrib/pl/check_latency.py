@@ -31,7 +31,7 @@ def save_object_to_file(myobject,output_file):
     f.close()
 
 def is_file_new(input_file,last_ts,delta=60):    
-    if (int(os.path.getmtime(input_file))-last_time_file)>delta:
+    if (int(os.path.getmtime(input_file))-last_ts)>delta:
         return True
     return False
     
