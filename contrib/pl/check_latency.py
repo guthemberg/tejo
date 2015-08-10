@@ -96,8 +96,8 @@ if __name__ == '__main__':
         save_object_to_file(int(time.time()), last_time_file)
         
     #check liveness of the workload
-    ##timeout is 2 hour (60*60*2 in seconds)
-    if (last_time-int(time.time()))>(60*60*4):
+    ##timeout is 24 hour (60*60*24 in seconds)
+    if (last_time-int(time.time()))>(60*60*24):
         kill_workload(tejo_config, rtt_list_file)
         sys.exit(1)
 
