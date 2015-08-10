@@ -79,7 +79,7 @@ def kill_workload(tejo_config,rtt_list_file):
 if __name__ == '__main__':
 
     tejo_config=ConfigObj(TEJO_CONF_FILE)
-    throughput_values=map(int,tejo_config['workload_target_rates'].split(','))
+    throughput_values=map(int,tejo_config['workload_target_rates'])
     current_throughput=int(tejo_config['mongo_default_throughput'])
     system_id=int(tejo_config['system_id'])
     rtt_list_file='/tmp/peer_rtt_list.pck'
