@@ -139,7 +139,7 @@ if __name__ == '__main__':
         smaller_target_throughput=get_smaller_value(throughput_values, current_throughput)
         if  smaller_target_throughput<current_throughput:    
             if system_id==0:
-                sed_cmd="\"s|mongo_default_throughput="+current_throughput+"|mongo_default_throughput="+smaller_target_throughput+"|g\""
+                sed_cmd="\"s|mongo_default_throughput="+str(current_throughput)+"|mongo_default_throughput="+str(smaller_target_throughput)+"|g\""
                 subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
                 stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
                 subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         bigger_target_throughput=get_bigger_value(throughput_values, current_throughput)
         if bigger_target_throughput>current_throughput:
             if system_id==0:
-                sed_cmd="\"s|mongo_default_throughput="+current_throughput+"|mongo_default_throughput="+bigger_target_throughput+"|g\""
+                sed_cmd="\"s|mongo_default_throughput="+str(current_throughput)+"|mongo_default_throughput="+str(bigger_target_throughput)+"|g\""
                 subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
                 stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
                 subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
