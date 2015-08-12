@@ -11,15 +11,15 @@ then
 	ts=`date`
 	echo "[$ts]$peer_to_setep" >> /tmp/peers_to_setup_history.log
 	/bin/sh $home_dir/contrib/pl/setup.sh $peer_to_setep
-	target="workload_user@peer_to_setep"
-	checking_result=`ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=60 -o ServerAliveInterval=60 $target sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh`
-	if [ $? -eq 0 ]
-	then
-		python $home_dir/tejo/common/experiments_scripts/peers/setup_peers.py $peer_to_setep
+#	target="workload_user@peer_to_setep"
+#	checking_result=`ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=60 -o ServerAliveInterval=60 $target sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh`
+#	if [ $? -eq 0 ]
+#	then
+#		python $home_dir/tejo/common/experiments_scripts/peers/setup_peers.py $peer_to_setep
 		exit 0
-	else
-		exit 1
-	fi
+#	else
+#		exit 1
+#	fi
 fi
 exit 1
 		
