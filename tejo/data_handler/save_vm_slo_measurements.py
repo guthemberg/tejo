@@ -232,7 +232,7 @@ def get_hostname(cluster,username,node_id, hostname_table):
         
         ###known exceptions
         if node_id in failed_host_table:
-            if failed_host_table[node_id]>5:
+            if failed_host_table[node_id]>12:
                 #print "known bad node %s" % node_id
                 return (node_id,hostname_table)
             
