@@ -186,7 +186,15 @@ def get_nodes():
     return (wls,vms)
 
 
-def get_hostname(cluster,username,node_id):
+def get_hostname_table():
+    hostname_table={}
+    if os.path.isfile(hostname_table_file):
+        hostname_table=load_object_from_file(hostname_table_file)
+    else:
+        save_object_to_file(hostname_table, hostname_table_file)
+    return hostname_table
+
+def get_hostname(cluster,username,node_id, hostname_table):
 #     print cluster
 #     print node_id
     try:
@@ -204,15 +212,10 @@ def get_hostname(cluster,username,node_id):
     except:
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
-        hostname_table={}
-        if os.path.isfile(hostname_table_file):
-            hostname_table=load_object_from_file(hostname_table_file)
-        else:
-            save_object_to_file(hostname_table, hostname_table_file)
             
         if node_id in hostname_table:
             print "found in table:%s:%s"%(node_id,hostname_table[node_id])
-            return hostname_table[node_id]
+            return hostname_table[node_id],hostname_table
         
         rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
         destination=username+'@'+node_id
@@ -221,15 +224,14 @@ def get_hostname(cluster,username,node_id):
         if cmd.returncode == 0:
             print "add to table:%s:%s"%(node_id,new_node_id)
             hostname_table[node_id]=new_node_id            
-            save_object_to_file(hostname_table, hostname_table_file)
-            return new_node_id
+            return new_node_id,hostname_table
         print "ssh to %s failed"%node_id
-        return node_id
+        return node_id,hostname_table
 
-def check_hostname(cluster,username,name):
+def check_hostname(cluster,username,name,hostname_table):
     try:
         int(name.split('.')[-1])
-        return get_hostname(cluster, username,name)
+        return get_hostname(cluster, username,name,hostname_table)
     except:
         return name
 #exclude some selected, troubled rrd files
@@ -312,7 +314,7 @@ def check_nearest_rtt(peer,nearest_peers_table,rtt):
     return rtt
     
 ###### main        
-  
+hostname_table=get_hostname_table()
 (setup_peers_status,nearest_peers_table)=get_peer_status_table()  
 active_peers=[]
 for peer in setup_peers_status:
@@ -440,7 +442,7 @@ for hostname in workload_hosts:
         
         number_of_workloads=number_of_workloads+1
         #check workload hostname
-        node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
+        (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname,hostname_table)
         #print 'workload node name:%s,%s'%(hostname,node_name)
         checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, rtt)
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
@@ -452,7 +454,7 @@ for hostname in workload_hosts:
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
-        node_name=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname)
+        (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname, hostname_table)
         checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
         save_peer(setup_peers_status,node_name,dead,checked_rtt)
         if node_name in active_peers:
@@ -508,7 +510,8 @@ for node in vms:
             
     #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
 #     if alive:
-    insert_vm_stat_into_db(ts,get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node),dbconn,keys,isFailed(config, fault_flag,workload_hosts),values,location)
+    (vm_hostname,hostname_table)=get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node)
+    insert_vm_stat_into_db(ts,vm_hostname,dbconn,keys,isFailed(config, fault_flag,workload_hosts),values,location)
     number_of_vms = number_of_vms + 1
 
 #save slo status
@@ -524,6 +527,7 @@ for peer in active_peers:
     rtt=check_nearest_rtt(peer, nearest_peers_table, setup_peers_status[peer]['rtt'])
     save_peer(setup_peers_status, peer, rtt)
     
+save_object_to_file(hostname_table, hostname_table_file)
     
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
 #    close_ssh_tunnel_to_master_db()
