@@ -206,7 +206,12 @@ def get_hostname_table():
 def get_hostname(cluster,username,node_id, hostname_table):
 #     print cluster
 #     print node_id
+    if node_id in hostname_table:
+        print "found in table:%s:%s"%(node_id,hostname_table[node_id])
+        return hostname_table[node_id],hostname_table
+
     try:
+        print "hostname try: %s"%node_id
         url=config['ganglia_api']+'/'+cluster+'/'+node_id
 #         print url
         document=urlopen(url)
@@ -216,9 +221,12 @@ def get_hostname(cluster,username,node_id, hostname_table):
         for obj in node[u'GANGLIA_XML'][u'GRID'][u'CLUSTER'][u'HOST'][u'METRIC']:
 #             print obj
             if obj[u'@NAME']=='miscellaneous_hostname':
-                return obj[u'@VAL']
-        return node_id
+                new_hostname=obj[u'@VAL']
+                hostname_table[node_id]=new_node_id
+                return (new_hostname,hostname_table)
+        return (node_id,hostname_table)
     except:
+        print "hostname try again: %s"%node_id
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
         
@@ -228,9 +236,6 @@ def get_hostname(cluster,username,node_id, hostname_table):
                 print "known bad node %s" % node_id
                 return (node_id,hostname_table)
             
-        if node_id in hostname_table:
-            print "found in table:%s:%s"%(node_id,hostname_table[node_id])
-            return hostname_table[node_id],hostname_table
         
         rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
         destination=username+'@'+node_id
