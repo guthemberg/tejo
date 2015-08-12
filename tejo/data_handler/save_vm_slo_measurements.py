@@ -510,7 +510,7 @@ for node in vms:
             
     #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
 #     if alive:
-    (vm_hostname,hostname_table)=get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node)
+    (vm_hostname,hostname_table)=get_hostname(rrd_path_vms_prefix.split('/')[-1], config['guest_vm_sys_user'],node,hostname_table)
     insert_vm_stat_into_db(ts,vm_hostname,dbconn,keys,isFailed(config, fault_flag,workload_hosts),values,location)
     number_of_vms = number_of_vms + 1
 
