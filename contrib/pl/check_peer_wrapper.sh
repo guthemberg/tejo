@@ -4,17 +4,6 @@
 . /etc/tejo.conf
 
 
-kill_workload()
-{       
-    if [ $system_id -eq 0 ]
-    then
-        /bin/sh ${home_dir}/tejo/common/experiments_scripts/ycsb/stop.sh
-        save_object_to_file([], rtt_list_file)   
-        save_object_to_file(True,tejo_config['workload_death_file'])            
-    sys.exit(1)
-	fi
-}
-
 #### main
 
 latency_result="`python $home_dir/contrib/pl/check_latency.py`"
