@@ -226,14 +226,14 @@ def get_hostname(cluster,username,node_id, hostname_table):
             hostname_table[node_id]=new_node_id            
             return new_node_id,hostname_table
         print "ssh to %s failed"%node_id
-        return node_id,hostname_table
+        return (node_id,hostname_table)
 
 def check_hostname(cluster,username,name,hostname_table):
     try:
         int(name.split('.')[-1])
-        return get_hostname(cluster, username,name,hostname_table)
+        return (get_hostname(cluster, username,name,hostname_table))
     except:
-        return name
+        return (name,hostname_table)
 #exclude some selected, troubled rrd files
 def is_it_an_invalid_rrd_file(name):
     if 'diskstat' in name:
