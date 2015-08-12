@@ -20,6 +20,17 @@ DEATH_TIME=int(config['time_to_vm_death'])
 #available in home_dir
 from tejo.common.db.postgres.database import MyDB
 
+hostname_table_file='/tmp/hostname_table.pck'
+
+
+def save_object_to_file(myobject,output_file):
+    f = open(output_file,'w')
+    pickle.dump(myobject, f)
+    f.close()
+
+def load_object_from_file(input_file):
+    return pickle.load( open( input_file, "rb" ) )
+
 def isFailed(config,fault_flag,workload_hosts):
     result=0
     for host in workload_hosts:
@@ -193,9 +204,27 @@ def get_hostname(cluster,username,node_id):
     except:
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
+        hostname_table={}
+        if os.path.isfile(hostname_table_file):
+            hostname_table=load_object_from_file(hostname_table_file)
+        else:
+            save_object_to_file(hostname_table, hostname_table_file)
+            
+        if node_id in hostname_table:
+            print "found in table:%s:%s"%(node_id,hostname_table[node_id])
+            return hostname_table[node_id]
+        
         rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
         destination=username+'@'+node_id
-        node_id = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no',destination,'hostname'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        cmd = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no', '-o', 'PasswordAuthentication=no', '-o','ConnectTimeout=5' ,'-o', 'ServerAliveInterval=5',destination,'hostname'], stdout=subprocess.PIPE, close_fds=True))
+        new_node_id=cmd.communicate()[0].strip()
+        cmd.communicate()[0].strip()
+        if cmd.returncode == 0:
+            print "add to table:%s:%s"%(node_id,new_node_id)
+            hostname_table[node_id]=new_node_id            
+            save_object_to_file(hostname_table, hostname_table_file)
+            return new_node_id
+        print "ssh failed"
         return node_id
 
 def check_hostname(cluster,username,name):
