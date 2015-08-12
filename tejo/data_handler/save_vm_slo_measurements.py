@@ -207,11 +207,11 @@ def get_hostname(cluster,username,node_id, hostname_table):
 #     print cluster
 #     print node_id
     if node_id in hostname_table:
-        print "found in table:%s:%s"%(node_id,hostname_table[node_id])
+        #print "found in table:%s:%s"%(node_id,hostname_table[node_id])
         return hostname_table[node_id],hostname_table
 
     try:
-        print "hostname try: %s"%node_id
+        #print "hostname try: %s"%node_id
         url=config['ganglia_api']+'/'+cluster+'/'+node_id
 #         print url
         document=urlopen(url)
@@ -226,14 +226,14 @@ def get_hostname(cluster,username,node_id, hostname_table):
                 return (new_hostname,hostname_table)
         return (node_id,hostname_table)
     except:
-        print "hostname try again: %s"%node_id
+        #print "hostname try again: %s"%node_id
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
         
         ###known exceptions
         if node_id in failed_host_table:
             if failed_host_table[node_id]>5:
-                print "known bad node %s" % node_id
+                #print "known bad node %s" % node_id
                 return (node_id,hostname_table)
             
         
@@ -242,10 +242,10 @@ def get_hostname(cluster,username,node_id, hostname_table):
         cmd = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no', '-o', 'PasswordAuthentication=no', '-o','ConnectTimeout=5' ,'-o', 'ServerAliveInterval=5',destination,'hostname'], stdout=subprocess.PIPE, close_fds=True))
         new_node_id=cmd.communicate()[0].strip()
         if cmd.returncode == 0:
-            print "add to table:%s:%s"%(node_id,new_node_id)
+            #print "add to table:%s:%s"%(node_id,new_node_id)
             hostname_table[node_id]=new_node_id            
             return new_node_id,hostname_table
-        print "ssh to %s failed"%node_id
+        #print "ssh to %s failed"%node_id
         fails_counter=1
         if node_id in failed_host_table:
             fails_counter=failed_host_table[node_id]+1
@@ -258,6 +258,7 @@ def check_hostname(cluster,username,name,hostname_table):
         int(name.split('.')[-1])
         return (get_hostname(cluster, username,name,hostname_table))
     except:
+        ##this means that the hostname is ok!!!
         return (name,hostname_table)
 #exclude some selected, troubled rrd files
 def is_it_an_invalid_rrd_file(name):
@@ -404,7 +405,7 @@ failed_data_collection=False
 print "getting nodes..."
 workload_hosts,vms=get_nodes()
 print "number of wl nodes: %d" % len(workload_hosts)
-print workload_hosts
+#print workload_hosts
 print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
@@ -430,7 +431,7 @@ for hostname in workload_hosts:
     
 
     if (node_latency_95th>0 and node_latency_99th>0):
-        print "looking for %s" % hostname
+        #print "looking for %s" % hostname
         
         latency_95th=latency_95th+node_latency_95th
         latency_99th=latency_99th+node_latency_99th
@@ -480,7 +481,7 @@ for hostname in workload_hosts:
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
-        print "looking for %s else" % hostname
+        #print "looking for %s else" % hostname
         (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname, hostname_table)
         checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
         save_peer(setup_peers_status,node_name,dead,checked_rtt)
