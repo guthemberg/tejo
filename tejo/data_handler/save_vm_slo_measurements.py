@@ -245,6 +245,7 @@ def get_hostname(cluster,username,node_id, hostname_table):
         if node_id in failed_host_table:
             fails_counter=failed_host_table[node_id]+1
         failed_host_table[node_id]=fails_counter
+        save_object_to_file(failed_host_table, failed_hostnames)        
         return (node_id,hostname_table)
 
 def check_hostname(cluster,username,name,hostname_table):
