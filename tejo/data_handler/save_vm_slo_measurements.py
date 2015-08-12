@@ -430,6 +430,7 @@ for hostname in workload_hosts:
     
 
     if (node_latency_95th>0 and node_latency_99th>0):
+        print "looking for %s" % hostname
         
         latency_95th=latency_95th+node_latency_95th
         latency_99th=latency_99th+node_latency_99th
@@ -479,6 +480,7 @@ for hostname in workload_hosts:
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
+        print "looking for %s else" % hostname
         (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname, hostname_table)
         checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
         save_peer(setup_peers_status,node_name,dead,checked_rtt)
