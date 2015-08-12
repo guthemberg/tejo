@@ -218,13 +218,12 @@ def get_hostname(cluster,username,node_id):
         destination=username+'@'+node_id
         cmd = (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no', '-o', 'PasswordAuthentication=no', '-o','ConnectTimeout=5' ,'-o', 'ServerAliveInterval=5',destination,'hostname'], stdout=subprocess.PIPE, close_fds=True))
         new_node_id=cmd.communicate()[0].strip()
-        cmd.communicate()[0].strip()
         if cmd.returncode == 0:
             print "add to table:%s:%s"%(node_id,new_node_id)
             hostname_table[node_id]=new_node_id            
             save_object_to_file(hostname_table, hostname_table_file)
             return new_node_id
-        print "ssh failed"
+        print "ssh to %s failed"%node_id
         return node_id
 
 def check_hostname(cluster,username,name):
