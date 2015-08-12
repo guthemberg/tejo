@@ -69,7 +69,12 @@ def check_rtt_values(rtt_list,target_rtt,downgrade_length,upgrade_length,outlier
             if outliers==0:
                 save_object_to_file(outliers, outliers_file)
                 return 'increase'
-            
+    elif len(rtt_list) > 0:
+        for sample in rtt_list:
+            if sample>target_rtt:
+                outliers=outliers+1
+        save_object_to_file(outliers, outliers_file)
+        return 'ok'
     save_object_to_file(outliers, outliers_file)
     return 'ok'
  
