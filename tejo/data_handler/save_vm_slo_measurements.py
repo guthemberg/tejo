@@ -22,6 +22,8 @@ from tejo.common.db.postgres.database import MyDB
 
 hostname_table_file='/tmp/hostname_table.pck'
 
+failed_hostnames='/tmp/failed_hostname_table.pck'
+
 
 def save_object_to_file(myobject,output_file):
     f = open(output_file,'w')
@@ -30,6 +32,13 @@ def save_object_to_file(myobject,output_file):
 
 def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
+
+failed_host_table={}
+if os.path.isfile(failed_hostnames):
+    failed_host_table = load_object_from_file(failed_hostnames)
+else:
+    save_object_to_file(failed_host_table, failed_hostnames)
+
 
 def isFailed(config,fault_flag,workload_hosts):
     result=0
@@ -212,6 +221,12 @@ def get_hostname(cluster,username,node_id, hostname_table):
     except:
         #trying through ssh
         #-i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no
+        
+        ###known exceptions
+        if node_id in failed_host_table:
+            if failed_host_table[node_id]>5:
+                print "known bad node %s" % node_id
+                return (node_id,hostname_table)
             
         if node_id in hostname_table:
             print "found in table:%s:%s"%(node_id,hostname_table[node_id])
@@ -226,6 +241,10 @@ def get_hostname(cluster,username,node_id, hostname_table):
             hostname_table[node_id]=new_node_id            
             return new_node_id,hostname_table
         print "ssh to %s failed"%node_id
+        fails_counter=1
+        if node_id in failed_host_table:
+            fails_counter=failed_host_table[node_id]+1
+        failed_host_table[node_id]=fails_counter
         return (node_id,hostname_table)
 
 def check_hostname(cluster,username,name,hostname_table):
