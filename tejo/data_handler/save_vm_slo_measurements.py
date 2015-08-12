@@ -399,6 +399,7 @@ rtt=0.0
 wl_death=0
 dead=False
 outliers=0
+node_target_throughput=0
 
 number_of_workloads=0
 failed_data_collection=False
@@ -449,7 +450,8 @@ for hostname in workload_hosts:
         violation=violation+node_violation
         
         rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+target_throughput_filename
-        target_throughput=target_throughput+getIntValue(rrd_file)
+        node_target_throughput=getIntValue(rrd_file)
+        target_throughput=target_throughput+node_target_throughput
         
         rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+system_id_filename
         system_id=getIntValue(rrd_file)
@@ -476,7 +478,7 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,checked_rtt,location, \
-                                      target_throughput, outliers)
+                                      node_target_throughput, outliers)
         save_peer(setup_peers_status,node_name,dead,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
