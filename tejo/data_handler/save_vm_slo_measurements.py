@@ -349,6 +349,7 @@ failed_data_collection=False
 print "getting nodes..."
 workload_hosts,vms=get_nodes()
 print "number of wl nodes: %d" % len(workload_hosts)
+print workload_hosts
 print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
