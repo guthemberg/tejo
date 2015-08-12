@@ -53,8 +53,8 @@ def insert_slo_state_into_db(ts,dbconn,throughput,violation, \
 ##this function expects ts as a string and throughput and violation as integers
 def insert_workload_state_into_db(ts,dbconn,hostname, throughput,violation, \
                              system_id, latency_95th,latency_99th,latency_avg, \
-                             rtt,location):
-    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d,%.4f,'%s')" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location))
+                             rtt,location,target_throughput,outliers):
+    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d,%.4f,'%s',%d,%d)" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers))
 
 def format_db_value(db_value):
     return str(float(db_value))
@@ -321,6 +321,7 @@ max_latency_99th_filename=config['slo_max_latency_99th_filename']
 max_latency_avg_filename=config['slo_max_latency_avg_filename']
 rtt_filename=config['slo_rtt_filename']
 death_filename=config['slo_death_filename']
+outliers_filename=config['slo_outliers_filename']
 
 #rrd_file_prefix=config['rrd_file_prefix']
 
@@ -341,6 +342,7 @@ max_latency_avg=0
 rtt=0.0
 wl_death=0
 dead=False
+outliers=0
 
 number_of_workloads=0
 failed_data_collection=False
@@ -366,6 +368,9 @@ for hostname in workload_hosts:
     wl_death=getIntValue(rrd_file)
     if wl_death==1:
         dead=True
+
+    rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+outliers_filename
+    outliers=getIntValue(rrd_file)
     
 
     if (node_latency_95th>0 and node_latency_99th>0):
@@ -412,7 +417,8 @@ for hostname in workload_hosts:
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
-                                      node_latency_avg,checked_rtt,location)
+                                      node_latency_avg,checked_rtt,location, \
+                                      target_throughput, outliers)
         save_peer(setup_peers_status,node_name,dead,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)

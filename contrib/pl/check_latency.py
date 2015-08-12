@@ -30,7 +30,7 @@ def save_object_to_file(myobject,output_file):
     pickle.dump(myobject, f)
     f.close()
 
-def is_file_new(input_file,last_ts,delta=60):    
+def is_file_new(input_file,last_ts,delta=30):    
     if (int(os.path.getmtime(input_file))-last_ts)>delta:
         return True
     return False
@@ -51,43 +51,66 @@ def get_bigger_value(lista,target):
 ##1 to increase
 ##0 to keep
 ##-1 to reduce
-def check_rtt_values(rtt_list,target_rtt,downgrade_length,upgrade_length):
+def check_rtt_values(rtt_list,target_rtt,downgrade_length,upgrade_length,outliers_file):
     base_rate=2
+    outliers=0
     if upgrade_length>=downgrade_length and len(rtt_list)>=downgrade_length and downgrade_length>=base_rate:
-        outliers=0
         for sample in rtt_list[-(downgrade_length):]:
             if sample>target_rtt:
                 outliers=outliers+1
         if outliers>(int(downgrade_length/base_rate)):
-            return -1
+            save_object_to_file(outliers, outliers_file)
+            return 'decrease'
         #extended search to upgrade
         if len(rtt_list)>=upgrade_length:
             for sample in rtt_list[-(upgrade_length):-(downgrade_length)]:
                 if sample>target_rtt:
                     outliers=outliers+1
             if outliers==0:
-                return 1
-    return 0
+                save_object_to_file(outliers, outliers_file)
+                return 'increase'
+            
+    save_object_to_file(outliers, outliers_file)
+    return 'ok'
  
-def kill_workload(tejo_config,rtt_list_file):       
-    if system_id==0:
-        stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
-        subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
-        save_object_to_file([], rtt_list_file)   
-        save_object_to_file(True,tejo_config['workload_death_file'])            
-    sys.exit(1)
 
 if __name__ == '__main__':
 
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     throughput_values=map(int,tejo_config['workload_target_rates'])
-    current_throughput=int(tejo_config['mongo_default_throughput'])
+    current_throughput=int(tejo_config['workload_throughput'])
     system_id=int(tejo_config['system_id'])
     rtt_list_file='/tmp/peer_rtt_list.pck'
     last_time_file='/tmp/peer_rtt_list_last_ts.pck'
     rtt_list=[]
     if os.path.isfile(rtt_list_file):
         rtt_list=load_object_from_file(rtt_list_file)
+    downgrade_length=10
+    upgrade_length=20
+    target_rtt=100
+
+
+    if len(sys.argv)==4:
+        peer_is_dead=int(sys.argv[1])
+        if peer_is_dead==1:
+            save_object_to_file([], rtt_list_file)
+            save_object_to_file(int(time.time()), last_time_file)
+            save_object_to_file(True,tejo_config['workload_death_file'])
+            sys.exit(1)
+            
+        erase_rtt_list_flag=int(sys.argv[2])
+        if erase_rtt_list_flag == 1:
+            save_object_to_file([], rtt_list_file)
+        else:
+            rtt_list.append(int(sys.argv[3]))
+            if len(rtt_list)<=upgrade_length:
+                save_object_to_file(rtt_list, rtt_list_file)
+            else:
+                save_object_to_file(rtt_list[1:], rtt_list_file)
+        save_object_to_file(int(time.time()), last_time_file)
+
+        sys.exit(0)
+
         
     last_time=int(time.time())
     if os.path.isfile(last_time_file):
@@ -97,9 +120,11 @@ if __name__ == '__main__':
         
     #check liveness of the workload
     ##timeout is 24 hour (60*60*24 in seconds)
+    to_kill=0
     if (last_time-int(time.time()))>(60*60*24):
-        kill_workload(tejo_config, rtt_list_file)
-        sys.exit(1)
+        to_kill=1
+        sys.stdout.write("%s %d %d %d %d"%('whatever',0,0,0,to_kill))
+        sys.exit(0)
 
             
     
@@ -113,6 +138,7 @@ if __name__ == '__main__':
         
     latency_99th_file='/tmp/slo_latency_99th.txt'
     
+    new_rtt=0
     if rtt>0:
         if os.path.isfile(latency_99th_file):
             if is_file_new(latency_99th_file,last_time):
@@ -124,51 +150,26 @@ if __name__ == '__main__':
                     
                 if current_latency>0:
                     if current_latency>rtt:
-                        rtt_list.append(current_latency-rtt)
+                        new_rtt=current_latency-rtt
+                        rtt_list.append(new_rtt)
+                    else:
+                        sys.exit(1)
+                else:
+                    sys.exit(1)
+            else:
+                sys.exit(1)
+
         else:
             sys.exit(1)
 
 
-    downgrade_length=10
-    upgrade_length=20
-    target_rtt=100
-
-    action=check_rtt_values(rtt_list, target_rtt, downgrade_length, upgrade_length)
+    action=check_rtt_values(rtt_list, target_rtt, downgrade_length, upgrade_length,tejo_config['workload_outliers_file'])
     
-    if action == -1:
-        smaller_target_throughput=get_smaller_value(throughput_values, current_throughput)
-        if  smaller_target_throughput<current_throughput:    
-            if system_id==0:
-                rtt_list=[]
-                sed_cmd="s|mongo_default_throughput="+str(current_throughput)+"|mongo_default_throughput="+str(smaller_target_throughput)+"|g"
-                print "sudo sed -i "+sed_cmd+' /etc/tejo.conf'
-                subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-                stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
-                subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
-                subprocess.Popen(["touch", tejo_config['mongo_active_wl_file']], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-                check_script="/home/"+tejo_config['workload_user']+"/tejo/contrib/pl/check_workload.sh" 
-                subprocess.Popen(["/bin/sh",check_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-        else:
-            kill_workload(tejo_config,rtt_list_file)
-            sys.exit(1)
-    elif action== 1:
-        bigger_target_throughput=get_bigger_value(throughput_values, current_throughput)
-        if bigger_target_throughput>current_throughput:
-            if system_id==0:
-                rtt_list=[]
-                sed_cmd="s|mongo_default_throughput="+str(current_throughput)+"|mongo_default_throughput="+str(bigger_target_throughput)+"|g"
-                subprocess.Popen(["sudo","sed","-i",sed_cmd,'/etc/tejo.conf'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-                stop_script="/home/"+tejo_config['workload_user']+"/tejo/tejo/common/experiments_scripts/ycsb/stop.sh" 
-                subprocess.Popen(["/bin/sh",stop_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()            
-                subprocess.Popen(["touch", tejo_config['mongo_active_wl_file']], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
-                check_script="/home/"+tejo_config['workload_user']+"/tejo/contrib/pl/check_workload.sh" 
-                subprocess.Popen(["/bin/sh",check_script], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
 
-    if len(rtt_list)<=upgrade_length:
-        save_object_to_file(rtt_list, rtt_list_file)
-    else:
-        save_object_to_file(rtt_list[1:], rtt_list_file)
-        
-    save_object_to_file(int(time.time()), last_time_file)
-
+    #to setup
+    #when len(sys.argv)==1
+    smaller_target_throughput=get_smaller_value(throughput_values, current_throughput)
+    bigger_target_throughput=get_bigger_value(throughput_values, current_throughput)
+    sys.stdout.write("%s %d %d %d %d"%(action,smaller_target_throughput,bigger_target_throughput,new_rtt,to_kill))
     sys.exit(0)
+        

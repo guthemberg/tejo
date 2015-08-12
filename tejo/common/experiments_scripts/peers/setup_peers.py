@@ -123,7 +123,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     #to setup
-    
+    #when len(sys.argv)==1
     if len(candidates)>0:
         peer_to_setup=candidates[random.randrange(0,len(candidates))]
         sys.stdout.write(peer_to_setup)
