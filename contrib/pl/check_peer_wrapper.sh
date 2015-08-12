@@ -65,7 +65,7 @@ then
 		erase_rtt_list_flag=1
 		if [ $system_id -eq 0 ] 
 		then
-			sudo sed -i "s|workload_throughput=${workload_throughput}|workload_throughput=${bigger_target_throughput}" /etc/tejo.conf
+			sudo sed -i "s|workload_throughput=${workload_throughput}|workload_throughput=${bigger_target_throughput}|g" /etc/tejo.conf
 			/bin/sh ${home_dir}/tejo/common/experiments_scripts/ycsb/stop.sh
 			touch $mongo_active_wl_file
 		fi
@@ -80,7 +80,7 @@ then
 		erase_rtt_list_flag=1
 		if [ $system_id -eq 0 ] 
 		then
-			sudo sed -i "s|workload_throughput=${workload_throughput}|workload_throughput=${smaller_target_throughput}" /etc/tejo.conf
+			sudo sed -i "s|workload_throughput=${workload_throughput}|workload_throughput=${smaller_target_throughput}|g" /etc/tejo.conf
 			/bin/sh ${home_dir}/tejo/common/experiments_scripts/ycsb/stop.sh
 			touch $mongo_active_wl_file
 		fi
