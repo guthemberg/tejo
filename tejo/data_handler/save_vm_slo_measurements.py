@@ -479,7 +479,7 @@ for hostname in workload_hosts:
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,checked_rtt,location, \
                                       node_target_throughput, outliers)
-        save_peer(setup_peers_status,node_name,dead,checked_rtt,True)
+        save_peer(setup_peers_status,node_name,False,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
