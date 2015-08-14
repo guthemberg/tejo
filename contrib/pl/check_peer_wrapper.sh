@@ -58,7 +58,7 @@ then
 fi
 
 
-if [ "$actions" = "increase" ]
+if [ "$action" = "increase" ]
 then
 	if [ $bigger_target_throughput -gt $workload_throughput ]
 	then
