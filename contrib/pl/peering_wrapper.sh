@@ -153,6 +153,7 @@ if [ "$workload_target" != "$target" -a `expr length "$target"` -gt 0 ]
 then
 	if [ "$workload_strategy" = "nearest" ]
 	then
+		rm $workload_rtt
 		node_location=`echo $target|tr '-' '\n'|head -n1`
 		install_ganglia_monitor "$node_location" "$node_type" "$target"
 		sudo sed -i "s|$workload_target|$target|g" /etc/tejo.conf

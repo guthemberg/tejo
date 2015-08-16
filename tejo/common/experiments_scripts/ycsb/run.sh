@@ -35,7 +35,7 @@ OUTPUT_DIR=/tmp/experiment_outputs
 YCSB_HOME=${home_dir}/contrib/fedora/mongodb/ycsb-0.1.4
 
 #mongodb host
-db_service="mongodb://${mongo_query_router_host}:27017"
+db_service="mongodb://${workload_target}:27017"
 
 #read-only workload (C)
 workload_label=wlC
