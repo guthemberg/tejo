@@ -318,16 +318,18 @@ def get_peer_status_table():
     if os.path.isfile(setup_peers_status_file):
         
         try:
-            nearest_peers_table=load_object_from_file(config['nearest_peers_file'])
+            setup_peers_status=load_object_from_file(setup_peers_status_file)
         except EOFError:
-            os.remove(config['nearest_peers_file'])
-            return ({},nearest_peers_table)
+            os.remove(setup_peers_status_file)
+            for peer in nearest_peers_table:
+                setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}            
+            return (setup_peers_status,nearest_peers_table)
                 
         except:
             print "unknown error in get_peer_status_table, exiting."
             sys.exit(1)
         
-        setup_peers_status=load_object_from_file(setup_peers_status_file)
+        
         #cleanup list
         peers_to_delete=[]
         for peer in setup_peers_status:
