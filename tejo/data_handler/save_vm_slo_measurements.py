@@ -316,6 +316,17 @@ def get_peer_status_table():
         print 'warm: empty nearest table'
         return None
     if os.path.isfile(setup_peers_status_file):
+        
+        try:
+            nearest_peers_table=load_object_from_file(config['nearest_peers_file'])
+        except EOFError:
+            os.remove(config['nearest_peers_file'])
+            return ({},nearest_peers_table)
+                
+        except:
+            print "unknown error in get_peer_status_table, exiting."
+            sys.exit(1)
+        
         setup_peers_status=load_object_from_file(setup_peers_status_file)
         #cleanup list
         peers_to_delete=[]
