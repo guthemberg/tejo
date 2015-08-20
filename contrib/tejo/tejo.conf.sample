@@ -45,7 +45,7 @@ db_name=userdb
 db_user=user
 db_host=127.0.0.1
 db_pass=u53r
-db_tunnelling=yes
+db_tunnelling=no
 db_port=8432
 db_master=eu-monitor-001.MY_DOMAIN
 
