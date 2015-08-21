@@ -79,6 +79,7 @@ workload_target_rates=300,200,100,50
 workload_death_file=/tmp/wl_death.pck
 workload_outliers_file=/tmp/wl_outliers.pck
 workload_throughput=200
+workload_force_setup=yes
 
 system_id=0
 

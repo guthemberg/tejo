@@ -11,7 +11,7 @@ if [ $? -eq 0 ]
 then
 	ts=`date`
 	echo "[$ts]$peer_to_setep" >> /tmp/peers_to_setup_history.log
-	/bin/sh $home_dir/contrib/pl/setup.sh $peer_to_setep
+	/bin/sh $home_dir/contrib/pl/setup.sh $peer_to_setep $workload_force_setup
 #	target="workload_user@peer_to_setep"
 #	checking_result=`ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=60 -o ServerAliveInterval=60 $target sh /home/${workload_user}/tejo/tejo/common/experiments_scripts/peers/check_running_peer.sh`
 #	if [ $? -eq 0 ]
