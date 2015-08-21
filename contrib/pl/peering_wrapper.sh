@@ -92,7 +92,7 @@ install_ganglia_monitor()
 	case "$node_type" in
 		"vm")
 			source="VMs"
-			gmond_port="`get_parameter default_gmond_port`"
+			gmond_port=${default_gmond_port}
 			sed "s|LOCATION|$location|g" ${home_dir}/contrib/fedora/ganglia/gmond.conf.sample | sed "s|SOURCE|$source|g" | sed "s|PORT|$gmond_port|g" | sed "s|TARGET|$aggregator|g" > /tmp/gmond.conf
 						
 			sudo cp ${home_dir}/contrib/fedora/ganglia/vm/*.pyconf ${gmond_conf_dir}/
@@ -103,7 +103,7 @@ install_ganglia_monitor()
 			
 		*)
 			source="workload"
-			gmond_port=`get_parameter wl_gmond_port`
+			gmond_port=${wl_gmond_port}
 			sed "s|LOCATION|$location|g" /tmp/gmond.conf.1 | sed "s|SOURCE|$source|g" | sed "s|PORT|$gmond_port|g" | sed "s|TARGET|$aggregator|g" > /tmp/gmond.conf
 			sudo cp ${home_dir}/contrib/fedora/ganglia/wl/*.pyconf ${gmond_conf_dir}/
 			sudo cp ${home_dir}/contrib/fedora/ganglia/wl/*.py `grep python_modules ${gmond_conf_dir}/modpython.conf|cut -f2 -d=|sed "s|\"||g"`/
