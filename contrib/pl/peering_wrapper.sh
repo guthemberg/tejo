@@ -157,5 +157,10 @@ then
 		node_location=`echo $target|tr '-' '\n'|head -n1`
 		install_ganglia_monitor "$node_location" "$node_type" "$target"
 		sudo sed -i "s|$workload_target|$target|g" /etc/tejo.conf
+
+		/bin/sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh
+		touch ${mongo_active_wl_file}
+		/bin/sh /home/`whoami`/tejo/contrib/pl/check_workload.sh 
+			
 	fi
 fi
