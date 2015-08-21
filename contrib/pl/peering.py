@@ -49,12 +49,12 @@ if __name__ == '__main__':
         for monitor in load_object_from_file(list_of_monitors):
             rtt=getRTT_SSH(monitor, path_to_yanoama)
             if monitor in peering_table:
-                if rtt<peering_table[monitor] and rtt>0:
+                if rtt<peering_table[monitor] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
                     peering_table[monitor]=rtt
                 if rtt == -1:
                     del peering_table[monitor]
             else:
-                if rtt>0:
+                if rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
                     peering_table[monitor]=rtt
             if monitor in peering_table:
                 if smallest_rtt==0.0 or peering_table[monitor]<smallest_rtt:

@@ -35,6 +35,8 @@ collect_delay=15
 alive_time=60
 time_to_vm_death=86400
 default_domain=MY_DOMAIN
+max_neighbourhood_rtt=100
+max_latency=100
 
 default_gmond_port=8649
 ganglia_api=http://localhost:8652

@@ -153,7 +153,7 @@ if __name__ == '__main__':
     while remaining_operation_tokens > 0 and len(ple_nodes) > 0:
         node=ple_nodes[0]
         rtt=getRTT_SSH(node,path_to_yanoama)
-        if rtt>0:
+        if rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             new_peers[node]=rtt
             remaining_operation_tokens=remaining_operation_tokens-1
         ple_nodes.remove(node)
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     while remaining_operation_tokens > 0 and len(all_peers_list) > 0:
         peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
         rtt=getRTT_SSH(peer,path_to_yanoama)
-        if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0:
+        if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             monitors=all_peers_list[peer]['monitors']
             monitors[monitor.split('.')[0]]=rtt
             peer_to_update[peer]={'monitor_rtt':rtt,'monitors':monitors}
