@@ -3,6 +3,7 @@
 
 . /etc/tejo.conf
 
+pkill -f setup_peers.py
 
 peer_to_setep=`python $home_dir/tejo/common/experiments_scripts/peers/setup_peers.py`
 
