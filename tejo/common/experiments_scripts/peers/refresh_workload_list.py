@@ -22,7 +22,7 @@ def clone_git_repository(uri_repository):
 def getRTT_TCP(hostname, yanoama_root,port=22):
     try:
         script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_tcp.sh'
-        rtt=float(subprocess.Popen(['sh',script_to_run,hostname,port], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        rtt=float(subprocess.Popen(['sh',script_to_run,hostname,str(port)], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         if rtt>0.0:
             return rtt
         else:
