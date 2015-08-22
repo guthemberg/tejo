@@ -33,10 +33,12 @@ i=0
 status=0
 max_delta=0
 resto=$MAX_TIME
+seconds=0
 while :;
 do
 	start=`date +"%s"`
-        /bin/tcsh -c "python ${home_dir}/tejo/data_handler/save_vm_slo_measurements.py"
+        /bin/tcsh -c "python ${home_dir}/tejo/data_handler/save_vm_slo_measurements.py $seconds"
+        seconds=`expr $seconds + $collect_time`
         status=$?
         now=`date +"%s"`
         passed=`expr $now - $start`

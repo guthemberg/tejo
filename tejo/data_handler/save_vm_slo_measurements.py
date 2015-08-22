@@ -352,7 +352,16 @@ def check_nearest_rtt(peer,nearest_peers_table,rtt):
                 rtt=nearest_peers_table[peer]
     return rtt
     
-###### main        
+###### main   
+seconds=60
+if len(sys.argv)==2:
+    try:
+        seconds=int(sys.argv[1])
+        if seconds<0 or seconds>59:
+            seconds=60
+    except:
+        print "ERROR in the sys.argv: %s" % str(sys.argv)
+        seconds=60
 hostname_table=get_hostname_table()
 (setup_peers_status,nearest_peers_table)=get_peer_status_table()  
 active_peers=[]
@@ -396,6 +405,10 @@ outliers_filename=config['slo_outliers_filename']
 
 ts=time.strftime("%Y-%m-%d %H:%M:%S")
 
+if seconds==60:
+    ts=time.strftime("%Y-%m-%d %H:%M:%S")
+else:
+    ts="%s:%d"%(time.strftime("%Y-%m-%d %H:%M"),seconds)
 
 ##collect slo status
 throughput=0
@@ -423,7 +436,7 @@ print "number of wl nodes: %d" % len(workload_hosts)
 print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
-    
+    dead=False
     #if node is not found it return unknown
 #    path_id=get_host_path_id(hostname)
     path_id=hostname
@@ -568,7 +581,7 @@ print dbconn.getDebugMess()
 
 for peer in active_peers:
     rtt=check_nearest_rtt(peer, nearest_peers_table, setup_peers_status[peer]['rtt'])
-    save_peer(setup_peers_status, peer, rtt)
+    save_peer(setup_peers_status, peer, False,rtt)
     
 save_object_to_file(hostname_table, hostname_table_file)
     
