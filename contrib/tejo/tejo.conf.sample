@@ -20,6 +20,7 @@ slo_max_latency_95th_filename=slo_max_latency_95th.rrd
 slo_max_latency_99th_filename=slo_max_latency_99th.rrd
 slo_max_latency_avg_filename=slo_max_latency_avg.rrd
 slo_rtt_filename=slo_rtt.rrd
+slo_service_rtt_filename=slo_service_rtt.rrd
 slo_death_filename=slo_death.rrd
 slo_outliers_filename=slo_outliers.rrd
 
@@ -71,6 +72,7 @@ nearest_peers_file=/home/USER/nearest_peers_list.pck
 monitors_list_file=/home/USER/monitors_list.pck
 workload_list_file=/home/USER/workload_list.pck
 workload_rtt=/tmp/rtt.pck
+workload_service_rtt=/tmp/fresh_service_rtt.pck
 workload_strategy=nearest
 workload_target=WL_TARGET
 workload_user=upmc_aren

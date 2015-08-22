@@ -152,10 +152,7 @@ if __name__ == '__main__':
     #computing new nodes
     while remaining_operation_tokens > 0 and len(ple_nodes) > 0:
         node=ple_nodes[0]
-        if int(tejo_config['system_id'])==0:
-            rtt=getRTT_TCP(node,path_to_yanoama,27017)
-        else:
-            rtt=getRTT_TCP(node,path_to_yanoama)
+        rtt=getRTT_TCP(node,path_to_yanoama)
         
         if rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             new_peers[node]=rtt
@@ -166,10 +163,7 @@ if __name__ == '__main__':
     while remaining_operation_tokens > 0 and len(all_peers_list) > 0:
         peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
         
-        if int(tejo_config['system_id'])==0:
-            rtt=getRTT_TCP(peer,path_to_yanoama,27017)
-        else:
-            rtt=getRTT_TCP(peer,path_to_yanoama)
+        rtt=getRTT_TCP(peer,path_to_yanoama)
         
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             monitors=all_peers_list[peer]['monitors']

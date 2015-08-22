@@ -37,10 +37,11 @@ if __name__ == '__main__':
     if os.path.isfile(tejo_config['workload_rtt']):
         current_rtt=float(load_object_from_file(tejo_config['workload_rtt']))
 
+    service_rtt=0.0
+    rtt=getRTT_TCP(tejo_config['workload_target'], path_to_yanoama)
+    service_rtt=rtt
     if int(tejo_config['system_id'])==0:
-        rtt=getRTT_TCP(tejo_config['workload_target'], path_to_yanoama,27017)
-    else:
-        rtt=getRTT_TCP(tejo_config['workload_target'], path_to_yanoama)
+        service_rtt=getRTT_TCP(tejo_config['workload_target'], path_to_yanoama,27017)
     
     if rtt>0.0:
         if current_rtt>0.0:
@@ -48,6 +49,9 @@ if __name__ == '__main__':
                 save_object_to_file(rtt, tejo_config['workload_rtt'])
         else:
             save_object_to_file(rtt, tejo_config['workload_rtt'])
+            
+    if service_rtt>0.0:
+        save_object_to_file(service_rtt, tejo_config['workload_service_rtt'])
             
     sys.exit(0)
 

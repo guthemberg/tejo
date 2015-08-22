@@ -73,8 +73,9 @@ def insert_slo_state_into_db(ts,dbconn,throughput,violation, \
 ##this function expects ts as a string and throughput and violation as integers
 def insert_workload_state_into_db(ts,dbconn,hostname, throughput,violation, \
                              system_id, latency_95th,latency_99th,latency_avg, \
-                             rtt,location,target_throughput,outliers):
-    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d,%.4f,'%s',%d,%d)" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers))
+                             rtt,location,target_throughput,outliers, \
+                             service_rtt):
+    dbconn.genericRun("INSERT into workload (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers,service_rtt) VALUES (timestamp '%s','%s',%d,%d,%d,%d,%d,%d,%.4f,'%s',%d,%d,%.4f)" % (ts,hostname,throughput,violation,system_id,latency_95th,latency_99th,latency_avg,rtt,location,target_throughput,outliers,service_rtt))
 
 def format_db_value(db_value):
     return str(float(db_value))
@@ -398,6 +399,7 @@ max_latency_95th_filename=config['slo_max_latency_95th_filename']
 max_latency_99th_filename=config['slo_max_latency_99th_filename']
 max_latency_avg_filename=config['slo_max_latency_avg_filename']
 rtt_filename=config['slo_rtt_filename']
+service_rtt_filename=config['slo_service_rtt_filename']
 death_filename=config['slo_death_filename']
 outliers_filename=config['slo_outliers_filename']
 
@@ -422,6 +424,7 @@ max_latency_95th=0
 max_latency_99th=0
 max_latency_avg=0
 rtt=0.0
+service_rtt=0.0
 wl_death=0
 dead=False
 outliers=0
@@ -494,6 +497,9 @@ for hostname in workload_hosts:
         rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+rtt_filename
         rtt=getFloatValue(rrd_file)
 
+        rrd_file=rrd_path_workload_hosts_prefix+"/"+path_id+"/"+service_rtt_filename
+        service_rtt=getFloatValue(rrd_file)
+
         
         number_of_workloads=number_of_workloads+1
         #check workload hostname
@@ -504,7 +510,7 @@ for hostname in workload_hosts:
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,checked_rtt,location, \
-                                      node_target_throughput, outliers)
+                                      node_target_throughput, outliers,service_rtt)
         save_peer(setup_peers_status,node_name,False,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)

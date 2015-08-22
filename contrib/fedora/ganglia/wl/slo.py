@@ -79,6 +79,13 @@ def get_metrics():
         except :
             metrics['rtt']=float(0.0)
             
+        #fresh service rtt
+        try:
+            metrics['service_rtt']=float(load_object_from_file(tejo_config['workload_service_rtt']))
+        except :
+            metrics['service_rtt']=float(0.0)
+            
+            
         ##workload death
         try:
             if (load_object_from_file(tejo_config['workload_death_file'])):
@@ -587,6 +594,17 @@ def metric_init(lparams):
             'slope': 'both',
             'format': '%f',
             'description': 'RTT to WL Target',
+            'groups': groups
+        },
+        {
+            'name': NAME_PREFIX + 'service_rtt',
+            'call_back': get_value,
+            'time_max': time_max,
+            'value_type': 'float',
+            'units': 'milliseconds',
+            'slope': 'both',
+            'format': '%f',
+            'description': 'RTT to service port',
             'groups': groups
         },
         {
