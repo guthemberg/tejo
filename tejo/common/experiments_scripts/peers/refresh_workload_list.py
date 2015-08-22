@@ -19,10 +19,10 @@ TEJO_CONF_FILE='/etc/tejo.conf'
 def clone_git_repository(uri_repository):
     subprocess.Popen(['git','clone',uri_repository], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
 
-def getRTT_SSH(hostname, yanoama_root):
+def getRTT_TCP(hostname, yanoama_root,port=22):
     try:
-        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_ssh.sh'
-        rtt=float(subprocess.Popen(['sh',script_to_run,hostname], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_tcp.sh'
+        rtt=float(subprocess.Popen(['sh',script_to_run,hostname,port], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         if rtt>0.0:
             return rtt
         else:
@@ -152,7 +152,11 @@ if __name__ == '__main__':
     #computing new nodes
     while remaining_operation_tokens > 0 and len(ple_nodes) > 0:
         node=ple_nodes[0]
-        rtt=getRTT_SSH(node,path_to_yanoama)
+        if int(tejo_config['system_id'])==0:
+            rtt=getRTT_TCP(node,path_to_yanoama,27017)
+        else:
+            rtt=getRTT_TCP(node,path_to_yanoama)
+        
         if rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             new_peers[node]=rtt
             remaining_operation_tokens=remaining_operation_tokens-1
@@ -161,7 +165,12 @@ if __name__ == '__main__':
     #updating existing nodes
     while remaining_operation_tokens > 0 and len(all_peers_list) > 0:
         peer=all_peers_list.keys()[random.randrange(0,len(all_peers_list.keys()))]
-        rtt=getRTT_SSH(peer,path_to_yanoama)
+        
+        if int(tejo_config['system_id'])==0:
+            rtt=getRTT_TCP(peer,path_to_yanoama,27017)
+        else:
+            rtt=getRTT_TCP(peer,path_to_yanoama)
+        
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             monitors=all_peers_list[peer]['monitors']
             monitors[monitor.split('.')[0]]=rtt

@@ -11,10 +11,10 @@ TEJO_CONF_FILE='/etc/tejo.conf'
 
 
 
-def getRTT_SSH(hostname, yanoama_root):
+def getRTT_TCP(hostname, yanoama_root,port=22):
     try:
-        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_ssh.sh'
-        rtt=float(subprocess.Popen(['sh',script_to_run,hostname], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_tcp.sh'
+        rtt=float(subprocess.Popen(['sh',script_to_run,hostname,port], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         if rtt>0.0:
             return rtt
         else:

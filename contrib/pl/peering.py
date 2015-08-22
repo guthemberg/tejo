@@ -15,10 +15,10 @@ TEJO_CONF_FILE='/etc/tejo.conf'
 
 
 
-def getRTT_SSH(hostname, yanoama_root):
+def getRTT_TCP(hostname, yanoama_root,port=22):
     try:
-        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_ssh.sh'
-        rtt=float(subprocess.Popen(['sh',script_to_run,hostname], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
+        script_to_run=yanoama_root+'/yanoama/monitoring/get_rtt_tcp.sh'
+        rtt=float(subprocess.Popen(['sh',script_to_run,hostname,port], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
         if rtt>0.0:
             return rtt
         else:
@@ -47,7 +47,10 @@ if __name__ == '__main__':
         smallest_rtt=0.0
         target=tejo_config['workload_target']
         for monitor in load_object_from_file(list_of_monitors):
-            rtt=getRTT_SSH(monitor, path_to_yanoama)
+            if int(tejo_config['system_id'])==0:
+                rtt=getRTT_TCP(monitor, path_to_yanoama,27017)
+            else:
+                rtt=getRTT_TCP(monitor, path_to_yanoama)
             if monitor in peering_table:
                 if rtt<peering_table[monitor] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
                     peering_table[monitor]=rtt
