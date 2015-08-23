@@ -434,7 +434,7 @@ number_of_workloads=0
 failed_data_collection=False
 print "getting nodes..."
 workload_hosts,vms=get_nodes()
-print "number of wl nodes: %d" % len(workload_hosts)
+print "number of monitored wl: %d" % len(workload_hosts)
 #print workload_hosts
 print "number of vms nodes: %d" % len(vms)
 #for hostname in config['workload_hosts']:
@@ -529,6 +529,8 @@ if (number_of_workloads == 0) or failed_data_collection:
     print "workload is not running, nothing to do (latency_95th,latency_99th,number_of_workloads:%d,%d,%d)." % (latency_95th,latency_99th,number_of_workloads)
     print '[%s] Done.' % ts
     sys.exit(0)
+
+print "number of active wl: %d" % number_of_workloads
     
 latency_95th=int(latency_95th/number_of_workloads)
 latency_99th=int(latency_99th/number_of_workloads)
