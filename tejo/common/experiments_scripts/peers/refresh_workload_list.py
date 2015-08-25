@@ -151,8 +151,8 @@ if __name__ == '__main__':
 
     ##peers status: add new nodes only
     setup_peers_status_file=tejo_config['workload_peer_status']
+    setup_peers_status={}
     if os.path.isfile(setup_peers_status_file):
-        setup_peers_status={}
         try:
             setup_peers_status=load_object_from_file(setup_peers_status_file)
         except:
