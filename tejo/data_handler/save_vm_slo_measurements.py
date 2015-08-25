@@ -536,8 +536,8 @@ for hostname in workload_hosts:
                                       node_latency_avg,checked_rtt,location, \
                                       node_target_throughput, outliers,service_rtt)
         #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
-        esta=(node_name in setup_peers_status)
-        print "%s:%s" (node_name,str(esta))
+        print (node_name in setup_peers_status)
+        print node_name
         setup_peers_status=save_peer(setup_peers_status,node_name,False,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
