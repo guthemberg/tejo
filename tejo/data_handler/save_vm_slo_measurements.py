@@ -330,8 +330,9 @@ def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
         if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
             setup_peers_status[hostname]['rtt']=rtt
     else:
-        setup_peers_status[peer]={'rtt':rtt,'active':active,'dead':wl_death}
-#    return setup_peers_status
+        setup_peers_status[hostname]={'rtt':rtt,'active':active,'dead':wl_death}
+        
+    return setup_peers_status
 
 
 def get_peer_status_table():
@@ -454,7 +455,6 @@ print "getting nodes..."
 (workload_hosts,vms,setup_peers_status,hostname_table)=get_nodes(setup_peers_status,hostname_table)
 active_peers=[]
 for peer in setup_peers_status:
-    print peer
     if setup_peers_status[peer]['active']:
         active_peers.append(peer)
 
@@ -538,8 +538,7 @@ for hostname in workload_hosts:
         #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
         #print (node_name in setup_peers_status)
         #print node_name
-        #setup_peers_status=
-        save_peer(setup_peers_status,node_name,False,checked_rtt,True)
+        setup_peers_status=save_peer(setup_peers_status,node_name,False,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
