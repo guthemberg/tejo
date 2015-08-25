@@ -140,6 +140,29 @@ def isVMDead(hostname):
         except:
             return True
 
+def isNodeDead(path_to_rrd,hostname):
+    #assuming that it is a storage VM
+    dead=False
+    path_id=get_host_path_id(hostname)
+    try:
+        #try two files
+        rrd_file=config['rrd_path_vms_prefix']+"/"+path_id+"/"+config['vm_bytes_out_filename']
+        dead=((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
+        if not dead:
+            rrd_file=config['rrd_path_vms_prefix']+"/"+path_id+"/"+config['load_one_filename']
+            dead=((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
+    except:
+        dead=True
+    if dead:
+        return True
+    else:
+        #supposing now that it is a workload VM
+        try:
+            rrd_file=config['rrd_path_workload_hosts_prefix']+"/"+path_id+"/"+config['slo_throughput_filename']
+            return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
+        except:
+            return True
+
 
 def getIntValue(rrd_file):
     return int(float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
@@ -169,7 +192,7 @@ def check_node_list(list_of_nodes):
         
         
     
-def get_nodes():
+def get_nodes(setup_peers_status,hostname_table):
     wls=[]
     vms=[]
     
@@ -190,10 +213,15 @@ def get_nodes():
 #     print bad_nodes
 #     print dead_nodes
     
+    rrd_path_workload_hosts_prefix=config['rrd_path_workload_hosts_prefix']
     for node in dead_nodes:
+        (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],node,hostname_table)
+        if node_name in setup_peers_status:
+            setup_peers_status[node_name]['active']=False
+            setup_peers_status[node_name]['dead']=True
         delete_path(config['rrd_path_workload_hosts_prefix']+'/'+node)
     
-    return (wls,vms)
+    return (wls,vms,setup_peers_status,hostname_table)
 
 
 def get_hostname_table():
@@ -295,16 +323,16 @@ def load_object_from_file(input_file):
     return pickle.load( open( input_file, "rb" ) )
 
 
-def save_peer(setup_peers_status,hostname,wl_death,rtt=0.0,active=False):
+def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
     if not setup_peers_status is None:
-        setup_peers_status_file=config['workload_peer_status']
         if not hostname in setup_peers_status:
             setup_peers_status[peer]={'rtt':rtt,'active':active,'dead':wl_death}
-            save_object_to_file(setup_peers_status, setup_peers_status_file)
         else:
             setup_peers_status[hostname]['active']=active
             setup_peers_status[hostname]['dead']=wl_death
-            save_object_to_file(setup_peers_status, setup_peers_status_file)
+            if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
+                setup_peers_status[hostname]['rtt']=rtt
+    return setup_peers_status
 
 
 def get_peer_status_table():
@@ -323,35 +351,30 @@ def get_peer_status_table():
         except EOFError:
             os.remove(setup_peers_status_file)
             for peer in nearest_peers_table:
-                setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}            
+                setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}  
+            save_object_to_file(setup_peers_status, setup_peers_status_file)          
             return (setup_peers_status,nearest_peers_table)
                 
         except:
             print "unknown error in get_peer_status_table, exiting."
-            sys.exit(1)
-        
-        
-        #cleanup list
-        peers_to_delete=[]
-        for peer in setup_peers_status:
-            if not peer in nearest_peers_table:
-                peers_to_delete.append(peer)
-        for peer in peers_to_delete:
-            del setup_peers_status[peer] 
+            sys.exit(1)        
     else:
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
     
-    return setup_peers_status,nearest_peers_table
+    return nearest_peers_table
 
-def check_nearest_rtt(peer,nearest_peers_table,rtt):
-    if peer in nearest_peers_table:
-        if nearest_peers_table[peer]>0.0:
-            if nearest_peers_table[peer]<rtt:
-                rtt=nearest_peers_table[peer]
-            elif rtt<=0.0:
-                rtt=nearest_peers_table[peer]
-    return rtt
+def check_nearest_rtt(peer,setup_peers_status,rtt):
+    if peer in setup_peers_status:
+        if setup_peers_status[peer]['rtt']>0.0:
+            if rtt<=0.0:
+                rtt=setup_peers_status[peer]['rtt']
+            elif setup_peers_status[peer]['rtt']<rtt:
+                rtt=setup_peers_status[peer]['rtt']
+            else:
+                setup_peers_status[peer]['rtt']=rtt
+    return (rtt,setup_peers_status)
     
 ###### main   
 seconds=60
@@ -364,11 +387,7 @@ if len(sys.argv)==2:
         print "ERROR in the sys.argv: %s" % str(sys.argv)
         seconds=60
 hostname_table=get_hostname_table()
-(setup_peers_status,nearest_peers_table)=get_peer_status_table()  
-active_peers=[]
-for peer in setup_peers_status:
-    if setup_peers_status[peer]['active']:
-        active_peers.append(peer)
+setup_peers_status=get_peer_status_table()  
         
 now = time.strftime("%c")
 ## Display current date and time from now variable 
@@ -433,7 +452,12 @@ node_target_throughput=0
 number_of_workloads=0
 failed_data_collection=False
 print "getting nodes..."
-workload_hosts,vms=get_nodes()
+(workload_hosts,vms,setup_peers_status,hostname_table)=get_nodes(setup_peers_status,hostname_table)
+active_peers=[]
+for peer in setup_peers_status:
+    if setup_peers_status[peer]['active']:
+        active_peers.append(peer)
+
 print "number of monitored wl: %d" % len(workload_hosts)
 #print workload_hosts
 print "number of vms nodes: %d" % len(vms)
@@ -505,20 +529,22 @@ for hostname in workload_hosts:
         #check workload hostname
         (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname,hostname_table)
         #print 'workload node name:%s,%s'%(hostname,node_name)
-        checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, rtt)
+        (checked_rtt,setup_peers_status)=check_nearest_rtt(node_name, setup_peers_status, rtt)
         insert_workload_state_into_db(ts,dbconn,node_name, node_throughput, \
                                       node_violation, system_id, \
                                       node_latency_95th,node_latency_99th, \
                                       node_latency_avg,checked_rtt,location, \
                                       node_target_throughput, outliers,service_rtt)
-        save_peer(setup_peers_status,node_name,False,checked_rtt,True)
+        #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
+        setup_peers_status=save_peer(setup_peers_status,node_name,False,checked_rtt,True)
         if node_name in active_peers:
             active_peers.remove(node_name)
     else:
         #print "looking for %s else" % hostname
         (node_name,hostname_table)=check_hostname(rrd_path_workload_hosts_prefix.split('/')[-1],config['workload_user'],hostname, hostname_table)
-        checked_rtt=check_nearest_rtt(node_name, nearest_peers_table, 0.0)
-        save_peer(setup_peers_status,node_name,dead,checked_rtt)
+        (checked_rtt,setup_peers_status)=check_nearest_rtt(node_name, setup_peers_status, -1.0)
+        #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
+        setup_peers_status=save_peer(setup_peers_status,node_name,dead,checked_rtt)
         if node_name in active_peers:
             active_peers.remove(node_name)
     
@@ -587,10 +613,19 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
 
 print dbconn.getDebugMess()
 
-for peer in active_peers:
-    rtt=check_nearest_rtt(peer, nearest_peers_table, setup_peers_status[peer]['rtt'])
-    save_peer(setup_peers_status, peer, False,rtt)
+# for peer in active_peers:
+#     rtt=setup_peers_status[peer]['rtt']
+#     #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
+#     save_peer(setup_peers_status, peer, False,rtt)
+#     if isVMAlive(peer):
+#         setup_peers_status[peer]['active']=False
+#     else:
+#         if isVMDead(peer):
+#             setup_peers_status[peer]['active']=False
+#             setup_peers_status[peer]['dead']=True
     
+    
+save_object_to_file(setup_peers_status,config['workload_peer_status'])
 save_object_to_file(hostname_table, hostname_table_file)
     
 #if config['db_tunnelling'] in ['true', 'True', '1', 't', 'y','Y', 'yes','Yes', 'yeah', 'yup', 'certainly', 'uh-huh']:

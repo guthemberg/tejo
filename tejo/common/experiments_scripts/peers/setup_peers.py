@@ -90,23 +90,27 @@ if __name__ == '__main__':
 #    print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama=tejo_config['root_dir']+'/yanoama'
-    setup_peers_status_file=tejo_config['root_dir']+'/peers_tatus_table.pck'
+    setup_peers_status_file=tejo_config['workload_peer_status']
     setup_peers_status={}
     nearest_peers_table={}
     if os.path.isfile(tejo_config['nearest_peers_file']):
         nearest_peers_table=load_object_from_file(tejo_config['nearest_peers_file'])
     if os.path.isfile(setup_peers_status_file):
-        setup_peers_status=load_object_from_file(setup_peers_status_file)
-        #cleanup list
-        for peer in setup_peers_status:
-            if not peer in nearest_peers_table:
-                del setup_peers_status[peer] 
-        for peer in nearest_peers_table:
-             if not peer in setup_peers_status:
-                 setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
+        try:
+            setup_peers_status=load_object_from_file(setup_peers_status_file)
+        except EOFError:
+            os.remove(setup_peers_status_file)
+            for peer in nearest_peers_table:
+                setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}   
+            save_object_to_file(setup_peers_status, setup_peers_status_file)         
+                
+        except:
+            print "unknown error in get_peer_status_table, exiting."
+            sys.exit(1)        
     else:
         for peer in nearest_peers_table:
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
      
         
     #getting non setuped nodes
