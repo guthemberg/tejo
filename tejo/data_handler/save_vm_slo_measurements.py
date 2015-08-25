@@ -627,7 +627,6 @@ print dbconn.getDebugMess()
 #             setup_peers_status[peer]['dead']=True
     
     
-print len(setup_peers_status)
 save_object_to_file(setup_peers_status,config['workload_peer_status'])
 save_object_to_file(hostname_table, hostname_table_file)
     
