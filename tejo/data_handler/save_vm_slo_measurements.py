@@ -620,8 +620,14 @@ for peer in active_peers:
 #     rtt=setup_peers_status[peer]['rtt']
 #     #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
 #     save_peer(setup_peers_status, peer, False,rtt)
-#     if isVMAlive(peer):
+    if isVMAlive(peer):
+        print "%s: is alive"%peer
 #         setup_peers_status[peer]['active']=False
+    else:
+        print "%s: is not alive"%peer
+        if isVMDead(peer):
+            print "%s: is dead indeed"%peer
+        
 #     else:
 #         if isVMDead(peer):
 #             setup_peers_status[peer]['active']=False
