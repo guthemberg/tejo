@@ -353,7 +353,7 @@ def get_peer_status_table():
             for peer in nearest_peers_table:
                 setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}  
             save_object_to_file(setup_peers_status, setup_peers_status_file)          
-            return (setup_peers_status,nearest_peers_table)
+            return (setup_peers_status)
                 
         except:
             print "unknown error in get_peer_status_table, exiting."
@@ -363,7 +363,7 @@ def get_peer_status_table():
             setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
         save_object_to_file(setup_peers_status, setup_peers_status_file)
     
-    return nearest_peers_table
+    return setup_peers_status
 
 def check_nearest_rtt(peer,setup_peers_status,rtt):
     if peer in setup_peers_status:
