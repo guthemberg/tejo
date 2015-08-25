@@ -615,7 +615,8 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
 
 print dbconn.getDebugMess()
 
-# for peer in active_peers:
+for peer in active_peers:
+    print peer
 #     rtt=setup_peers_status[peer]['rtt']
 #     #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
 #     save_peer(setup_peers_status, peer, False,rtt)
