@@ -92,7 +92,30 @@ def get_host_path_id(hostname):
             return ip
         else:
             return "unknown"
-    
+
+
+
+# config['rrd_path_workload_hosts_prefix']
+# config['slo_throughput_filename']    
+def isPeerAlive(path_to_rrd,rrd_filename,peer):
+    path_id=get_host_path_id(peer)    
+    try:
+        rrd_file=path_to_rrd+"/"+path_id+"/"+rrd_filename
+        return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))<=ALIVE_TIME)
+    except:
+        return False
+
+#config['rrd_path_workload_hosts_prefix']
+#config['slo_throughput_filename']
+def isPeerDead(path_to_rrd,rrd_filename,peer):
+    #assuming that it is a storage VM
+    path_id=get_host_path_id(peer)
+    try:
+        rrd_file=path_to_rrd+"/"+path_id+"/"+rrd_filename
+        return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
+    except:
+        return True
+
     
 def isVMAlive(hostname):
     #assuming that it is a storage VM
@@ -616,17 +639,29 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
 print dbconn.getDebugMess()
 
 for peer in active_peers:
-    print peer
+    
+    
+#    print peer
 #     rtt=setup_peers_status[peer]['rtt']
 #     #def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
 #     save_peer(setup_peers_status, peer, False,rtt)
-    if isVMAlive(peer):
-        print "%s: is alive"%peer
-#         setup_peers_status[peer]['active']=False
-    else:
-        print "%s: is not alive"%peer
-        if isVMDead(peer):
-            print "%s: is dead indeed"%peer
+# config['rrd_path_workload_hosts_prefix']
+# config['slo_throughput_filename']    
+# def isPeerAlive(path_to_rrd,rrd_filename,peer):
+#     path_id=get_host_path_id(peer)    
+#     try:
+#         rrd_file=path_to_rrd+"/"+path_id+"/"+rrd_filename
+#         return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))<=ALIVE_TIME)
+#     except:
+#         return False
+
+#config['rrd_path_workload_hosts_prefix']
+#config['slo_throughput_filename']
+
+    
+    if isPeerDead(config['rrd_path_workload_hosts_prefix'], config['slo_throughput_filename'], peer):
+        setup_peers_status[peer]['active']=False
+        setup_peers_status[peer]['dead']=True
         
 #     else:
 #         if isVMDead(peer):
