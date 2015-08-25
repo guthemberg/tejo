@@ -324,14 +324,13 @@ def load_object_from_file(input_file):
 
 
 def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
-    if not setup_peers_status is None:
-        if not hostname in setup_peers_status:
-            setup_peers_status[peer]={'rtt':rtt,'active':active,'dead':wl_death}
-        else:
-            setup_peers_status[hostname]['active']=active
-            setup_peers_status[hostname]['dead']=wl_death
-            if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
-                setup_peers_status[hostname]['rtt']=rtt
+    if hostname in setup_peers_status:
+        setup_peers_status[hostname]['active']=active
+        setup_peers_status[hostname]['dead']=wl_death
+        if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
+            setup_peers_status[hostname]['rtt']=rtt
+    else:        
+        setup_peers_status[peer]={'rtt':rtt,'active':active,'dead':wl_death}
     return setup_peers_status
 
 
