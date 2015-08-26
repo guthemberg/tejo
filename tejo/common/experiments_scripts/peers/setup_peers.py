@@ -128,11 +128,19 @@ if __name__ == '__main__':
 
     #to setup
     #when len(sys.argv)==1
-    if len(candidates)>0:
+    while len(candidates)>0:
         peer_to_setup=candidates[random.randrange(0,len(candidates))]
-        sys.stdout.write(peer_to_setup)
-        sys.exit(0)
-        
+        #before sending, check liveness of node
+        rtt=getRTT_TCP(peer_to_setup, path_to_yanoama)
+        #check liveness
+        if rtt > 0:
+            sys.stdout.write(peer_to_setup)
+            sys.exit(0)
+        else:
+            setup_peers_status[peer_to_setup]['active']=False
+            setup_peers_status[peer_to_setup]['dead']=True
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
+            candidates.remove(peer_to_setup)
     sys.exit(1)
     
 #         
