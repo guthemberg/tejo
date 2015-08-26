@@ -126,8 +126,20 @@ if __name__ == '__main__':
         save_object_to_file(setup_peers_status, setup_peers_status_file)
         sys.exit(0)
 
+    if len(sys.argv)==3:
+        peer_to_save=sys.argv[1]
+        try:
+            dead=bool(sys.argv[2])
+            setup_peers_status[peer_to_save]['active']=False
+            setup_peers_status[peer_to_save]['dead']=dead
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
+        except:
+            sys.exit(2)
+        sys.exit(0)
+
+
     #to setup
-    #when len(sys.argv)==1
+    #when len(sys.argv)==1 or greater than 3 (unexpected)
     while len(candidates)>0:
         peer_to_setup=candidates[random.randrange(0,len(candidates))]
         #before sending, check liveness of node
@@ -136,11 +148,10 @@ if __name__ == '__main__':
         if rtt > 0:
             sys.stdout.write(peer_to_setup)
             sys.exit(0)
-        else:
-            setup_peers_status[peer_to_setup]['active']=False
-            setup_peers_status[peer_to_setup]['dead']=True
-            save_object_to_file(setup_peers_status, setup_peers_status_file)
-            candidates.remove(peer_to_setup)
+        setup_peers_status[peer_to_setup]['active']=False
+        setup_peers_status[peer_to_setup]['dead']=True
+        save_object_to_file(setup_peers_status, setup_peers_status_file)
+        candidates.remove(peer_to_setup)
     sys.exit(1)
     
 #         
