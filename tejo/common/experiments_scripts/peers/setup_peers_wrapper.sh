@@ -14,6 +14,7 @@ then
 
     target=${workload_user}@${peer_to_setup}
     key=${root_dir}/.ssh/id_rsa_cloud
+    echo $target
     ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target "pwd"
 
 	if [ $? -eq 0 ]
