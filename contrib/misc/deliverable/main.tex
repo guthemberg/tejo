@@ -1,0 +1,237 @@
+\documentclass[a4paper]{report}   % list options between brackets
+\usepackage{geometry}
+\usepackage{natbib,bibentry}
+\usepackage{tocloft}
+\usepackage{listings}
+\usepackage{verbatim}
+\renewcommand\thesection{\arabic{section}}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+%table column length
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% Fonts
+\usepackage[T1]{fontenc}
+%\usepackage[bitstream-charter]{mathdesign}
+\usepackage[scaled=0.85]{beramono}
+\usepackage[utf8]{inputenc}
+
+
+
+
+
+
+%\usepackage{hyperref,xcolor}
+\usepackage{geometry}
+\usepackage{natbib,bibentry}
+\usepackage{tocloft}
+
+\renewcommand\thesection{\arabic{section}}
+
+% Fonts
+%\usepackage[T1]{fontenc}
+%\usepackage[bitstream-charter]{mathdesign}
+%\usepackage[scaled=0.85]{beramono}
+\usepackage[utf8]{inputenc}
+
+
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+
+
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsfonts}
+\usepackage{enumerate}
+\usepackage{dsfont}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{ifthen}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{makecell}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% content macro
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Targetsys}{SoSS}
+\newcommand{\Targetsyss}{SoSS}
+\newcommand{\targetsyss}{SoSS}
+\newcommand{\targetsys}{SoSS}
+\newcommand{\rulesep}{\unskip\ \vrule\ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% math macro
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\inp}{x}
+\newcommand{\inpseq}{{\bf x}}
+\newcommand{\f}{{\bf f}}
+\newcommand{\q}{{\bf q}}
+\newcommand{\blab}{{\bf \lab}}
+\newcommand{\lab}{y}
+\newcommand{\labs}{{\bf y}}
+\newcommand{\nlab}{{\bar y}}
+\newcommand{\loss}{L}
+\newcommand{\expect}[1]{\mathbb{E}_{X,Y}\bigl[#1 \bigr]}
+
+\newcommand{\fscore}{f}
+\newcommand{\score}{s}
+\newcommand{\SGDloss}{L_\obs(\fscore_{w(t)}(\obs_t), \labs_t)}
+\newcommand{\len}[1]{{[#1]}}
+\newcommand{\pair}[1]{(\inpseq_{#1},\lab_{#1})}
+\newcommand{\npair}[1]{(\bar \inpseq_{#1},\bar \lab_{#1})}
+\newcommand{\pairloss}{l_p(\fscore_w(\inp_i)-\fscore_w(\bar \inp_j))}
+\newcommand{\pairlossArg}[1]{l_p({#1})}
+\newcommand{\slossnew}{\Psi}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bs}{{\bf s}}
+\newcommand{\boldr}{{\bf r}}
+
+\newcommand{\qm}{{\tt r}}
+
+\newcommand{\pospart}[1]{\left [ #1 \right ]_+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   framework
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\lenq}[1]{|#1|}
+
+\newcommand{\subsetOfQuery}[1]{{\cal S}(#1)}
+\newcommand{\set}[1]{\left \{ #1 \right \}}
+ \newcommand{\sset}[1]{\bigl \{ #1 \bigr \}}
+\newcommand{\bigpospart}[1]{\Big [ #1 \Big ]_+}
+\newcommand{\norm}[1]{\left | \left | #1 \right | \right |}
+\newcommand{\indic}[1]{I_{\set{#1}}}
+\newcommand{\expobs}{\expectation_{(\obs, \rels) \sim \mu}}
+
+\newcommand{\expmu}{\expectation_{\inpseqb \sim \mu}}
+\newcommand{\empexpmu}{\empexpectation_{\inpseqb \sim \trset}}
+\newcommand{\expnu}{\expectation_{\inp \sim \nu}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argsort}{arg\,sort}
+\DeclareMathOperator{\indicc}{I\!I}
+\DeclareMathOperator{\nindicc}{I\!I\!I}
+\DeclareMathOperator{\dist}{d}
+\DeclareMathOperator*{\expectation}{\mathbb{E}}
+
+\newcommand{\probasobs}{\probas\left({\cal S}\right)}
+\newcommand{\expxy}{\expectation_{X,Y}}
+\newcommand{\expx}{\expectation_{X}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% textimage retrieval macro
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\params}{{\bf w}}
+\newcommand{\trset}{S}
+\newcommand{\alts}{{\bf X}}
+\newcommand{\alt}{X}
+\newcommand{\emploss}{\hat{R}^{\rerr}(\score, S)}
+\newcommand{\dotp}[2]{\left<#1, #2\right>} %dot product
+\newcommand{\intint}[2]{\set{#1, ..., #2}}%{\left \{#1..#2\right \}}
+\newcommand{\sign}{\mbox{sign}}
+%\newcommand{\pospart}[1]{\left [ #1 \right ]_+}
+\renewcommand{\Re}{\mathbb{R}}
+%\DeclareMathOperator{\indic}{I}
+\DeclareMathOperator*{\empexpectation}{\hat{\mathbb{E}}}
+\newcommand{\empexpobs}{\empexpectation_{(\obs, \rels) \sim \trset}}
+\newcommand{\rel}{y}
+\newcommand{\nrel}{{\bar y}}
+
+% Spaces
+\newcommand{\fspace}{{\cal F}}
+\newcommand{\hfspace}{{\cal H}}
+\newcommand{\inpspace}{{\cal X}}
+\newcommand{\supspace}{{\cal Y}}
+\newcommand{\distspace}{{Pr(X,Y)}}
+\newcommand{\distspacex}{{Pr(X)}}
+\newcommand{\alldistspace}{{\cal D}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% code for formatting comments
+%%%%%%%%%%%%%%%%%%%%    BEGIN  %%%%%%%%%%%%%%%%%%%%
+\newboolean{showcomments}
+\setboolean{showcomments}{false}
+
+\ifthenelse{\boolean{showcomments}}
+{ \newcommand{\mynote}[2]{
+    \fbox{\bfseries\sffamily\scriptsize#1}
+    {\small$\blacktriangleright$\textsf{\emph{#2}}$\blacktriangleleft$}}}
+{ \newcommand{\mynote}[2]{}}
+
+\newcommand{\guthemberg}[1]{\mynote{Guthemberg}{#1}}
+%%%%%%%%%%%%%%%%%%%%    END  %%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%END%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\begin{document}
+
+	\begin{figure}
+	    			%\centering
+	    			\includegraphics[scale=0.45]{inputs/img/svc}
+	  		\end{figure}
+
+%Investissement d'Avenir Développement de l’Économie Numérique
+%``Informatique en nuage''
+\title{Deliverable 4.1.3.1 -- \emph{Prototype de prévision des défaillances et expérimentations}}   % type title between braces
+\author{List of authors HERE}         % type author(s) between braces
+\date{30 September 2015}    % type date between braces
+\maketitle
+
+\begin{abstract}
+\input{inputs/abstract}
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+
+\input{inputs/sections/introduction.tex}
+\input{inputs/sections/related_work.tex}
+\input{inputs/sections/background.tex}
+\input{inputs/sections/design.tex}
+\input{inputs/sections/setup.tex}
+\input{inputs/sections/experiment.tex}
+\input{inputs/sections/results.tex}
+
+\input{inputs/sections/conclusion.tex}
+
+%\input{inputs/sections/introduction}
+
+\addcontentsline{toc}{section}{Bibliography}
+\bibliographystyle{plain}
+%\begin{thebibliography}{9}
+\bibliography{inputs/biblio}
+%\end{thebibliography}
+
+\end{document}
