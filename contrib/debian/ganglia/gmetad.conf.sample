@@ -42,7 +42,8 @@
 # data_source "another source" 1.3.4.7:8655  1.3.4.8
 
 data_source "VMs" 15 SOURCE
-data_source "workload" 15 SOURCE:8648
+data_source "workload" 15 SOURCE:WPORT
+data_source "monitor" 15 SOURCE:MPORT
 
 #
 # Round-Robin Archives

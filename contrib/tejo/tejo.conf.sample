@@ -3,6 +3,7 @@ location=LOCATION
 
 rrd_file_prefix=mongodb_
 rrd_path_vms_prefix=PATH_TO_RRDS/VMs
+rrd_path_monitor_prefix=PATH_TO_RRDS/monitor
 rrd_path_workload_hosts_prefix=PATH_TO_RRDS/workload
 
 fault_injection_filename=fault_injection.rrd
@@ -43,6 +44,7 @@ default_gmond_port=8649
 ganglia_api=http://localhost:8652
 vm_gmond_port=8649
 wl_gmond_port=8648
+mo_gmond_port=8647
 
 db_name=userdb
 db_user=user

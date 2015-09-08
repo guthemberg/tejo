@@ -1,0 +1,22 @@
+modules {
+    module {
+        name = "mongodb_extension"
+        language = "python"
+        param net_status {
+            value = "/usr/bin/netstat -s -p tcp"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 10
+    time_threshold = 15
+    metric {
+        name = "mongodb_is_primary"
+        title = "Is This Primary"
+    }
+    metric {
+        name = "mongodb_is_active"
+        title = "Is Active"
+    }
+}
