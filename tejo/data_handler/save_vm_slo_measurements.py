@@ -190,8 +190,11 @@ def isNodeDead(path_to_rrd,hostname):
 def getIntValue(rrd_file):
     return int(float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
 
-def getFloatValue(rrd_file):
-    return (float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
+# def getFloatValue(rrd_file):
+#     return (float(rrdtool.info(rrd_file)['ds[sum].last_ds']))
+
+
+
 
 def delete_path(path_to_be_deleted):
     #safeguard against accidents
@@ -211,16 +214,16 @@ def check_node_list(list_of_nodes):
             else:
                 bad_nodes.append(node)  
                 
-    return (good_nodes,bad_nodes,dead_nodes)
+    return (good_nodes,dead_nodes,bad_nodes)
         
         
     
 def get_nodes(setup_peers_status,hostname_table):
-    wls=[]
-    vms=[]
+#     wls=[]
+#     vms=[]
     
     path_to_vms_rrds=config['rrd_path_vms_prefix']+'/*.*'
-    vms,bad_nodes,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_vms_rrds))])
+    vms,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_vms_rrds))])[:2]
 #     print "getting vms (vms:%d,bad_nodes:%d,dead_nodes:%d):"%(len(vms),len(bad_nodes),len(dead_nodes))
 #     print vms
 #     print bad_nodes
@@ -230,7 +233,7 @@ def get_nodes(setup_peers_status,hostname_table):
         delete_path(config['rrd_path_vms_prefix']+'/'+node)
     
     path_to_wls_rrds=config['rrd_path_workload_hosts_prefix']+'/*.*'
-    wls,bad_nodes,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_wls_rrds))])
+    wls,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_wls_rrds))])[:2]
 #     print "getting wls (wls:%d,bad_nodes:%d,dead_nodes:%d):"%(len(wls),len(bad_nodes),len(dead_nodes))
 #     print wls
 #     print bad_nodes
@@ -274,7 +277,7 @@ def get_hostname(cluster,username,node_id, hostname_table):
 #             print obj
             if obj[u'@NAME']=='miscellaneous_hostname':
                 new_hostname=obj[u'@VAL']
-                hostname_table[node_id]=new_node_id
+                hostname_table[node_id]=new_hostname
                 return (new_hostname,hostname_table)
         return (node_id,hostname_table)
     except:
@@ -322,7 +325,7 @@ def is_it_an_invalid_rrd_file(name):
     return False
  
 def close_ssh_tunnel_to_master_db():
-    rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
+#    rsa_key=config['root_dir']+'/.ssh/id_rsa_cloud'
     process_key=config['guest_vm_sys_user']+'@'+config['db_master']
     (subprocess.Popen(['pkill','-f',process_key], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
 
@@ -337,13 +340,13 @@ def open_ssh_tunnel_to_master_db():
     (subprocess.Popen(['ssh','-i',rsa_key,'-o','StrictHostKeyChecking=no','-f',process_key,'-L',forward_ports,'-N'], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip())
  
 
-def save_object_to_file(myobject,output_file):
-    f = open(output_file,'w')
-    pickle.dump(myobject, f)
-    f.close()
-
-def load_object_from_file(input_file):
-    return pickle.load( open( input_file, "rb" ) )
+# def save_object_to_file(myobject,output_file):
+#     f = open(output_file,'w')
+#     pickle.dump(myobject, f)
+#     f.close()
+# 
+# def load_object_from_file(input_file):
+#     return pickle.load( open( input_file, "rb" ) )
 
 
 def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
