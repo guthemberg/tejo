@@ -9,7 +9,6 @@ from urllib2 import urlopen
 import xmltodict
 import pickle
 
-
 #db api available in home_dir
 conf_file = "/etc/tejo.conf"
 config=ConfigObj(conf_file)
