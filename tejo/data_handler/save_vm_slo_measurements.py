@@ -141,6 +141,15 @@ def isVMAlive(hostname):
             rrd_file=config['rrd_path_workload_hosts_prefix']+"/"+path_id+"/"+config['slo_throughput_filename']
             return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))<=ALIVE_TIME)
         except:
+            alive=False
+    if alive:
+        return True
+    else:
+        #supposing now that it is a monitor VM
+        try:
+            rrd_file=config['rrd_path_monitor_prefix']+"/"+path_id+"/"+config['load_one_filename']
+            return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))<=ALIVE_TIME)
+        except:
             return False
 
 def isVMDead(hostname):
@@ -162,6 +171,15 @@ def isVMDead(hostname):
         #supposing now that it is a workload VM
         try:
             rrd_file=config['rrd_path_workload_hosts_prefix']+"/"+path_id+"/"+config['slo_throughput_filename']
+            return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
+        except:
+            dead=True
+    if dead:
+        return True
+    else:
+        #supposing now that it is a monitor VM
+        try:
+            rrd_file=config['rrd_path_monitor_prefix']+"/"+path_id+"/"+config['load_one_filename']
             return ((long(time.time())-(rrdtool.info(rrd_file)["last_update"]))>DEATH_TIME)
         except:
             return True
