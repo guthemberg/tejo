@@ -87,11 +87,12 @@ def getFloatValue(rrd_file):
     return float(rrdtool.info(rrd_file)['ds[sum].last_ds'])
 
 def get_host_path_id(hostname):
-    if os.path.isdir(config['rrd_path_vms_prefix']+"/"+hostname) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+hostname):
+    #rrd_path_monitor_prefix
+    if os.path.isdir(config['rrd_path_vms_prefix']+"/"+hostname) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+hostname) or os.path.isdir(config['rrd_path_monitor_prefix']+"/"+hostname):
         return hostname
     else:
         ip=socket.gethostbyname(hostname)
-        if os.path.isdir(config['rrd_path_vms_prefix']+"/"+ip) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+ip):
+        if os.path.isdir(config['rrd_path_vms_prefix']+"/"+ip) or os.path.isdir(config['rrd_path_workload_hosts_prefix']+"/"+ip) or os.path.isdir(config['rrd_path_monitor_prefix']+"/"+ip):
             return ip
         else:
             return "unknown"
