@@ -423,14 +423,15 @@ def get_peer_status_table():
     return setup_peers_status
 
 def check_nearest_rtt(peer,setup_peers_status,rtt):
-    if peer in setup_peers_status:
-        if setup_peers_status[peer]['rtt']>0.0:
-            if rtt<=0.0:
-                rtt=setup_peers_status[peer]['rtt']
-            elif setup_peers_status[peer]['rtt']<rtt:
-                rtt=setup_peers_status[peer]['rtt']
-            else:
-                setup_peers_status[peer]['rtt']=rtt
+    if not setup_peers_status is None:    
+        if peer in setup_peers_status:
+            if setup_peers_status[peer]['rtt']>0.0:
+                if rtt<=0.0:
+                    rtt=setup_peers_status[peer]['rtt']
+                elif setup_peers_status[peer]['rtt']<rtt:
+                    rtt=setup_peers_status[peer]['rtt']
+                else:
+                    setup_peers_status[peer]['rtt']=rtt
     return (rtt,setup_peers_status)
     
 ###### main   
