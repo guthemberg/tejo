@@ -494,9 +494,10 @@ failed_data_collection=False
 print "getting nodes..."
 (workload_hosts,vms,monitors,setup_peers_status,hostname_table)=get_nodes(setup_peers_status,hostname_table)
 active_peers=[]
-for peer in setup_peers_status:
-    if setup_peers_status[peer]['active']:
-        active_peers.append(peer)
+if not setup_peers_status is None:
+    for peer in setup_peers_status:
+        if setup_peers_status[peer]['active']:
+            active_peers.append(peer)
 
 print "number of monitored wl: %d" % len(workload_hosts)
 #print workload_hosts
