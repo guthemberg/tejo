@@ -381,13 +381,14 @@ def open_ssh_tunnel_to_master_db():
 
 
 def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
-    if hostname in setup_peers_status:
-        setup_peers_status[hostname]['active']=active
-        setup_peers_status[hostname]['dead']=wl_death
-        if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
-            setup_peers_status[hostname]['rtt']=rtt
-    else:
-        setup_peers_status[hostname]={'rtt':rtt,'active':active,'dead':wl_death}
+    if not setup_peers_status is None:
+        if hostname in setup_peers_status:
+            setup_peers_status[hostname]['active']=active
+            setup_peers_status[hostname]['dead']=wl_death
+            if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
+                setup_peers_status[hostname]['rtt']=rtt
+        else:
+            setup_peers_status[hostname]={'rtt':rtt,'active':active,'dead':wl_death}
         
     return setup_peers_status
 
