@@ -256,6 +256,10 @@ def get_nodes(setup_peers_status,hostname_table):
     ##do the same for  monitor
     path_to_monitors_rrds=config['rrd_path_monitor_prefix']+'/*.*'
     monitors,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_monitors_rrds))])[:2]
+    print 'monitors'
+    print monitors
+    print 'dead_nodes'
+    print dead_nodes
     for node in dead_nodes:
         delete_path(config['rrd_path_monitor_prefix']+'/'+node)
 
