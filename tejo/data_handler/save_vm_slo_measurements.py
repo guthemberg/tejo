@@ -148,6 +148,7 @@ def isVMAlive(hostname):
         #supposing now that it is a monitor VM
         try:
             rrd_file=config['rrd_path_monitor_prefix']+"/"+path_id+"/"+config['load_one_filename']
+            print rrd_file
             print long(time.time())
             print rrdtool.info(rrd_file)["last_update"]
             print ((long(time.time())-(rrdtool.info(rrd_file)["last_update"])))
