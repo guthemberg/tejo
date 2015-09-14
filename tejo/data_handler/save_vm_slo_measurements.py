@@ -59,6 +59,9 @@ def isFailed(config,fault_flag,workload_hosts):
 def insert_vm_stat_into_db(ts,hostname,dbconn,keys,failure,values,location):
     dbconn.genericRun("INSERT into vm (ts,hostname,failure,%s,location) VALUES (timestamp '%s','%s',%d,%s,'%s')" % (keys,ts,hostname,failure,values,location))
 
+def insert_monitor_stat_into_db(ts,hostname,dbconn,keys,values,location):
+    dbconn.genericRun("INSERT into monitor (ts,hostname,%s,location) VALUES (timestamp '%s','%s',%s,'%s')" % (keys,ts,hostname,values,location))
+
 #def insert_fault_info_into_db(ts,hostname,dbconn,injection,intensity):
 #    dbconn.genericRun("INSERT into fault (ts,hostname,injection,intensity) VALUES (timestamp '%s','%s',%d,%s)" % (ts,hostname,injection,intensity))
 
@@ -231,9 +234,18 @@ def get_nodes(setup_peers_status,hostname_table):
     
     for node in dead_nodes:
         delete_path(config['rrd_path_vms_prefix']+'/'+node)
+
+    ##do the same for  monitor
+    path_to_monitors_rrds=config['rrd_path_monitor_prefix']+'/*.*'
+    monitors,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_monitors_rrds))])[:2]
+    for node in dead_nodes:
+        delete_path(config['rrd_path_monitor_prefix']+'/'+node)
+
+
     
     path_to_wls_rrds=config['rrd_path_workload_hosts_prefix']+'/*.*'
     wls,dead_nodes=check_node_list([path.split('/')[-1] for path in (glob.glob(path_to_wls_rrds))])[:2]
+    
 #     print "getting wls (wls:%d,bad_nodes:%d,dead_nodes:%d):"%(len(wls),len(bad_nodes),len(dead_nodes))
 #     print wls
 #     print bad_nodes
@@ -247,7 +259,7 @@ def get_nodes(setup_peers_status,hostname_table):
             setup_peers_status[node_name]['dead']=True
         delete_path(config['rrd_path_workload_hosts_prefix']+'/'+node)
     
-    return (wls,vms,setup_peers_status,hostname_table)
+    return (wls,vms,monitors,setup_peers_status,hostname_table)
 
 
 def get_hostname_table():
@@ -430,6 +442,7 @@ else:
 location=(socket.gethostname())
 
 rrd_path_vms_prefix=config['rrd_path_vms_prefix']
+rrd_path_monitor_prefix=config['rrd_path_monitor_prefix']
 fault_injection_filename=config['fault_injection_filename']
 fault_intensity_filename=config['fault_intensity_filename']
 fault_value_filename=config['fault_value_filename']
@@ -479,7 +492,7 @@ node_target_throughput=0
 number_of_workloads=0
 failed_data_collection=False
 print "getting nodes..."
-(workload_hosts,vms,setup_peers_status,hostname_table)=get_nodes(setup_peers_status,hostname_table)
+(workload_hosts,vms,monitors,setup_peers_status,hostname_table)=get_nodes(setup_peers_status,hostname_table)
 active_peers=[]
 for peer in setup_peers_status:
     if setup_peers_status[peer]['active']:
@@ -488,6 +501,7 @@ for peer in setup_peers_status:
 print "number of monitored wl: %d" % len(workload_hosts)
 #print workload_hosts
 print "number of vms nodes: %d" % len(vms)
+print "number of monitors nodes: %d" % len(monitors)
 #for hostname in config['workload_hosts']:
 for hostname in workload_hosts:
     dead=False
@@ -639,6 +653,42 @@ insert_slo_state_into_db(ts, dbconn, throughput, violation, \
                          number_of_vms,latency_95th,latency_99th,latency_avg, \
                          max_latency_95th,max_latency_99th,max_latency_avg, \
                          location,number_of_workloads)
+
+
+#for hostname in config['vms']:
+for node in monitors:
+    #if node is not found it return unknown
+#    path_id=get_host_path_id(hostname)
+    path_id=node
+    stat={}
+    list_of_files = (sorted(glob.glob(rrd_path_monitor_prefix+"/"+path_id+"/*.rrd")))
+    keys=""
+    values=""
+    #check fault injection
+#     alive=True
+    for filename in list_of_files:
+#         if not isVMAlive(hostname):
+#             alive=False
+#             break
+        db_key= ( (filename).split('/')[-1] ).split('.')[0]
+        if is_it_an_invalid_rrd_file(db_key):
+            continue
+        if len(keys)>0:
+            keys+=(','+db_key)
+        else:
+            keys=db_key
+        value=format_db_value(rrdtool.info(filename)['ds[sum].last_ds'])
+        if len(values)>0:
+            values+=(','+value)
+        else:
+            values=value
+            
+    #insert_fault_info_into_db(ts, hostname, dbconn, getIntValue(fault_file), str(getFloatValue(fault_intensity_file)), str(getFloatValue(fault_value_file)))
+#     if alive:
+    
+    insert_monitor_stat_into_db(ts,node,dbconn,keys,values,location)
+
+
 
 print dbconn.getDebugMess()
 
