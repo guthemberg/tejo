@@ -5,6 +5,8 @@
 
 pkill -f setup_peers.py
 
+exit
+
 #this verifies if the host is available to setup and if it is recheable through 22 port 
 peer_to_setup=`python $home_dir/tejo/common/experiments_scripts/peers/setup_peers.py`
 
