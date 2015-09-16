@@ -417,9 +417,10 @@ def get_peer_status_table():
             print "unknown error in get_peer_status_table, exiting."
             sys.exit(1)        
     else:
-        for peer in nearest_peers_table:
-            setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
-        save_object_to_file(setup_peers_status, setup_peers_status_file)
+        if config['workload_setup_peers'] == 'yes':
+            for peer in nearest_peers_table:
+                setup_peers_status[peer]={'rtt':nearest_peers_table[peer],'active':False,'dead':False}
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
     
     return setup_peers_status
 
