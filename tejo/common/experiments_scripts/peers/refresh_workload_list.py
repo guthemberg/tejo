@@ -158,24 +158,24 @@ if __name__ == '__main__':
 #    print nearest_peers_list                
     save_object_to_file(nearest_peers_list, tejo_config['nearest_peers_file'])
 
-    ##peers status: add new nodes only
+#     ##peers status: add new nodes only
     setup_peers_status_file=tejo_config['workload_peer_status']
     setup_peers_status={}
     if os.path.isfile(setup_peers_status_file):
         try:
             setup_peers_status=load_object_from_file(setup_peers_status_file)
+            for peer in nearest_peers_list:
+                if not peer in setup_peers_status:
+                    setup_peers_status[peer]={'rtt':nearest_peers_list[peer],'active':False,'dead':False}                
+            save_object_to_file(setup_peers_status, setup_peers_status_file)
         except:
             pass
         #cleanup list
-        for peer in nearest_peers_list:
-            if not peer in setup_peers_status:
-                setup_peers_status[peer]={'rtt':nearest_peers_list[peer],'active':False,'dead':False}                
-                
-    else:
-        for peer in nearest_peers_list:
-            setup_peers_status[peer]={'rtt':nearest_peers_list[peer],'active':False,'dead':False}
-            
-    save_object_to_file(setup_peers_status, setup_peers_status_file)
+                 
+#     else:
+#         for peer in nearest_peers_list:
+#             setup_peers_status[peer]={'rtt':nearest_peers_list[peer],'active':False,'dead':False}
+#              
     
 
                 

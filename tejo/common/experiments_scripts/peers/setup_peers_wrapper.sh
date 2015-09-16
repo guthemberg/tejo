@@ -5,7 +5,16 @@
 
 pkill -f setup_peers.py
 
-exit
+if [ ! -z $workload_setup_peers ]; then
+	if [ $workload_setup_peers != 'yes' ]; then
+		echo "workload_setup_peers in /etc/tejo.conf (${workload_setup_peers}) should be 'yes' to launch peers setup. Bye." 
+		exit
+	fi
+else
+	echo "workload_setup_peers should exist in /etc/tejo.conf and be 'yes' to launch peers setup. Bye." 
+	exit
+fi
+
 
 #this verifies if the host is available to setup and if it is recheable through 22 port 
 peer_to_setup=`python $home_dir/tejo/common/experiments_scripts/peers/setup_peers.py`
