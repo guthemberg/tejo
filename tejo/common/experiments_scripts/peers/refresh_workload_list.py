@@ -15,8 +15,6 @@ PLE_CONF_FILE='/etc/ple.conf'
 TEJO_CONF_FILE='/etc/tejo.conf'
 
 
-
-
 def clone_git_repository(uri_repository):
     subprocess.Popen(['git','clone',uri_repository], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
 
