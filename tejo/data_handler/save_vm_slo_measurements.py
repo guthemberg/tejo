@@ -381,13 +381,14 @@ def open_ssh_tunnel_to_master_db():
 
 
 def save_peer(setup_peers_status,hostname,wl_death,rtt=-1.0,active=False):
-    if hostname in setup_peers_status:
-        setup_peers_status[hostname]['active']=active
-        setup_peers_status[hostname]['dead']=wl_death
-        if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
-            setup_peers_status[hostname]['rtt']=rtt
-    else:
-        setup_peers_status[hostname]={'rtt':rtt,'active':active,'dead':wl_death}
+    if not setup_peers_status is None:
+        if hostname in setup_peers_status:
+            setup_peers_status[hostname]['active']=active
+            setup_peers_status[hostname]['dead']=wl_death
+            if setup_peers_status[hostname]['rtt']>rtt and rtt>0.0:
+                setup_peers_status[hostname]['rtt']=rtt
+        else:
+            setup_peers_status[hostname]={'rtt':rtt,'active':active,'dead':wl_death}
         
     return setup_peers_status
 
@@ -423,14 +424,15 @@ def get_peer_status_table():
     return setup_peers_status
 
 def check_nearest_rtt(peer,setup_peers_status,rtt):
-    if peer in setup_peers_status:
-        if setup_peers_status[peer]['rtt']>0.0:
-            if rtt<=0.0:
-                rtt=setup_peers_status[peer]['rtt']
-            elif setup_peers_status[peer]['rtt']<rtt:
-                rtt=setup_peers_status[peer]['rtt']
-            else:
-                setup_peers_status[peer]['rtt']=rtt
+    if not setup_peers_status is None:    
+        if peer in setup_peers_status:
+            if setup_peers_status[peer]['rtt']>0.0:
+                if rtt<=0.0:
+                    rtt=setup_peers_status[peer]['rtt']
+                elif setup_peers_status[peer]['rtt']<rtt:
+                    rtt=setup_peers_status[peer]['rtt']
+                else:
+                    setup_peers_status[peer]['rtt']=rtt
     return (rtt,setup_peers_status)
     
 ###### main   
