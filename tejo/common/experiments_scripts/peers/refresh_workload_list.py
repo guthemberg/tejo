@@ -49,9 +49,19 @@ def update_peer_monitor(peer, monitor, rtt,monitors):
     c = MongoClient(host, 27017)
     db=c.tejo
     status=db.status
-    status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False,check_keys=False)
-    status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False,check_keys=False)
-    status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False,check_keys=False)
+    list_of_peers=list(status.find({'peer': peer}))
+    if len(list_of_peers)!=1:
+        print list_of_peers
+        print "WARNING: inconsistent number of oids (%d), leaving." % len(list_of_peers)
+    else:
+            
+        object_id=list_of_peers[0]['_id']
+        status.update({'_id':object_id},{'$set':{'monitor':monitor}})
+        status.update({'_id':object_id},{'$set':{'monitor_rtt':rtt}})
+        status.update({'_id':object_id},{'$set':{'monitors':monitors}})
+    #    status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False,check_keys=False)
+    #    status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False,check_keys=False)
+    #    status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False,check_keys=False#)
     c.close()    
 
 def add_peer(peer, monitor, rtt):
