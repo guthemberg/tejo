@@ -1,7 +1,7 @@
 import pickle,sys,socket,subprocess,os,git,random
 from pymongo import MongoClient
 from datetime import datetime
-from time import mktime,sleep
+from time import mktime,sleep,time
 #from planetlab import Monitor
 from configobj import ConfigObj
 
@@ -72,6 +72,33 @@ def add_peer(peer, monitor, rtt):
     status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
     c.close()    
 
+def get_list_of_monitors():
+    host=(socket.gethostname())
+    c = MongoClient(host, 27017)
+    db=c.azure
+    monitors=db.monitors
+    list_of_monitors=list(monitors.find())
+    c.close()    
+    return list_of_monitors
+
+
+def add_monitor(monitor):
+    host=(socket.gethostname())
+    c = MongoClient(host, 27017)
+    db=c.azure
+    monitors=db.monitors
+    monitors.insert({'monitor':monitor,'ts':time()},check_keys=False)
+    c.close()    
+
+def remove_monitor(monitor):
+    host=(socket.gethostname())
+    c = MongoClient(host, 27017)
+    db=c.azure
+    monitors=db.monitors
+    monitors.remove({'monitor':monitor})
+    c.close()    
+
+
 def remove_peer(peer):
     host=(socket.gethostname())
     c = MongoClient(host, 27017)
@@ -96,6 +123,9 @@ def load_object_from_file(input_file):
 
 
 if __name__ == '__main__':
+    print "[%s]:update monitors..."%(str(datetime.now()))    
+    add_monitor(socket.gethostname())
+    print 'ok'
     print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama=tejo_config['root_dir']+'/yanoama'
