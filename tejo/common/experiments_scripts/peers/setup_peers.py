@@ -90,6 +90,13 @@ if __name__ == '__main__':
 #    print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama=tejo_config['root_dir']+'/yanoama'
+    workload_setup_file=tejo_config['workload_setup_file']
+    workload_setup=[]
+    if os.path.isfile(workload_setup_file):
+        try:
+            workload_setup=load_object_from_file(workload_setup_file)
+        except EOFError:
+            os.remove(workload_setup_file)
     setup_peers_status_file=tejo_config['workload_peer_status']
     setup_peers_status={}
     nearest_peers_table={}
@@ -115,8 +122,11 @@ if __name__ == '__main__':
         
     #getting non setuped nodes
     candidates=[]
-    for peer in setup_peers_status:
-        if not setup_peers_status[peer]['active'] and not setup_peers_status[peer]['dead']:
+#     for peer in setup_peers_status:
+#         if not setup_peers_status[peer]['active'] and not setup_peers_status[peer]['dead']:
+#             candidates.append(peer)
+    for peer in nearest_peers_table:
+        if not peer in workload_setup:
             candidates.append(peer)
             
     
@@ -147,6 +157,8 @@ if __name__ == '__main__':
         #check liveness
         if rtt > 0:
             sys.stdout.write(peer_to_setup)
+            workload_setup.append(peer_to_setup)
+            save_object_to_file(workload_setup, workload_setup_file)
             sys.exit(0)
         setup_peers_status[peer_to_setup]['active']=False
         setup_peers_status[peer_to_setup]['dead']=True
