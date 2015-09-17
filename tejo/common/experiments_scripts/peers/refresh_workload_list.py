@@ -248,7 +248,7 @@ if __name__ == '__main__':
         
         if rtt<all_peers_list[peer]['monitor_rtt'] and rtt>0 and rtt<int(tejo_config['max_neighbourhood_rtt']):
             monitors=all_peers_list[peer]['monitors']
-            monitors[monitor.split('.')[0]]=rtt
+            monitors[myself.split('.')[0]]=rtt
             peer_to_update[peer]={'monitor_rtt':rtt,'monitors':monitors}
             remaining_operation_tokens=remaining_operation_tokens-1
         del all_peers_list[peer]
@@ -262,12 +262,12 @@ if __name__ == '__main__':
         print '(%d/%d)%s [REMOVED]'%(measured_nodes,operation_tokens,peer)
         
     for peer in new_peers:
-        add_peer(peer, monitor, new_peers[peer])
+        add_peer(peer, myself, new_peers[peer])
         measured_nodes=measured_nodes+1
         print '(%d/%d)%s:%.4f [ADDED]'%(measured_nodes,operation_tokens,peer,new_peers[peer])
         
     for peer in peer_to_update:
-        update_peer_monitor(peer, monitor, peer_to_update[peer]['monitor_rtt'], peer_to_update[peer]['monitors'])
+        update_peer_monitor(peer, myself, peer_to_update[peer]['monitor_rtt'], peer_to_update[peer]['monitors'])
         measured_nodes=measured_nodes+1
         print '(%d/%d)%s:%.4f (rtt) , %d (number of monitors) [UPDATED]'%(measured_nodes,operation_tokens,peer,peer_to_update[peer]['monitor_rtt'],len(peer_to_update[peer]['monitors']))
 
