@@ -73,6 +73,7 @@ all_peers_file=/home/USER/all_peers_list.pck
 nearest_peers_file=/home/USER/nearest_peers_list.pck
 monitors_list_file=/home/USER/monitors_list.pck
 workload_list_file=/home/USER/workload_list.pck
+workload_setup_file=/home/USER/workload_setup.pck
 workload_rtt=/tmp/rtt.pck
 workload_service_rtt=/tmp/fresh_service_rtt.pck
 workload_strategy=nearest

@@ -123,6 +123,7 @@ def load_object_from_file(input_file):
 
 
 if __name__ == '__main__':
+    
     print "[%s]:update membership..."%(str(datetime.now()))    
     tejo_config=ConfigObj(TEJO_CONF_FILE)
     path_to_yanoama=tejo_config['root_dir']+'/yanoama'
@@ -159,6 +160,21 @@ if __name__ == '__main__':
     operation_tokens=20
     remaining_operation_tokens=operation_tokens
     #1.1) 
+
+    #monitors list
+    add_monitor(socket.gethostname())
+    monitors=get_list_of_monitors()
+    monitors_list=[]
+    DEATH_TIME=int(tejo_config['time_to_vm_death']) #about one day in seconds
+    for monitor in monitors:
+        #check if peer is alive
+        if (int(monitor['ts'])-int(time()))<DEATH_TIME:
+            monitors_list.append(monitor['monitor'])
+        else:
+            remove_monitor(monitor['monitor'])
+            
+#    print "current monitors list size: %d " % len(monitors_list)
+#    save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
     
     
     for peer in peers:
@@ -170,14 +186,16 @@ if __name__ == '__main__':
         elif peer['peer'] in ple_nodes:
             ple_nodes.remove(peer['peer'])
             all_peers_list[peer['peer']]={'monitor':peer['monitor'],'monitor_rtt':peer['monitor_rtt'],'target':peer['target'],'target_rtt':peer['target_rtt'],'monitors':peer['monitors'],'active':peer['active']}
-            if peer['monitor'] not in monitors_list:
-                monitors_list.append(peer['monitor'])
+#            if peer['monitor'] not in monitors_list:
+#                monitors_list.append(peer['monitor'])
             if peer['monitor'] == monitor:
                 nearest_peers_list[peer['peer']]=peer['monitor_rtt']
 
     print "current number of peers: %d " % len(all_peers_list)
 #    print all_peers_list
     save_object_to_file(all_peers_list, tejo_config['all_peers_file'])
+
+    
     print "current monitors list size: %d " % len(monitors_list)
 #    print monitors_list                
     save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
@@ -247,10 +265,6 @@ if __name__ == '__main__':
         measured_nodes=measured_nodes+1
         print '(%d/%d)%s:%.4f (rtt) , %d (number of monitors) [UPDATED]'%(measured_nodes,operation_tokens,peer,peer_to_update[peer]['monitor_rtt'],len(peer_to_update[peer]['monitors']))
 
-
-    print "update monitors..."%(str(datetime.now()))    
-    add_monitor(socket.gethostname())
-    print 'ok'
 
 
     print "[%s]:done."%(str(datetime.now()))  
