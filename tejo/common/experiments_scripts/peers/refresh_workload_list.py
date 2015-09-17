@@ -194,7 +194,7 @@ if __name__ == '__main__':
             all_peers_list[peer['peer']]={'monitor':peer['monitor'],'monitor_rtt':peer['monitor_rtt'],'target':peer['target'],'target_rtt':peer['target_rtt'],'monitors':peer['monitors'],'active':peer['active']}
 #            if peer['monitor'] not in monitors_list:
 #                monitors_list.append(peer['monitor'])
-            if peer['monitor'] == monitor:
+            if peer['monitor'] == myself:
                 nearest_peers_list[peer['peer']]=peer['monitor_rtt']
 
     print "current number of peers: %d " % len(all_peers_list)
