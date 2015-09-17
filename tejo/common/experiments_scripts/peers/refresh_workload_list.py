@@ -163,10 +163,10 @@ if __name__ == '__main__':
 
     #monitors list
     add_monitor(socket.gethostname())
-    monitors=get_list_of_monitors()
+    monitors_list_azure=get_list_of_monitors()
     monitors_list=[]
     DEATH_TIME=int(tejo_config['time_to_vm_death']) #about one day in seconds
-    for monitor in monitors:
+    for monitor in monitors_list_azure:
         #check if peer is alive
         if (int(monitor['ts'])-int(time()))<DEATH_TIME:
             monitors_list.append(monitor['monitor'])
