@@ -162,16 +162,22 @@ if __name__ == '__main__':
     #1.1) 
 
     #monitors list
-    add_monitor(socket.gethostname())
+    myself=socket.gethostname()
     monitors_list_azure=get_list_of_monitors()
     monitors_list=[]
     DEATH_TIME=int(tejo_config['time_to_vm_death']) #about one day in seconds
+    add_myself=True
     for monitor in monitors_list_azure:
         #check if peer is alive
         if (int(monitor['ts'])-int(time()))<DEATH_TIME:
             monitors_list.append(monitor['monitor'])
+            if monitor['monitor'] == myself:
+                add_myself=False
         else:
             remove_monitor(monitor['monitor'])
+            
+    if add_myself:
+        add_monitor(myself)
             
 #    print "current monitors list size: %d " % len(monitors_list)
 #    save_object_to_file(monitors_list, tejo_config['monitors_list_file'])
