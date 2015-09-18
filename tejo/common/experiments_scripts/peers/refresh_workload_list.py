@@ -1,15 +1,11 @@
 import pickle,sys,socket,subprocess,os,git,random
 from pymongo import MongoClient
 from datetime import datetime
-from time import mktime,sleep,time
+from time import time
 #from planetlab import Monitor
 from configobj import ConfigObj
 
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 PLE_CONF_FILE='/etc/ple.conf'
 TEJO_CONF_FILE='/etc/tejo.conf'
