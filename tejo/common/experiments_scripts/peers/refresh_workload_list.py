@@ -46,10 +46,8 @@ def update_peer_monitor(peer, monitor, rtt,monitors):
     status=db.status
     list_of_peers=list(status.find({'peer': peer}))
     if len(list_of_peers)!=1:
-        print list_of_peers
-        print "WARNING: inconsistent number of oids (%d), leaving." % len(list_of_peers)
-    else:
-            
+        print "WARNING: inconsistent number of oids (list size: %d, content: %s, peer:%s), leaving." % (len(list_of_peers),str(list_of_peers),peer)
+    else:            
         object_id=list_of_peers[0]['_id']
         status.update({'_id':object_id},{'$set':{'monitor':monitor}})
         status.update({'_id':object_id},{'$set':{'monitor_rtt':rtt}})
