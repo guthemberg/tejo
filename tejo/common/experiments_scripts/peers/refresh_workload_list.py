@@ -66,6 +66,8 @@ def add_peer(peer, monitor, rtt):
     if len(list_of_peers)==0:
         monitors={monitor.split('.')[0]:rtt}
         status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
+    else:
+        print "addition Failed"
     c.close()    
 
 def get_list_of_monitors():
