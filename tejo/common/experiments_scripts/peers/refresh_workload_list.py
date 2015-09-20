@@ -62,8 +62,10 @@ def add_peer(peer, monitor, rtt):
     c = MongoClient(host, 27017)
     db=c.tejo
     status=db.status
-    monitors={monitor.split('.')[0]:rtt}
-    status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
+    list_of_peers=list(status.find({'peer': peer}))
+    if len(list_of_peers)==0:
+        monitors={monitor.split('.')[0]:rtt}
+        status.insert({'peer':peer,'monitor':monitor,'target':monitor,'monitor_rtt':rtt,'target_rtt':rtt,'monitors':monitors,'active':False},check_keys=False)
     c.close()    
 
 def get_list_of_monitors():
@@ -178,9 +180,9 @@ if __name__ == '__main__':
     
     
     for peer in peers:
-        if remaining_operation_tokens > 0 and (not(peer['peer'] in ple_nodes)):
-            #print "CHECKING: %s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
-            #print ple_nodes
+        if remaining_operation_tokens > 0 and (not (peer['peer'] in ple_nodes)):
+            print "CHECKING: %s: %s" % (peer['peer'],str((not(peer['peer'] in ple_nodes))))
+            print ple_nodes
             peers_to_be_removed.append(peer['peer'])
             remaining_operation_tokens=remaining_operation_tokens-1
         elif peer['peer'] in ple_nodes:
