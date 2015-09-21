@@ -24,8 +24,8 @@ get_random_vm_hostname()
 	n_vms=`echo $vms|awk -F, '{print NF}'`
 #the following command returns a random number (-p1) between 0 and 6 (-n5)
 #host_index=`shuffle -n 6 -p1`
-	random_index=`shuffle -n $n_vms -p1`
-	random_vm_index=`expr $random_index + 1`
+	random_vm_index=`shuf -i 1-$n_vms -n 1`
+	#	random_vm_index=`expr $random_index + 1`
 	echo $vms | cut -d, -f$random_vm_index
 }
 
@@ -35,8 +35,8 @@ get_random_hostname()
 	n_my_vms=`echo $my_vms|awk -F, '{print NF}'`
 	#the following command returns a random number (-p1) between 0 and 6 (-n5)
 	#host_index=`shuffle -n 6 -p1`
-	random_index=`shuffle -n $n_my_vms -p1`
-	random_vm_index=`expr $random_index + 1`
+	random_vm_index=`shuf -i 1-$n_my_vms -n 1`
+	#random_vm_index=`expr $random_index + 1`
 	echo $my_vms | cut -d, -f$random_vm_index
 }
 
