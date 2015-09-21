@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sh /home/user/svc/svc/fault_injection/run_fault_campaigns.sh
+sh /home/user/tejo/tejo/fault_injection_tools/run_fault_campaigns.sh

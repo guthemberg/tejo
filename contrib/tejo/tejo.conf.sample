@@ -87,6 +87,19 @@ workload_throughput=200
 workload_setup_peers=no
 workload_force_setup=no
 
+### fault injection, experiment setup
+#system_id codes: 
+##0: mongo+read-only
+##1: volt+tpcc
+##2: mongo+updates
+##3: volt+voter
+## depredated, replaced by system_id, EXPERIMENT_ID=0
+#injection campaign settings
 system_id=0
+
+RECOVERY_DELAY=60
+FAULT_DURATION=180
+TRIES_PER_FAULT=2
+
 
 www_dir=/usr/share/ganglia-webfrontend/

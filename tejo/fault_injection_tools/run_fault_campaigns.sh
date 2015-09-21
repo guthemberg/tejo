@@ -115,6 +115,11 @@ inject() {
 
 ######    Main  ##########
 
+
+
+EXPERIMENT_ID=$system_id
+
+
 for fault_type in 2 3 4 6 7 5
 #for fault_type in 5
 do
