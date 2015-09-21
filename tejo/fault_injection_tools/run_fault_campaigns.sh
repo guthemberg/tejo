@@ -6,7 +6,18 @@
 #RECOVERY_DELAY=60
 #FAULT_DURATION=300
 #TRIES_PER_FAULT=2
-#EXPERIMENT_ID=$1
+#system_id=$1
+
+get_ssh_remote_call()
+{	
+	printf "ssh -i ${root_dir}/.ssh/id_rsa_cloud -o StrictHostKeyChecking=no  ${guest_vm_sys_user}@"	
+}
+
+run_remote_cmd ()
+{
+	${1}${2} ${3}
+}
+
 
 get_random_vm_hostname()
 {
@@ -65,7 +76,12 @@ inject() {
 	fault_type=$2
 	intensity=$3
 	system_id=$4
-	
+
+	#	host=$target
+	SSH_CMD="`get_ssh_remote_call`"
+	#	run_remote_cmd "$SSH_CMD" "$host" "sudo service mongos stop"
+
+		
 	while [ -e /tmp/pause_fc.txt ]
 	do
 		echo -n "It is paused for 60 second... "
@@ -77,27 +93,27 @@ inject() {
 	/bin/echo -n "[${ts}] injecting fault $fault_type with intensity of $intensity towards $target (fault dur. ${FAULT_DURATION} sec. in system $system_id)..."
 	
 	if [ $fault_type -eq 2 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/packet_loss_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/packet_loss_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/packet_loss_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/packet_loss_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	elif [ $fault_type -eq 3 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/latency_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/latency_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/latency_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/latency_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	elif [ $fault_type -eq 4 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/bandwidth_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/bandwidth_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/bandwidth_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/bandwidth_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	elif [ $fault_type -eq 5 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/memory_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/memory_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/memory_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/memory_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	elif [ $fault_type -eq 6 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/disk_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/disk_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/disk_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/disk_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	elif [ $fault_type -eq 7 ]; then
-	        ssh -o StrictHostKeyChecking=no $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/cpu_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/cpu_fault_${intensity}.log\""
+	        run_remote_cmd "$SSH_CMD" $target "/bin/tcsh -c \"/bin/sh /home/user/tejo/tejo/fault_injection_tools/cpu_fault.sh $FAULT_DURATION $intensity $system_id >& /tmp/cpu_fault_${intensity}.log\""
 	        /bin/sleep $RECOVERY_DELAY
 	        /bin/sleep $RECOVERY_DELAY
 	else  
