@@ -80,13 +80,33 @@ def get_list_of_monitors():
     return list_of_monitors
 
 
-def add_monitor(monitor):
+def add_monitor(monitor, crowd=-1,score=-1):
     host=(socket.gethostname())
     c = MongoClient(host, 27017)
     db=c.azure
     monitors=db.monitors
-    monitors.insert({'monitor':monitor,'ts':time()},check_keys=False)
+    monitors.insert({'monitor':monitor,'ts':time(),'score':score,'crowd':crowd},check_keys=False)
     c.close()    
+
+def update_monitor(monitor,crowd,score):
+    host=(socket.gethostname())
+    c = MongoClient(host, 27017)
+    db=c.azure
+    status=db.monitors
+    list_of_monitors=list(status.find({'monitor': monitor}))
+    if len(list_of_monitors)!=1:
+        print "WARNING: inconsistent number of oids (list size: %d, content: %s, monitor:%s), leaving." % (len(list_of_monitors),str(list_of_monitors),monitor)
+    else:            
+        object_id=list_of_monitors[0]['_id']
+        status.update({'_id':object_id},{'$set':{'monitor':monitor}})
+        status.update({'_id':object_id},{'$set':{'score':score}})
+        status.update({'_id':object_id},{'$set':{'crowd':crowd}})
+        status.update({'_id':object_id},{'$set':{'ts':time()}})
+    #    status.update({'peer':peer},{'$set':{'monitor':monitor}}, upsert=False,check_keys=False)
+    #    status.update({'peer':peer},{'$set':{'monitor_rtt':rtt}}, upsert=False,check_keys=False)
+    #    status.update({'peer':peer},{'$set':{'monitors':monitors}}, upsert=False,check_keys=False#)
+    c.close()    
+
 
 def remove_monitor(monitor):
     host=(socket.gethostname())
