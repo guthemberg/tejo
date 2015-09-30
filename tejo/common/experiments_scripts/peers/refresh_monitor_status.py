@@ -190,5 +190,6 @@ if __name__ == '__main__':
         update_monitor(myself, crowd, score)
     else:
         add_monitor(monitor, crowd, score)
+    print "[%s]:done."%(str(datetime.datetime.now())) 
+    print get_list_of_monitors()   
     sys.exit(0)
-    print "[%s]:done."%(str(datetime.datetime.now()))    
