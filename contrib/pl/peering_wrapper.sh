@@ -148,6 +148,8 @@ fi
 
 #this returns the nearest target
 target=`python ${home_dir}/contrib/pl/peering.py ${root_dir}/$monitors_file`
+#saving the peering file for further analysis
+cp ${root_dir}/peering.pck ${root_dir}/my_peering_file.pickle
 
 if [ "$workload_target" != "$target" -a `expr length "$target"` -gt 0 ]
 then
