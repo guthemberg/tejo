@@ -1,4 +1,4 @@
-import pickle,sys,socket,subprocess,os,git,random
+import pickle,sys,socket,subprocess,os,random
 from pymongo import MongoClient
 import datetime
 from time import time
@@ -18,8 +18,6 @@ TEJO_CONF_FILE='/etc/tejo.conf'
 #from tejo.common.db.postgres.database import MyDB
 
 
-def clone_git_repository(uri_repository):
-    subprocess.Popen(['git','clone',uri_repository], stdout=subprocess.PIPE, close_fds=True).communicate()[0].strip()
 
 def getRTT_TCP(hostname, yanoama_root,port=22):
     try:
