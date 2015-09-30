@@ -150,11 +150,12 @@ def get_local_monitor_state(dbconn,target_ts=None,max_ts=None):
     crowd=-1
     score=-1
     #past minute
-    last_minute=datetime.datetime.now()-datetime.timedelta(minutes=1)
+    now=datetime.datetime.now()
+    last_minute=now-datetime.timedelta(minutes=1)
     if target_ts is None:
         target_ts=("%s:%s")%(last_minute.strftime("%Y-%m-%d %H:%M"),'00')
     if max_ts is None:
-        max_ts="%s:%s"%(time.strftime("%Y-%m-%d %H:%M"),'00')
+        max_ts="%s:%s"%(now.strftime("%Y-%m-%d %H:%M"),'00')
     select_result=dbconn.getSelect(("SELECT ts,outliers from workload where ts>='%s' and ts<'%s'")%(target_ts,max_ts))
     current_time=''
     for line in select_result:
