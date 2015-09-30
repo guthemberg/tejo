@@ -5,11 +5,6 @@ from time import mktime,sleep
 from configobj import ConfigObj
 
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 PLE_CONF_FILE='/etc/ple.conf'
 TEJO_CONF_FILE='/etc/tejo.conf'
 
