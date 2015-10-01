@@ -1,6 +1,4 @@
-import pickle,sys,socket,subprocess,os,random
-from datetime import datetime
-from time import mktime,sleep
+import pickle,sys,subprocess
 #from planetlab import Monitor
 from configobj import ConfigObj
 
