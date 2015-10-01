@@ -151,6 +151,8 @@ target=`python ${home_dir}/contrib/pl/peering.py ${root_dir}/$monitors_file`
 #saving the peering file for further analysis
 cp ${root_dir}/peering.pck ${root_dir}/my_peering_file.pickle
 
+
+
 if [ "$workload_target" != "$target" -a `expr length "$target"` -gt 0 ]
 then
 	if [ "$workload_strategy" = "nearest" ]
@@ -163,6 +165,60 @@ then
 		/bin/sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh
 		touch ${mongo_active_wl_file}
 		/bin/sh /home/`whoami`/tejo/contrib/pl/check_workload.sh 
+		
+		exit 0
 			
 	fi
 fi
+
+
+
+#### about other option
+
+#getting monitors status
+
+n_fields=`echo $workload_monitors_status_file| tr '/' '\n' | wc -l`
+monitors_status_file=`echo $workload_monitors_status_file |cut -d/ -f$n_fields`
+
+
+
+if [ ! -e ${root_dir}/$monitors_status_file ]
+then
+	wget --no-check-certificate http://$workload_target/$monitors_status_file -O ${root_dir}/$monitors_status_file
+fi
+
+python -c "import pickle ; print pickle.load( open( '${root_dir}/$monitors_status_file', 'rb' ) )"
+if [ ! $? -eq 0 ]
+then
+	rm ${root_dir}/$monitors_status_file
+	wget --no-check-certificate http://$workload_target/$monitors_status_file -O ${root_dir}/$monitors_status_file
+	#doubling checking
+	python -c "import pickle ; print pickle.load( open( '${root_dir}/$monitors_status_file', 'rb' ) )"
+	if [ ! $? -eq 0 ]
+	then
+		echo "sorry failed to get the monitors status list ${root_dir}/$monitors_status_file"
+		exit 1
+	fi
+fi 
+
+target=`python ${home_dir}/contrib/pl/compute_monitors_status.py ${root_dir}/$monitors_status_file $workload_strategy`
+if [ ! $? -eq 0 ]
+then
+	echo "failed to get target in $workload_strategy strategy option"
+	exit 1
+fi
+if [ "$workload_target" != "$target" -a `expr length "$target"` -gt 0 ]
+then
+		rm $workload_rtt
+		node_location=`echo $target|tr '-' '\n'|head -n1`
+		install_ganglia_monitor "$node_location" "$node_type" "$target"
+		sudo sed -i "s|$workload_target|$target|g" /etc/tejo.conf
+
+		/bin/sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh
+		touch ${mongo_active_wl_file}
+		/bin/sh /home/`whoami`/tejo/contrib/pl/check_workload.sh 
+		
+		exit 0
+	
+fi
+#"$workload_strategy"

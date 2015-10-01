@@ -190,6 +190,7 @@ if __name__ == '__main__':
         update_monitor(myself, crowd, score)
     else:
         add_monitor(monitor, crowd, score)
+    save_object_to_file(get_list_of_monitors(), tejo_config['workload_monitors_status_file'])
     print "[%s]:done."%(str(datetime.datetime.now())) 
 #    print get_list_of_monitors()   
     sys.exit(0)
