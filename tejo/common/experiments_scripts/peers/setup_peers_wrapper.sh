@@ -3,7 +3,27 @@
 
 . /etc/tejo.conf
 
-pkill -f setup_peers.py
+
+num=`pgrep -f setup_peers.py|wc -l`
+echo $num
+
+index=1
+
+while [ "$num" -gt 0 ]
+do
+	echo "running $num setup_peer.py, sleeping 150s"
+	sleep 150
+	if [ "$index" -eq 2 ]; then
+		pkill -f setup_peers.py
+        break
+	fi
+	num=`pgrep -f setup_peers.py|wc -l`
+	index=`expr $index + 1`
+done
+
+
+
+
 
 if [ ! -z $workload_setup_peers ]; then
 	if [ $workload_setup_peers != 'yes' ]; then
