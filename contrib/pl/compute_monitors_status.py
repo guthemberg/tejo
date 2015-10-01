@@ -3,7 +3,6 @@ from datetime import datetime
 from time import mktime,sleep
 #from planetlab import Monitor
 from configobj import ConfigObj
-from igraph.vendor.texttable import len
 
 
 PLE_CONF_FILE='/etc/ple.conf'
@@ -52,7 +51,7 @@ if __name__ == '__main__':
                     score=node['score']
                     crowd=node['crowd']
                 else:
-                    if node['score'] < score:
+                    if ((node['crowd']*3) - node['score']) > ((crowd*3)-score):
                         best=monitor
                         score=node['score']
                         crowd=node['crowd']
