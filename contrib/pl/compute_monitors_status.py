@@ -68,10 +68,10 @@ if __name__ == '__main__':
                 
 
         strategy=sys.argv[2]
-        if strategy == 'best':
+        if strategy == 'best' and len(best)>0:
             sys.stdout.write(best)
             sys.exit(0)
-        elif strategy == 'balance':
+        elif strategy == 'balance' and len(balance)>0:
             sys.stdout.write(balance)
             sys.exit(0)
         else:
