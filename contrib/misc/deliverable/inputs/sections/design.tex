@@ -23,10 +23,10 @@ Tejo comprises three components, namely a set of fault injection tools, a data h
 \subsection{The components of Tejo}
 \label{subsec:tejo_components}
 
-\subsubsection{Fault injection tools.} 
+\subsubsection{Fault injection tools} 
 To provoke performance anomalies, this component emulates four categories of faulty events in VMs of a NewSQL database cluster. 
 
-\emph{Network faults}. Communication issues are common in distributed systems. To analyse their impact, we inject three types of network faults, namely packet loss, network latency, and limping network. Packet loss and network latency emulates interconnection issues, such as network partition. Limping network reproduces anomalies previously observed by Do \emph{et al.}~\cite{do2013limplock}, where the transmission rate of limping network interface is smaller than the manufacturer's specification. 
+\emph{Network faults}. Communication issues are common in distributed systems. To analyse their impact, we inject three types of network faults, namely packet loss, network latency, and limping network. Packet loss and network latency emulate communications with interconnection-related anomalies, such as network partition. Limping network reproduces anomalies previously observed by Do \emph{et al.}~\cite{do2013limplock}, where the transmission rate of limping network interface is smaller than the manufacturer's specification. 
 
 \emph{Memory faults}. As NewSQL databases fit the entire data to the main memory, they become more vulnerable to anomalies in memory availability. To provoke such anomalies, we make arbitrary amounts of main memory unavailable. As a result, the database instance is likely to perform more costly disk I/O operations. A typical example of this fault is a VM running out of memory due to a misconfiguration, memory leaking, overloading, or an unbalanced resource allocation.
 
@@ -35,14 +35,14 @@ To provoke performance anomalies, this component emulates four categories of fau
 \emph{CPU faults}. CPU is a key resource in a virtual machine. As unattended number of processes compete the database instance to CPU resources, they may undermine the performance of the database cluster. The CPU fault emulates an arbitrary number of jobs performing arithmetic operations to overload the VM cores. 
 
 
-\subsubsection{The data handler.} 
+\subsubsection{The data handler} 
 This component computes data from the monitoring system (i) to collect the performance counters of a NewSQL database and (ii) to provide data to characterize performance anomalies.
 
 \emph{Collect the performance counters of a NewSQL database}. The data handler samples monitoring data to collect the current state of the NewSQL cluster, as depicted in Figure~\ref{fig:tejo_overview}. To this end, it frequently communicates with the monitoring system to fetch raw monitoring data and to convert it into useful, aggregated information. The content of the resulting aggregated information depends on the aim of each functioning phase, learning or detection, detailed below. 
 
 \emph{Providing data to characterize performance anomalies}. After aggregating samples of monitoring data, the data handler organizes this data into \emph{feature vectors}. These vectors represent the state of the VMs of the database cluster or the workload. The vectors are stored in datasets for performance analysis or anomaly detection. 
 
-\subsubsection{The learning model.} 
+\subsubsection{The learning model} 
 The learning model is at the heart of the Tejo scheme. The purpose of this model, the so-called predictive task, is to characterize the behaviour of VMs under performance anomalies. Given an i.i.d. sample $(\inpseq,\rel)$, described in Subsection~\ref{sec:background}, we model our predictive task as a classification problem, whose inputs and outputs are defined as follows.
 
 \emph{Inputs}. We represent the input space $\inpseq$ as a VM running a database instance. This input data corresponds to a feature vector computed by the data handler component. The size of the feature vector matters. In general, the higher the dimension of this vector, the higher the predictive efficiency is. However, an increase in the input dimension rises the computational cost of predictions.
@@ -52,7 +52,7 @@ The learning model is at the heart of the Tejo scheme. The purpose of this model
 \subsection{Two-phase functioning}
 \label{subsec:tejo_phases}
 
-\subsubsection{Learning phase.} In this phase, Tejo learns the behaviour of the database cluster under anomalies and reports on its performance.
+\subsubsection{Learning phase} In this phase, Tejo learns the behaviour of the database cluster under anomalies and reports on its performance.
 
 \emph{Requirements}. As illustrated in Figure~\ref{fig:tejo_overview_learning}, Tejo relies on an already existing monitoring system to poll performance counters from both VMs and workload. To measure the cluster-wide performance counters, we assume that the workload can be replayed or run through a benchmark tool. We consider that Tejo's analyst specifies expected SLO metrics, such as average throughput and $99^{th}$ percentile latency. The analyst must also specify parameters of the fault campaign and running experiments, including intensity and duration of each fault, number of injections, and interval between consecutive fault injections. 
 
@@ -60,7 +60,7 @@ The learning model is at the heart of the Tejo scheme. The purpose of this model
 
 \emph{Reports.} Besides providing data to learn the behaviour of anomalous VMs, analysts can observe the impact of anomalies in the throughput and $99^{th}$ percentile latency. They may evaluate which anomalies cause SLO  violations, gaining more insight into the efficiency of existing fault-tolerance mechanisms. 
 
-\subsubsection{Detection phase.} In this phase, Tejo reports on the efficiency of the learning model and performs anomaly detection in VMs at runtime. 
+\subsubsection{Detection phase} In this phase, Tejo reports on the efficiency of the learning model and performs anomaly detection in VMs at runtime. 
 
 \emph{Requirements}. Similar to the training phase, Tejo relies on an existing monitoring platform to gather data for predictions. It requires that the learning model has already been trained as detailed in learning phase described above. We assume that SLO targets and the workload are the same as those of the learning phase. 
 

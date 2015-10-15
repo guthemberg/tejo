@@ -1,15 +1,15 @@
 \section{Prototype set-up}
 
-In this section we describe the set-up of Tejo in a cloud platform. Initially, we details the basic roles of nodes in Tejo design through a simple topology that guides us throughout this section. Then we list the steps to install nodes according to them roles and requirements. We also provide some guidelines to the installation of cloud databases, useful for validation purposes. After the installation steps, we explain how to configure nodes to work as part of Tejo.
+In this section we describe the set-up of Tejo in a cloud platform. Initially, we detail the basic roles of nodes in Tejo design through a simple topology that guides us throughout this section. Then we list the steps to install nodes according to their roles and requirements. We also provide some guidelines to the installation of cloud databases, useful for validation purposes. After the installation steps, we explain how to configure nodes to work as part of Tejo.
 
 \subsection{Role of nodes in Tejo and their main interactions}
 \label{subsec:roles}
 
-Nodes play specific roles according to the services they provide to the anomaly detection scheme. There thee main roles are:
+Nodes play specific roles according to the services they provide to the anomaly detection scheme. There are thee main roles:
 
 \begin{itemize}
-	\item Service Unity (SU): This is the node, commonly a virtual machine, whose services are observed by Tejo in order to identify anomalous behaviours. Essentially, SU runs processes, commonly from a distributed systems, whose performance might be undermined by unwanted cloud behaviours. Therefore, each SU provides monitoring information to characterize the performance of the process running on it. When Tejo orchestrate fault injection campaigns, SUs actually run scripts that emulate faults. In this document, we focus on clusters of cloud databases where the components of the cluster, SUs, play a role of data storage process. However, we assume that the vast majority of monitoring data provided by SU is not specific to cloud databases, hence Tejo is flexible enough to detect anomalies in other distributed services deployed in cloud platforms.
-	\item Workload: Nodes that play a role of Workload generates requests to the service running atop SUs. Essentially, they emulates the service load, similar to that expected in the real deployment, that SUs should serve. This role allows us to reproduce the behaviour of users and to verify if their expectations are met through service level objectives monitoring. When Tejo runs in production it is represented by remote requests from clients. 
+	\item Service Unity (SU): This is the node, commonly a virtual machine, whose services are observed by Tejo in order to identify anomalous behaviours. Essentially, SU runs processes, commonly from a distributed system, whose performance might be undermined by undesired cloud behaviours. Therefore, each SU provides monitoring information to characterize the performance of the process running on it. When Tejo orchestrates fault injection campaigns, SUs actually run scripts that emulate faults. In this document, we focus on clusters of cloud databases where the components of the cluster, SUs, play a role of data storage process. However, we assume that the vast majority of monitoring data provided by SU is not specific to cloud databases, hence Tejo is flexible enough to detect anomalies in other distributed services deployed in cloud platforms.
+	\item Workload: Nodes that play a role of Workload generate requests to the service running atop SUs. Essentially, they emulate the service load, similar to that expected in the real deployment, that SUs should serve. This role allows us to reproduce the behaviour of users and to verify if their expectations are met through service level objectives monitoring. When Tejo runs in production it is represented by remote requests from clients. 
 	\item Monitor: This is the main role of Tejo scheme. In this role, data for anomaly detection is collected from different sources (SUs and Workloads), computed, and stored in a SQL database. This node also runs routines to learn or predict anomalous behaviour from the collected data, playing a key role to send alerts about anomalous SUs. 
 \end{itemize} 
 
@@ -26,7 +26,7 @@ The Figure~\ref{fig:roles_scheme} depicts the main roles and interactions of Tej
 
 \subsection{Installation}
 
-In this subsection, we describe the main installation steps of our prototype. Our description will be based on the scheme depicted in Figure~\ref{fig:roles_scheme} and is organized as follows. First, we provide an overview of the installations tools available online. In turn, we describe the the installation steps that are common for all roles. Then we describe installation steps that are specific to the roles, explaining the main steps to set-up a Monitor. After the Monitor set-up, we describe the installation of a SU and finally the installation of the Workload.
+In this subsection, we describe the main installation steps of our prototype. Our description will be based on the scheme depicted in Figure~\ref{fig:roles_scheme} and is organized as follows. First, we provide an overview of the installations tools available online. In turn, we describe the installation steps that are common to all roles. Then we describe installation steps that are specific to the roles, explaining the main steps to set-up a Monitor. After the Monitor set-up, we describe the installation of a SU and finally the installation of the Workload.
 
 \subsubsection{Installation scripts and source code organization in the publicly available repository}
 \label{subsubsec:gitclone}
@@ -39,33 +39,33 @@ git clone https://github.com/guthemberg/tejo
 \end{lstlisting}
 
 
-Overall, the repository are organized in the following way.
+Overall, the repository is organized in the following way.
 
 \lstinputlisting[language=sh, firstline=1, lastline=22,frame=single]  {inputs/sources/repo_organization.txt}
 
-There are two folders in the repository root: \verb|contrib| and \verb|tejo|. \verb|contrib| has a collection of scripts necessary to the installation procedure organized by operating system distribution and packages specificities. As we will explain in futher details in the following subsections, most of packages required to install our prototype are available on any unix-like system. However, for a matter of simplicity, we have adapted the installation scripts to be more comfortably performed in Debian systems, more precisely, to the 7.8 release. This includes all scripts and configuration files templates available inside \verb|contrib/debian|, which might be easily modified for other distributions. In \verb|contrib|, we provide a set of tools and templates to install Workload role in fedoralike systems, particularly customized for PlanetLab testbed. Moreover, one will find binaries of \verb|paping|, a tcp-based tool for latency measurements, a template of the main configurations file of tejo along with some of its miscellaneous/tuning scripts.
+There are two folders in the repository root: \verb|contrib| and \verb|tejo|. \verb|contrib| has a collection of scripts necessary to the installation procedure organized by operating system distribution and packages specificities. As we will explain in futher details in the following subsections, most of packages required to install our prototype are available on any unix-like system. However, for a matter of simplicity, we have adapted the installation scripts to be more comfortably performed in Debian systems, more precisely, to the 7.8 release. This includes all scripts and configuration files templates available inside \verb|contrib/debian|, which might be easily modified for other distributions. In \verb|contrib|, we provide a set of tools and templates to install Workload role in fedora-like systems, particularly customized for PlanetLab testbed. Moreover, one will find binaries of \verb|paping|~\footnote{paping: Cross-platform TCP port testing, emulating the functionality of ping (port ping). \url{https://code.google.com/p/paping/}}, a tcp-based tool for latency measurements, a template of the main configurations file of Tejo along with some of its miscellaneous/tuning scripts.
 
-While \verb|contrib|  mostly provides installation scripts for third-part, required packages, \verb|tejo| has the main sources and modules of our prototype itself. It contains four directories: \verb|common|, \verb|data_handler|, \verb|fault_injection_tools|, and \verb|learning_model|. The first one has a collection of commonly performed tasks as Tejo runs, such as launching experiments and fault injection campaigns as well as monitoring database set-up scheme and backup. The later three directories correspond pretty much to the modules described in Section~\ref{sec:design}. They actually provide the main functionalities of our prototype, including compute the monitoring data, fault injection campaign orchestration and learning/predictions of anomalies.
+While \verb|contrib|  mostly provides installation scripts for third-party, required packages, \verb|tejo| has the main sources and modules of our prototype itself. It contains four directories: \verb|common|, \verb|data_handler|, \verb|fault_injection_tools|, and \verb|learning_model|. The first one has a collection of commonly performed tasks as Tejo runs, such as launching experiments and fault injection campaigns as well as monitoring database set-up scheme and backup. The latter three directories correspond pretty much to the modules described in Section~\ref{sec:design}. They actually provide the main functionalities of our prototype, including computing the monitoring data, fault injection campaign orchestration and learning/predictions of anomalies.
 
 \subsubsection{Common installation steps}
 
-Regardless the role of the node, we should perform a few preliminary installation steps to set-up Tejo. These steps mainly concern a set of common installation packages and some adjustments to configuration files. Table~\ref{tab:common_install_conf} concisely describes these steps and the configuration file templates to be customized.
+Regardless the role of the node, we should perform a few preliminary installation steps to set-up Tejo. These steps mainly concern a set of common installation packages and some adjustments to configuration files. Table~\ref{tab:common_install_conf_node} concisely describes these steps and the configuration file templates to be customized.
 
 			\begin{table*}[htdp]
 				\begin{center}
 \caption{Common required packages and main configuration file.}
-  \label{tab:common_install_conf}
+  \label{tab:common_install_conf_node}
 					\begin{tabular}{R{2.5cm} || L{4.5cm} L{6cm} }
 						{\bf Requirement}&{\bf Template/packages}&{\bf Description} \\  
 						\hline
 						\hline
-						{\bf Common packages}&rcconf sysv-rc-conf wget ntp ntpdate rdate screen htop apt-show-versions ethtool gcc git nmap less iperf bc tcsh & This list provide a common set of open-source packages required by the collection of Unix shell scripts of Tejo.\\
+						{\bf Common packages}&rcconf sysv-rc-conf wget ntp ntpdate rdate screen htop apt-show-versions ethtool gcc git nmap less iperf bc tcsh & This list provides a common set of open-source packages required by the collection of Unix shell scripts of Tejo.\\
 						\hline
 						{\bf Python libraries/tools}&python-psutil python-pip python-configobj python-dev python-rrdtool python-psycopg2 & Most of scripts of Tejo are implemented in Python language, notably those that provide interface to database API, configuration file parsing, interface to monitoring data database API (rrd), etc.\\
 						\hline
 						{\bf Java}&openjdk-7-jdk & Several functionalities of Tejo require java (release 7 or higher) support, e.g. workload generator and query router/load balancer.\\
 						\hline
-						{\bf The main configuration file}&\verb|tejo/contrib/tejo/| \verb|tejo.conf.sample|&This file provides the main parameters for Tejo functioning and should be copied to \verb|/etc| directory. This file contains a couple of key works in upper-case letters to be replaced/customized accordingly. At this point of the installation, the key words to be customized are: USER, GUEST\_PASSWORD, and MY\_DOMAIN.  \\
+						{\bf The main configuration file}&\verb|tejo/contrib/tejo/| \verb|tejo.conf.sample|&This file provides the main parameters for Tejo functioning and should be copied to \verb|/etc| directory. This file contains a couple of keywords in upper-case letters to be replaced/customized accordingly. At this point of the installation, the key words to be customized are: USER, GUEST\_PASSWORD, and MY\_DOMAIN.  \\
 					\end{tabular}
 				\end{center}
 			\end{table*}
@@ -74,7 +74,7 @@ Regardless the role of the node, we should perform a few preliminary installatio
 
 \subsubsection{Installing a Monitor node}
 
-Monitor is the main role of Tejo prototype. As briefly described in Subsection~\ref{subsec:roles}, a node that plays this role is in charge of (i) aggregating and compute monitoring data, (ii) orchestrating fault injection campaigns and (iii) predicting anomalous behaviours. To do that, Tejo requires the installation of two additional packages and the customization of some configuration files. We provide a summary of these installation steps as follows.
+Monitor is the main role of Tejo prototype. As briefly described in Subsection~\ref{subsec:roles}, a node that plays this role is in charge of (i) aggregating and computing monitoring data, (ii) orchestrating fault injection campaigns and (iii) predicting anomalous behaviours. To do that, Tejo requires the installation of two additional packages and the customization of some configuration files. We provide a summary of these installation steps as follows.
 
 			\begin{table*}[htdp]
 				\begin{center}
@@ -84,9 +84,9 @@ Monitor is the main role of Tejo prototype. As briefly described in Subsection~\
 						{\bf Requirement}&{\bf Template/packages}&{\bf Description} \\  
 						\hline
 						\hline
-						{\bf Postgres database}& postgresql, \verb|/contrib/debian/| \verb|pgsql/pg_hba.conf|& Tejo relies on a relational database scheme running on postgres to handle/maintain monitoring data. After postgres installation, we should allow connections to the \verb|localhost|. To do that, one replace the installed \verb|pg_hba.conf| by the one available in the retrieved repository.\\
+						{\bf Postgres database}& postgresql, \verb|/contrib/debian/| \verb|pgsql/pg_hba.conf|& Tejo relies on a relational database scheme running on postgres to handle/maintain monitoring data. After postgres installation, we should be allowed to establish connections to the \verb|localhost|. To do that, replace the installed \verb|pg_hba.conf| by the one available in the retrieved repository.\\
 						\hline
-						{\bf Ganglia}&ganglia-monitor gmetad & Monitor nodes require the installation of ganglia system as poller and aggregator of monitoring data. To make ganglia work like that, two configuration files should be customized: \verb|tejo/contrib/debian/| \verb|ganglia/gmetad.conf.sample| and \verb|tejo/contrib/debian/| \verb|ganglia/gmond.conf.aggregator.sample|. These files contain two key works (in upper-case letters) that should be replaced accordingly, namely TARGET and SOURCE. For further information about the configuration of ganglia are available online\footnote{https://github.com/ganglia/monitor-core/wiki/Ganglia-Quick-Start}.\\
+						{\bf Ganglia}&ganglia-monitor gmetad & Monitor nodes require the installation of ganglia system as poller and aggregator of monitoring data. To make ganglia work like that, two configuration files should be customized: \verb|tejo/contrib/debian/| \verb|ganglia/gmetad.conf.sample| and \verb|tejo/contrib/debian/| \verb|ganglia/gmond.conf.aggregator.sample|. These files contain two keywords (in upper-case letters) that should be replaced accordingly, namely TARGET and SOURCE. Further information about the configuration of ganglia are available online (Ganglia quick-start doc: \url{https://github.com/ganglia/monitor-core/wiki/Ganglia-Quick-Start}).\\
 					\end{tabular}
 				\end{center}
 			\end{table*}
