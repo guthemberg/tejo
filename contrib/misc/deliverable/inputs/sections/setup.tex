@@ -108,19 +108,19 @@ These commands allow us to set-up the PostgreSQL database with the scheme that T
 \subsubsection{Installing a Service Unity node}
 \label{subsubsec:su}
 
-The Service Unity node is actually where runs the cloud database, whose cluster-based set-up is briefly described in Subsection~\ref{subsec:dbsetup}. Alongside the cloud database instance, there are fault injection tools and monitoring agent. While the fault injection tools allow us to emulate malfunctioning cloud infrastructure the monitoring agent collects a collection of measurements of the Service Unity node. The agent periodically sends these measurements to the monitor aggregator (as depicted in Fig.~\ref{fig:roles_scheme}). 
+The Service Unity node is actually where runs the cloud database. Its cluster-based set-up is briefly described in Subsection~\ref{subsec:dbsetup}. Alongside the cloud database instance, there are fault injection tools and monitoring agent. While the fault injection tools allow us to emulate malfunctioning cloud infrastructure, the monitoring agent collects a collection of measurements of the Service Unity node. The agent periodically sends these measurements to the monitor aggregator (as depicted in Fig.~\ref{fig:roles_scheme}). 
 
-A Service Unity node requires minimal set-up. First, it is necessary to fetch sources, as described in \ref{subsubsec:gitclone}. The fault injection tools does not require any adjustment, since most of fault injection campaigns are launched remotely (further details in Subsection~\ref{subsec:conftejo}). The monitoring agent requires the following package:
+A Service Unity node requires minimal set-up. First, it is necessary to fetch sources, as described in \ref{subsubsec:gitclone}. The fault injection tools do not require any adjustment, since most of fault injection campaigns are launched remotely (further details in Subsection~\ref{subsec:conftejo}). The monitoring agent requires the packages described in Table~\ref{tab:common_install_conf_gm}:
 
 			\begin{table*}[htdp]
 				\begin{center}
 \caption{Required packages and configuration file adjustments for a Service Unity node.}
-  \label{tab:common_install_conf}
+  \label{tab:common_install_conf_gm}
 					\begin{tabular}{R{2.5cm} || L{4.5cm} L{6cm} }
 						{\bf Requirement}&{\bf Template/packages}&{\bf Description} \\  
 						\hline
 						\hline
-						{\bf Ganglia}&ganglia-modules-linux ganglia-monitor ganglia-monitor-python, \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|, \verb|/contrib/debian/| \verb|ganglia/vm/*.py*| & Service Unity nodes require the installation of ganglia system as ``monitor'' or simply as an agent. For that, two categories of configuration files should be customized. The first category is the main configuration file which governs the behaviour of the ganglia monitor, whose a template is available in \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|, to replace the original configuration file (that is the \verb|/etc/ganglia/gmond.conf| in Debian systems). The second category is a set of configuration files of additional plug-ins, available in \verb|/contrib/debian/| \verb|ganglia/vm/*.py*|. These plug-ins allow us to collect additional information about the node including metrics of the cloud database instance and fault campaign activity.\\
+						{\bf Ganglia}&ganglia-modules-linux ganglia-monitor ganglia-monitor-python, \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|, \verb|/contrib/debian/| \verb|ganglia/vm/*.py*| & Service Unity nodes require the installation of ganglia system as ``monitor'' or simply as an agent. For that, two categories of configuration files should be customized. The first category is the main configuration file which governs the behaviour of the ganglia monitor (a template is available in \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|), to replace the original configuration file (that is the \verb|/etc/ganglia/gmond.conf| in Debian systems). The second category is a set of configuration files of additional plug-ins, available in \verb|/contrib/debian/| \verb|ganglia/vm/*.py*|. These plug-ins allow us to collect additional information about the node including metrics of the cloud database instance and fault campaign activity.\\
 					\end{tabular}
 				\end{center}
 			\end{table*}
@@ -128,17 +128,17 @@ A Service Unity node requires minimal set-up. First, it is necessary to fetch so
 
 \subsubsection{Installing a Workload node}
 
-To emulate the behaviour of requests from clients to the cloud database cluster, the Workload generates a number of requests to the cluster instances. In Tejo, the workload is emulate by YCSB, a benchmark for cloud services designed by Yahoo~\cite{cooper2010benchmarking}. Similar to fault injection tools, no additional set-up is required to YCSB, it makes part of Tejo sources, available online git repository. To accomplish the set-up of the Workload node, one should install and configure ganglia monitoring agent, detailed as follows: 
+To emulate requests from clients to the cloud database cluster, the Workload generates a number of requests to the cluster instances. In Tejo, the workload is emulated by YCSB, a benchmark for cloud services designed by Yahoo~\cite{cooper2010benchmarking}. Similar to fault injection tools, no additional set-up is required to YCSB, it makes part of Tejo sources, available online git repository. To accomplish the set-up of the Workload node, one should install and configure ganglia monitoring agent, detailed in Table~\ref{tab:common_install_conf_gg}. 
 
 			\begin{table*}[htdp]
 				\begin{center}
 \caption{Required packages and configuration file adjustments for a Service Unity node.}
-  \label{tab:common_install_conf}
+  \label{tab:common_install_conf_gg}
 					\begin{tabular}{R{2.5cm} || L{4.5cm} L{6cm} }
 						{\bf Requirement}&{\bf Template/packages}&{\bf Description} \\  
 						\hline
 						\hline
-						{\bf Ganglia}&ganglia-modules-linux ganglia-monitor ganglia-monitor-python, \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|, \verb|/contrib/debian/| \verb|ganglia/wl/*.py*| & Similar to a Service Unity node, Workload ones require the installation of ganglia system as an agent and one might even use the same template for both type of node (as described in \ref{subsubsec:su} ). However, the files of additional plug-ins are different and should be copied from the Tejo installation directory \verb|/contrib/debian/| \verb|ganglia/wl/*.py*|. In fact, these files implement an additional plug-in for Workload nodes that collects measurements about the performance of YCSB, namely SLO metrics.\\
+						{\bf Ganglia}&ganglia-modules-linux ganglia-monitor ganglia-monitor-python, \verb|/contrib/debian/| \verb|ganglia/gmond.conf.sample|, \verb|/contrib/debian/| \verb|ganglia/wl/*.py*| & Similar to a Service Unity node, Workload ones require the installation of ganglia system as an agent and one might even use the same template for both types of node (as described in \ref{subsubsec:su} ). However, the files of additional plug-ins are different and should be copied from the Tejo installation directory \verb|/contrib/debian/| \verb|ganglia/wl/*.py*|. In fact, these files implement an additional plug-in for Workload nodes that collects measurements about the performance of YCSB, namely SLO metrics.\\
 					\end{tabular}
 				\end{center}
 			\end{table*}
@@ -150,7 +150,7 @@ To emulate the behaviour of requests from clients to the cloud database cluster,
 
 In this section, we provide a brief overview of the main steps to install a cloud database cluster using MongoDB and VoltDB. The comprehensive documentation of MongoDB and VoltDB are available online~\footnote{MongoDB: https://docs.mongodb.org/manual/, VoltDB: http://docs.voltdb.com/}.
 
-These distributed database systems provides two properties that are interesting to evaluate with Tejo: scalable and fault-tolerant data maintenance. They offer scalability by splitting data in L partitions or shards across a cluster of VMs. To increase the storage capacity of the cluster, operators may add nodes as the system run. To enhance data availability, data is replicated in K+1 copies, which allows the system to tolerate up to K VM failures. Depending on the scheme to maintain replicas, replication is divided in two broad groups: primary/secondary and multi-primary schemes. Essentially they differ on how requests that modify data are handled. Our approach takes into account both schemes. In addition, we assume that cloud database cluster rely on load balancing throughout replicas in order to limit the impact of cloud anomalies on a cluster.
+These distributed database systems provide two properties that are interesting to evaluate with Tejo: scalability and fault-tolerant data maintenance. They offer scalability by splitting data in L partitions or shards across a cluster of VMs. To increase the storage capacity of the cluster, operators may add nodes as the system run. To enhance data availability, data is replicated in K+1 copies, which allows the system to tolerate up to K VM failures. Depending on the scheme to maintain replicas, replication is divided in two broad groups: primary/secondary and multi-primary schemes. Essentially they differ on how requests that modify data are handled. Our approach takes into account both schemes. In addition, we assume that cloud database clusters rely on load balancing throughout replicas in order to limit the impact of cloud anomalies on a cluster.
 
 
 
@@ -166,12 +166,12 @@ Figure~\ref{fig:mongo_cluster} highlights the main components a MongoDB cluster 
   \label{fig:mongo_cluster}
 \end{figure}
 
-The main packages and configuration files of MongoDB cluster are described a follows.
+The main packages and configuration files of MongoDB cluster are described in Table~\ref{tab:common_install_conf_mm}.
 
 			\begin{table*}[htdp]
 				\begin{center}
-\caption{Required packages and configuration file adjustments for a Mongo.}
-  \label{tab:common_install_conf}
+\caption{Required packages and configuration file adjustments for a MongoDB cluster.}
+  \label{tab:common_install_conf_mm}
 					\begin{tabular}{R{2.5cm} || L{4.5cm} L{6cm} }
 						{\bf Requirement}&{\bf Template/packages}&{\bf Description} \\  
 						\hline
@@ -183,7 +183,7 @@ The main packages and configuration files of MongoDB cluster are described a fol
 				\end{center}
 			\end{table*}
 
-Once mongos and mongod are installed and configured properly, the latest step is to add mongod instances to the mongos as follows:
+Once mongos and mongod are installed and configured properly, the latest step is to add mongod instances to the mongos with the following commands:
 
 \begin{lstlisting}
 #once connected to the node running the mongos
@@ -192,7 +192,7 @@ sh.addShard( "rs0/primary-mongod-server-partition-0:27017, \
 sh.shardCollection( "collection.name", 'key': { "_id": "hashed" } ) 
 \end{lstlisting}
 
-The first command adds the two primary copies to the query router (mongos) and the second creates a collection of documents whose storage are spread across the nodes according the hash value of the document keys. After set-upping and configuring the MongoDB cluster, we should load it with data. This step can be performed from the workload by running the following command:
+The first command adds the two primary copies to the query router (mongos) and the second creates a collection of documents whose storage are spread across the nodes according to the hash value of the document keys. After setting-up and configuring the MongoDB cluster, we should load it with data. This step can be performed from the workload by running the following command:
 
 \begin{lstlisting}
 sh contrib/debian/mongodb/load.sh
@@ -212,9 +212,9 @@ The set-up of a VoltDB cluster differs in two main points from that of MongoDB. 
   \label{fig:voltdb_cluster}
 \end{figure}
 
-To install VoltDB, one might either clone VoltDB Community Edition from the public repository~\footnote{https://github.com/VoltDB/voltdb/} or download the Enterprise edition for trial~\footnote{http://learn.voltdb.com/DLSoftwareDownload.html}. We recommend the installation of the later because it includes key features such as high availability that are not currently available in the community edition.
+To install VoltDB, one might either clone VoltDB Community Edition from the public repository~\footnote{https://github.com/VoltDB/voltdb/} or download the Enterprise edition for trial~\footnote{http://learn.voltdb.com/DLSoftwareDownload.html}. We recommend the installation of the latter because it includes key features such as high availability that are not currently available in the community edition.
 
-One the VoltDB is installed in the cluster nodes, the database can be run from the Workload node using the following Tejo's scripts: \verb|/tejo/common/experiments_scripts/tpcc/run.sh| and \verb|/tejo/common/experiments_scripts/tpcc/stop.sh| to use a TPC-C workload~\footnote{http://www.tpc.org/tpcc/detail.asp}, and \verb|/tejo/| \verb|common/experiments_scripts/| \verb|voter-selfcheck/run.sh| and \verb|/tejo/| \verb|common/experiments_scripts/| \verb|voter-selfcheck/stop.sh| for another workload customized for VoltDB clusters.
+Once the VoltDB is installed in the cluster nodes, the database can be run from the Workload node using the following Tejo's scripts: \verb|/tejo/common/experiments_scripts/tpcc/run.sh| and \verb|/tejo/common/experiments_scripts/tpcc/stop.sh| to use a TPC-C workload~\footnote{http://www.tpc.org/tpcc/detail.asp}, and \verb|/tejo/| \verb|common/experiments_scripts/| \verb|voter-selfcheck/run.sh| and \verb|/tejo/| \verb|common/experiments_scripts/| \verb|voter-selfcheck/stop.sh| for another workload customized for VoltDB clusters.
 
 \subsection{How to configure and use Tejo}
 \label{subsec:conftejo}
@@ -230,7 +230,7 @@ The configuration and use of Tejo include the following steps: environment set-u
 
 \subsubsection{Environment set-up}
 
-The Service Unity (SU) requires following packages to be installed on your local machine before configuration.
+The Service Unity (SU) requires the following packages to be installed on your local machine before configuration.
 
 \begin{itemize}
 	\item JDK/JRE +1.7~\footnote{http://www.ubuntuupdates.org/openjdk-7-jdk};
@@ -254,7 +254,7 @@ ssh-keygen -t dsa # Please do not enter in a password
 cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 \end{lstlisting}
 
-Then, we should performing the following steps in the remaining nodes, including SUs and Workload nodes.
+Then, the following steps should be performed in the remaining nodes, including SUs and Workload nodes.
 
 \begin{lstlisting}
 sudo apt-get -q -y install openssh-server
@@ -264,7 +264,7 @@ where \verb|~/.ssh/id_dsa.pub| is the same file initially generated in the Monit
  
 \subsubsection{Configuration file}
 
-The file \verb|/etc/tejo.conf| is the main configuration file of Tejo and it should be installed and tuned on each node properly. By cloning the sources from the public repository (described in \ref{subsubsec:gitclone}), you will download a template file whose some parameter key should be changed accordingly.
+The file \verb|/etc/tejo.conf| is the main configuration file of Tejo and it should be installed and tuned on each node properly. By cloning the sources from the public repository (described in \ref{subsubsec:gitclone}), you will download a template file whose some key parameters (see Table~\ref{tab:common_install_conf_kp}) should be changed accordingly.
 
 To install the template, run:
 \begin{lstlisting}
@@ -276,7 +276,7 @@ The key parameters to be tuned are:
 			\begin{table*}[htdp]
 				\begin{center}
 \caption{Key parameters of /etc/tejo.conf.}
-  \label{tab:common_install_conf}
+  \label{tab:common_install_conf_kp}
 					\begin{tabular}{R{4cm} || L{6cm} L{3cm} }
 						{\bf Parameter}&{\bf Description}&{\bf Examples} \\  
 						\hline
@@ -310,21 +310,25 @@ To run a workload, one should run the following script from the Workload node.
 sh tejo/tejo/common/experiments_scripts/quick_launch/run.sh
 \end{lstlisting}
 
+\noindent
 this launches requests to SUs. Then, you can launch a fault campaign from the Monitor node as follows.
 
 \begin{lstlisting}
 sh tejo/tejo/common/experiments_scripts/quick_launch/inject.sh
 \end{lstlisting}
 
-this scripts remotely injects faults in SUs. Finally, to stop the launched workload, run the following script from the Workload node:
+\noindent
+this scripts remotely injects faults in SUs by instrumenting \verb|stress-ng| and \verb|dummynet|. Finally, to stop the launched workload, run the following script from the Workload node:
 
 \begin{lstlisting}
 sh tejo/tejo/common/experiments_scripts/quick_launch/stop.sh
 \end{lstlisting}
 
+Further details about hos to set-up fault injection campaigns are available in our previous work~\cite{silvestre2014anomaly}.
+
 \subsubsection{Set-up learning and anomaly prediction}
 
-The set-up of Tejo for learning and predicting has two major steps: periodic collection of measurements and data analysis.
+The set-up of Tejo for learning and anomaly prediction has two major steps: periodic collection of measurements and data analysis.
 
 The collection of measurements can be performed periodically using the \verb|crontab| of the Monitor node as follows:
 \begin{lstlisting}
@@ -332,22 +336,26 @@ crontab  -r #to erase the previous jobs
 crontab  tejo/data_handler/cron.job
 \end{lstlisting}
 
+\noindent
 these commands allow us to read rrd files and store them into the PostgreSQL database periodically.
 
-For data analysis, data should be carefully selected from the database, preprocessed and finally put into the learning scripts. as selecting raw data, one should get data from two main tables of the PostgreSQL database, namely vm and slo. The following example shows a query template for doing that:
+For data analysis, data should be carefully selected from the database, preprocessed and finally put into the learning scripts for selecting raw data, one should get data from two main tables of the PostgreSQL database, namely vm and slo. The following example shows a query template for doing that:
 
 \begin{lstlisting}
-select \$list\_of\_columns from vm inner join slo on slo.ts=vm.ts where \$filters order by vm.ts
+select $list_of_columns from vm inner join slo \
+           on slo.ts=vm.ts where $filters \
+           order by vm.ts;
 \end{lstlisting}
 
-This query template defines a aggregated list of comma-separated columns ,\$list\_of\_columns (about 200 columns, including SU/vm resources consumption, slo performance from the workload, and fault injection activity), selected from a join sql command over the two main tables, vm and slo. \$filters defines the restrictions of our query, mainly concerning the time-stamp column and and fault injection activity.
+This query template defines an aggregated list of comma-separated columns ,\$list\_of\_columns (about 200 columns, including SU/vm resources consumption, SLO performance from the workload, and fault injection activity), selected from a join sql command over the two main tables, vm and slo. \$filters defines the restrictions of our query, mainly concerning the time-stamp column and and fault injection activity.
 
-Once the raw data is collected and stored to a a file (either binary like pickle python os cvs-based text file), you can start preprocessing this data. Preprocessing the raw selected data is very simple and essentially consists in attributing labels to selected lines. Labels definition depends on the learning/prediction tasks. For example, if the goal is distinguish faulty from faulty-free nodes, just two labels are required, e.g. -1 for faulty SU nodes and 1 otherwise.
+Once the raw data is collected and stored to a file (either binary-like pickle python or cvs-based text file), you can start preprocessing this data. Preprocessing the raw selected data is very simple and essentially consists in attributing labels to selected lines. Labels definition depends on the learning/prediction tasks. For example, if the goal is to distinguish faulty from fault-free nodes, just two labels are required, e.g. -1 for faulty SU nodes and 1 otherwise.
 
-The latest step of the learning/prediction step is to feed the preprocessed data to the learning script. To this aim, Tejos provides a straightforward, easy-to-customize python script, which contains the definition of a supervised-learning classifier. This file is available on the following Tejo repository path:
+The latest step of the learning/prediction step is to feed the preprocessed data to the learning script. To this aim, Tejo provides a straightforward, easy-to-customize python script, which contains the definition of a supervised-learning classifier. This file is available on the following Tejo repository path:
 
 \begin{lstlisting}
 tejo/learning_model/anomaly_detection.py
 \end{lstlisting}
 
-it defines a anomaly detection classifier whose python class is called \verb|OneClassSVMClassifier|. This class is based on Scikit Learning~\footnote{http://scikit-learn.org/}, an open-source machine learning library, and implements two methods for anomaly detection: the instantiation and the predict method. The former allows us to read the preprocessed file (the training dataset), interpret the attributed labels, and learning anomalous behaviour of faulty nodes. This initial learning phase is run in batch mode. The second, the predict method, can be run on real deployments to predict anomalous SUs. 
+\noindent
+this script defines a anomaly detection classifier whose python class is called \verb|OneClassSVMClassifier|. This class is based on Scikit Learning~\footnote{http://scikit-learn.org/}~\cite{scikitlearn11}, an open-source machine learning library, and implements two methods for anomaly detection: the instantiation and the predict method. The former allows us to read the preprocessed file (the training dataset), interpret the attributed labels, and learning anomalous behaviour of faulty nodes. This initial learning phase is run in batch mode. The second, the predict method, can be run on real deployments to predict anomalous SUs. 
