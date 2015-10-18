@@ -1,0 +1,12 @@
+\section{Discussion}
+
+In this section, we discuss specific points of our approach and future research directions.
+
+\noindent
+{\bf Flexible approach.} Tejo provides a framework for predicting anomalies that is highly flexible. Although we have shown that Tejo perform accurate anomaly prediction for cloud database, it does not rely on features that are specific for these system. Therefore, Tejo can be extended to predict anomalies of different distributed systems deployed on cloud environments. 
+
+\noindent
+{\bf Scalability of anomaly predictions.} The scalability of Tejo in terms of anomaly predictions depends mainly on the implemented the anomaly detection model. So far, we have implemented Tejo with two statistical learning algorithms: SVM and Random Forests.  Both algorithms can provide scalable predictions of VMs with feature vectors of small medium size (i.e., up to hundreds sof features) by performing predictions of subsets of VMs in parallel. For systems whose feature vectors are bigger (i.e. thousands or hundreds of thousands), it is recommended to use algorithms that can be parallelized, like Random Forests. In this case, a prediction of a single, big vector can be performed in parallel.
+
+\noindent
+{\bf Future work.} Our findings open some perspectives for future research. We plan to evaluate Tejo with different systems and, especially, in different deployment scenarios. As mentioned previously, Tejo design is not specific to cloud databases. So that, we expect to evaluate Tejo with different distributed, large-scale systems. In addition, we envisage evaluating Tejo in different platforms, such as public cloud platforms (e.g., Microsoft Azure or AWS Amazon).
