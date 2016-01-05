@@ -104,3 +104,5 @@ TRIES_PER_FAULT=2
 
 
 www_dir=/usr/share/ganglia-webfrontend/
+
+monitors=MONITORS
