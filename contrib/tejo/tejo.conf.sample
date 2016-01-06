@@ -1,3 +1,6 @@
+#all words in upper-case letters will
+#be replaced accordingly during 
+#the setup
 node_type=TYPE
 location=LOCATION
 
@@ -80,6 +83,7 @@ workload_service_rtt=/tmp/fresh_service_rtt.pck
 workload_strategy=balance
 workload_target=WL_TARGET
 workload_user=upmc_aren
+workload_testbed_user=USER
 workload_peer_status=/home/USER/peers_tatus_table.pck
 workload_target_rates=300,250,200,150,100,50
 workload_death_file=/tmp/wl_death.pck
