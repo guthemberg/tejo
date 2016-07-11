@@ -12,7 +12,7 @@
 # By default this script does nothing.
 
 
-domain='cloudapp.net'
+domain='MY_DOMAIN'
 current_hostname=`hostname`
 if [ `hostname |tr '.' '\n'|wc -l` -eq 1 ]
 then
@@ -22,8 +22,6 @@ fi
 
 exit
 
-#sudo /bin/hostname ew-vm-001.cloudapp.net
-#sudo sh -c "echo \"ew-vm-001.cloudapp.net\" > /etc/hostname"
 
 ethtool -K eth0 gro off
 ethtool -K eth0 tso off
